@@ -119,7 +119,7 @@ public class ConsoleAppenderTest {
                 "DEBUG debug3: multi1, multi2, multi3\n" +
                 "DEBUG debugE:\n" +
                 "java.lang.Exception: exception\n" +
-                "\tat com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest.testLoggerDebug(ConsoleAppenderTest.java:110)\n"));
+                "\tat com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest.testLoggerDebug(ConsoleAppenderTest.java:109)\n"));
 
         MockDiamondServer.tearDownMockServer();
         ConsoleTarget.tearDownMockConsole();
@@ -159,7 +159,7 @@ public class ConsoleAppenderTest {
                 " INFO info3: multi1, multi2, multi3\n" +
                 " INFO infoE:\n" +
                 "java.lang.Exception: exception\n" +
-                "\tat com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest.testLoggerInfo(ConsoleAppenderTest.java:150)\n"));
+                "\tat com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest.testLoggerInfo(ConsoleAppenderTest.java:149)\n"));
 
         MockDiamondServer.tearDownMockServer();
         ConsoleTarget.tearDownMockConsole();
@@ -201,7 +201,7 @@ public class ConsoleAppenderTest {
                 " WARN warn3: multi1, multi2, multi3\n" +
                 " WARN warnE:\n" +
                 "java.lang.Exception: exception\n" +
-                "\tat com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest.testLoggerWarn(ConsoleAppenderTest.java:192)\n"));
+                "\tat com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest.testLoggerWarn(ConsoleAppenderTest.java:191)\n"));
 
         MockDiamondServer.tearDownMockServer();
         ConsoleTarget.tearDownMockConsole();
@@ -245,7 +245,7 @@ public class ConsoleAppenderTest {
                 "ERROR error3: multi1, multi2, multi3\n" +
                 "ERROR errorE:\n" +
                 "java.lang.Exception: exception\n" +
-                "\tat com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest.testLoggerError(ConsoleAppenderTest.java:236)\n"));
+                "\tat com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest.testLoggerError(ConsoleAppenderTest.java:235)\n"));
 
         MockDiamondServer.tearDownMockServer();
         ConsoleTarget.tearDownMockConsole();
