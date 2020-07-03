@@ -83,7 +83,6 @@
 
         <lombok.version>1.18.12</lombok.version>
 
-        <!--<joor-java-8.version>0.9.13</joor-java-8.version>-->
         <junit-jupiter.version>5.6.2</junit-jupiter.version>
         <jmockit.version>1.49</jmockit.version>
         <awaitility.version>4.0.3</awaitility.version>
@@ -148,12 +147,6 @@
             <scope>provided</scope>
         </dependency>
 
-        <!--<dependency>-->
-            <!--<groupId>org.jooq</groupId>-->
-            <!--<artifactId>joor-java-8</artifactId>-->
-            <!--<version>${joor-java-8.version}</version>-->
-            <!--<scope>test</scope>-->
-        <!--</dependency>-->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
@@ -216,7 +209,7 @@
                 <version>${jacoco-maven-plugin.version}</version>
                 <configuration>
                     <excludes>
-                        <exclude>src/main/java/com/github/charlemaznable/logback/miner/appender/ConsoleTarget.java</exclude>
+                        <exclude>src/main/java/com/github/charlemaznable/logback/miner/appender/ConsoleTarget.class</exclude>
                     </excludes>
                 </configuration>
                 <executions>

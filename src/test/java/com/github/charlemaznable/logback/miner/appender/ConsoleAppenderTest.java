@@ -74,7 +74,6 @@ public class ConsoleAppenderTest {
 
         val outputBuffer = ConsoleTarget.mockBufferByName("test-trace");
         assertNotNull(outputBuffer);
-        System.out.println(outputBuffer.output());
         assertTrue(outputBuffer.output().startsWith("" +
                 "TRACE trace0\n" +
                 "TRACE trace1: single\n" +
