@@ -1,0 +1,13 @@
+dist: trusty
+language: java
+jdk:
+  - oraclejdk8
+addons:
+  sonarcloud:
+    organization: "charlemaznable"
+    token:
+      secure: "QmGX8BPp4Imj5CY685tG8Uglh6KS5P5ZUEGgomPHIO9QoPKoqB8ZXdZ4T/HytvuwxW+aKT5jiNAeLIjpg/1X5Ivegs8p2UTh1w57Hs6cLLvoa4UULxbNbVPWyA/Ky4ogsrfT1kmf7mqGiVVHIsyO/nEs3MzLY1+wkE9WPKmd2WPsFnJLIb/njwgRHqaJxxSz9OeQnfFryertMBMXPI4Q6AgDXSzz5lr5v611DPIDQOjgD8q+e34Cn5K/BSMLPkcg1ykjNY/kRIIkrC5tQevxO0XwjmXsu2LBX8b2oBLFjIln+P+lukOQeLxT4jy0I0BYq5acJFlP9tFxjSxSJQS0/GsISV5TYxKoNWvmYwzg1lyCcJKWVFrfNGgcaCQrQnzUz0ypw8vgnlRKWOWoYwGOtgELkChnobD2+AXHzaYzrlyQp4xIlJ64XlNBcHw+tn5stb1gMsASu5Ep1uET/r/tUbYGdFcmt2EyvUcw4owDWKGLNHGUkmuPdInaXCKeRLTX9PBxDbI297bgi98SUx8flZUVzxQLaR/XJzxQVZFsJDVyCmM6jj0skUKU2WWgV+VU1o1yHRWBNN+/rGZI4OnVPvDNy74XiG1hlV5q1UeFIJ8Sq/z2cqut2/EdhdESM+a6ACVS/rHre973Fd9SFmIxV/JjlqBHlR3MqHbtBepNwww="
+script:
+  - mvn clean verify sonar:sonar -Dsonar.projectKey=CharLemAznable_logback-miner
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
