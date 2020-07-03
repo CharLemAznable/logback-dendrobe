@@ -55,9 +55,16 @@ logback.miner.dataId=default
 
 diamond配置日志:
 ```
-{root-or-class-name-or-package-name}.level=INFO
-{root-or-class-name-or-package-name}.additivity=true
+context.packagingDataEnabled=false
+context.maxCallerDataDepth=8
+context.frameworkPackages=
 
+context.property.{property-name}={property-value}
+
+{root-or-class-name-or-package-name}.additivity=true
+{root-or-class-name-or-package-name}.level=INFO
+
+{root-or-class-name-or-package-name}.console-level=info
 {root-or-class-name-or-package-name}.console-charset=utf-8
 {root-or-class-name-or-package-name}.console-pattern=%date [%-20thread] %5level %logger{50}\(%line\): %message%n
 {root-or-class-name-or-package-name}.console-target=System.out
