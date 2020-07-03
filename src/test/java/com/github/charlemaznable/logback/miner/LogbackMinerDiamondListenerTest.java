@@ -104,7 +104,8 @@ public class LogbackMinerDiamondListenerTest {
                 "Logback", "test", "context.packagingDataEnabled=Y\n" +
                         "context.maxCallerDataDepth=4\n" +
                         "context.frameworkPackages=com.github.charlemaznable.logback.miner\n" +
-                        "context.property.miner=test\n");
+                        "context.property.miner=test\n" +
+                        "root.console-target=System.warn");
         await().forever().until(future1::isDone);
         assertTrue(loggerContext.isPackagingDataEnabled());
         assertEquals(4, loggerContext.getMaxCallerDataDepth());

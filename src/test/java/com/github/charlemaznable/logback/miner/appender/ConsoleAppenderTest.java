@@ -24,7 +24,7 @@ public class ConsoleAppenderTest {
                 "context.property.miner=test\n" +
                         "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest.ADDITIVITY=no\n" +
                         "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest.LEVEL=INFO\n" +
-                        "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest.CONSOLE-CHARSET=utf-8\n" +
+                        "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest.CONSOLE-CHARSET=utf8\n" +
                         "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest.CONSOLE-PATTERN=%property{miner} %5level %message%n\n" +
                         "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest.CONSOLE-TARGET=miner-config\n" +
                         "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest.CONSOLE-IMMEDIATEFLUSH=true\n");
