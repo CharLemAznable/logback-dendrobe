@@ -119,8 +119,7 @@ public class LogbackMinerDiamondListener implements DiamondListener, LoggerConte
 
     @Override
     public void onLevelChange(Logger logger, Level level) {
-        val effector = effectorContext.getEffector(logger.getName());
-        effector.setLoggerLevel(level);
+        effectorContext.getEffector(logger.getName()).setLoggerLevel(level);
     }
 
     private Properties loadLocalConfig() {
@@ -195,8 +194,7 @@ public class LogbackMinerDiamondListener implements DiamondListener, LoggerConte
 
                 } else if (endsWithIgnoreCase(key, LEVEL_SUFFIX)) {
                     val name = fetchLoggerName(key, LEVEL_SUFFIX);
-                    effectorContext.getEffector(name)
-                            .setLoggerLevel(Level.toLevel(value));
+                    loggerContext.getLogger(name).setLevel(Level.toLevel(value));
 
                 } else if (endsWithIgnoreCase(key, CONSOLE_LEVEL_SUFFIX)) {
                     val name = fetchLoggerName(key, CONSOLE_LEVEL_SUFFIX);
