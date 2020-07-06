@@ -47,9 +47,9 @@ public class LogbackMinerDiamondListenerTest {
         val thisLogger = (Logger) log;
 
         val future1 = MockDiamondServer.updateDiamond(
-                "Logback", "test", "ROOT.LEVEL=INFO\n" +
-                        "ROOT.ADDITIVITY=true\n" +
-                        "ROOT.CONSOLE-LEVEL=DEBUG\n");
+                "Logback", "test", "ROOT[LEVEL]=INFO\n" +
+                        "ROOT[ADDITIVITY]=true\n" +
+                        "ROOT[CONSOLE.LEVEL]=DEBUG\n");
         await().forever().until(future1::isDone);
         assertEquals(Level.INFO, rootLogger.getLevel());
         assertTrue(rootLogger.isAdditive());
@@ -60,9 +60,9 @@ public class LogbackMinerDiamondListenerTest {
         assertTrue(thisLogger.isDebugEnabled()); // decide by turbo filter
 
         val future2 = MockDiamondServer.updateDiamond(
-                "Logback", "test", "ROOT.LEVEL=warn\n" +
-                        "ROOT.ADDITIVITY=false\n" +
-                        "ROOT.CONSOLE-LEVEL=info\n");
+                "Logback", "test", "ROOT[LEVEL]=warn\n" +
+                        "ROOT[ADDITIVITY]=false\n" +
+                        "ROOT[CONSOLE.LEVEL]=info\n");
         await().forever().until(future2::isDone);
         assertEquals(Level.WARN, rootLogger.getLevel());
         assertFalse(rootLogger.isAdditive());
@@ -75,12 +75,12 @@ public class LogbackMinerDiamondListenerTest {
         assertTrue(thisLogger.isInfoEnabled()); // decide by turbo filter
 
         val future3 = MockDiamondServer.updateDiamond(
-                "Logback", "test", "root.level=warn\n" +
-                        "root.additivity=no\n" +
-                        "root.console-level=info\n" +
-                        this.getClass().getName() + ".level=debug\n" +
-                        this.getClass().getName() + ".additivity=off\n" +
-                        this.getClass().getName() + ".console-level=debug\n");
+                "Logback", "test", "root[level]=warn\n" +
+                        "root[additivity]=no\n" +
+                        "root[console.level]=info\n" +
+                        this.getClass().getName() + "[level]=debug\n" +
+                        this.getClass().getName() + "[additivity]=off\n" +
+                        this.getClass().getName() + "[console.level]=debug\n");
         await().forever().until(future3::isDone);
         assertEquals(Level.WARN, rootLogger.getLevel());
         assertFalse(rootLogger.isAdditive());
@@ -104,8 +104,8 @@ public class LogbackMinerDiamondListenerTest {
                 "Logback", "test", "context.packagingDataEnabled=Y\n" +
                         "context.maxCallerDataDepth=4\n" +
                         "context.frameworkPackages=com.github.charlemaznable.logback.miner\n" +
-                        "context.property.miner=test\n" +
-                        "root.console-target=System.warn");
+                        "context.property[miner]=test\n" +
+                        "root[console.target]=System.warn");
         await().forever().until(future1::isDone);
         assertTrue(loggerContext.isPackagingDataEnabled());
         assertEquals(4, loggerContext.getMaxCallerDataDepth());

@@ -1,16 +1,15 @@
-package com.github.charlemaznable.logback.miner.turbo;
+package com.github.charlemaznable.logback.miner.level;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.turbo.TurboFilter;
 import ch.qos.logback.core.spi.FilterReply;
-import com.github.charlemaznable.logback.miner.level.EffectorContext;
 import lombok.AllArgsConstructor;
 import lombok.val;
 import org.slf4j.Marker;
 
 @AllArgsConstructor
-public class LogbackMinerFilter extends TurboFilter {
+public class EffectorTurboFilter extends TurboFilter {
 
     private EffectorContext effectorContext;
 

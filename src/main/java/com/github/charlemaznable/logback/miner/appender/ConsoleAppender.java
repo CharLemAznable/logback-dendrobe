@@ -8,7 +8,6 @@ import ch.qos.logback.core.OutputStreamAppender;
 import ch.qos.logback.core.spi.FilterReply;
 import ch.qos.logback.core.status.WarnStatus;
 import com.github.charlemaznable.logback.miner.level.Effector;
-import com.github.charlemaznable.logback.miner.level.EffectorContext;
 import lombok.val;
 
 import java.nio.charset.Charset;
@@ -26,9 +25,7 @@ public class ConsoleAppender extends AsyncAppender {
     private PatternLayoutEncoder encoder;
     private InternalAppender appender;
 
-    public ConsoleAppender(EffectorContext effectorContext) {
-        super(effectorContext);
-
+    public ConsoleAppender() {
         this.encoder = new PatternLayoutEncoder();
         this.encoder.setCharset(DEFAULT_CHARSET);
         this.encoder.setPattern(DEFAULT_CONSOLE_PATTERN);
