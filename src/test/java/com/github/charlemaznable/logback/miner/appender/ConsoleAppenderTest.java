@@ -56,7 +56,8 @@ public class ConsoleAppenderTest {
         ConsoleTarget.setUpMockConsole();
         MockDiamondServer.setUpMockServer();
         val future = MockDiamondServer.updateDiamond("Logback", "test",
-                "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[CONSOLE.LEVEL]=TRACE\n" +
+                "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[DQL.LEVEL]=OFF\n" +
+                        "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[CONSOLE.LEVEL]=TRACE\n" +
                         "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[ADDITIVITY]=no\n" +
                         "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[CONSOLE.PATTERN]=%5level %message%n\n" +
                         "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[CONSOLE.TARGET]=test-trace\n");
@@ -81,7 +82,7 @@ public class ConsoleAppenderTest {
                 "TRACE trace3: multi1, multi2, multi3\n" +
                 "TRACE traceE:\n" +
                 "java.lang.Exception: exception\n" +
-                "\tat com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest.testLoggerTrace(ConsoleAppenderTest.java:71)\n"));
+                "\tat com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest.testLoggerTrace(ConsoleAppenderTest.java:"));
 
         MockDiamondServer.tearDownMockServer();
         ConsoleTarget.tearDownMockConsole();
@@ -92,7 +93,8 @@ public class ConsoleAppenderTest {
         ConsoleTarget.setUpMockConsole();
         MockDiamondServer.setUpMockServer();
         val future = MockDiamondServer.updateDiamond("Logback", "test",
-                "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[CONSOLE.LEVEL]=debug\n" +
+                "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[DQL.LEVEL]=OFF\n" +
+                        "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[CONSOLE.LEVEL]=debug\n" +
                         "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[ADDITIVITY]=no\n" +
                         "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[CONSOLE.PATTERN]=%5level %message%n\n" +
                         "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[CONSOLE.TARGET]=test-debug\n");
@@ -119,7 +121,7 @@ public class ConsoleAppenderTest {
                 "DEBUG debug3: multi1, multi2, multi3\n" +
                 "DEBUG debugE:\n" +
                 "java.lang.Exception: exception\n" +
-                "\tat com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest.testLoggerDebug(ConsoleAppenderTest.java:109)\n"));
+                "\tat com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest.testLoggerDebug(ConsoleAppenderTest.java:"));
 
         MockDiamondServer.tearDownMockServer();
         ConsoleTarget.tearDownMockConsole();
@@ -130,7 +132,8 @@ public class ConsoleAppenderTest {
         ConsoleTarget.setUpMockConsole();
         MockDiamondServer.setUpMockServer();
         val future = MockDiamondServer.updateDiamond("Logback", "test",
-                "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[CONSOLE.LEVEL]=info\n" +
+                "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[DQL.LEVEL]=OFF\n" +
+                        "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[CONSOLE.LEVEL]=info\n" +
                         "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[ADDITIVITY]=no\n" +
                         "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[CONSOLE.PATTERN]=%5level %message%n\n" +
                         "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[CONSOLE.TARGET]=test-info\n");
@@ -159,7 +162,7 @@ public class ConsoleAppenderTest {
                 " INFO info3: multi1, multi2, multi3\n" +
                 " INFO infoE:\n" +
                 "java.lang.Exception: exception\n" +
-                "\tat com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest.testLoggerInfo(ConsoleAppenderTest.java:149)\n"));
+                "\tat com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest.testLoggerInfo(ConsoleAppenderTest.java:"));
 
         MockDiamondServer.tearDownMockServer();
         ConsoleTarget.tearDownMockConsole();
@@ -170,7 +173,8 @@ public class ConsoleAppenderTest {
         ConsoleTarget.setUpMockConsole();
         MockDiamondServer.setUpMockServer();
         val future = MockDiamondServer.updateDiamond("Logback", "test",
-                "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[CONSOLE.LEVEL]=warn\n" +
+                "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[DQL.LEVEL]=OFF\n" +
+                        "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[CONSOLE.LEVEL]=warn\n" +
                         "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[ADDITIVITY]=no\n" +
                         "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[CONSOLE.PATTERN]=%5level %message%n\n" +
                         "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[CONSOLE.TARGET]=test-warn\n");
@@ -201,7 +205,7 @@ public class ConsoleAppenderTest {
                 " WARN warn3: multi1, multi2, multi3\n" +
                 " WARN warnE:\n" +
                 "java.lang.Exception: exception\n" +
-                "\tat com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest.testLoggerWarn(ConsoleAppenderTest.java:191)\n"));
+                "\tat com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest.testLoggerWarn(ConsoleAppenderTest.java:"));
 
         MockDiamondServer.tearDownMockServer();
         ConsoleTarget.tearDownMockConsole();
@@ -212,7 +216,8 @@ public class ConsoleAppenderTest {
         ConsoleTarget.setUpMockConsole();
         MockDiamondServer.setUpMockServer();
         val future = MockDiamondServer.updateDiamond("Logback", "test",
-                "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[CONSOLE.LEVEL]=error\n" +
+                "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[DQL.LEVEL]=OFF\n" +
+                        "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[CONSOLE.LEVEL]=error\n" +
                         "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[ADDITIVITY]=no\n" +
                         "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[CONSOLE.PATTERN]=%5level %message%n\n" +
                         "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[CONSOLE.TARGET]=test-error\n");
@@ -245,7 +250,7 @@ public class ConsoleAppenderTest {
                 "ERROR error3: multi1, multi2, multi3\n" +
                 "ERROR errorE:\n" +
                 "java.lang.Exception: exception\n" +
-                "\tat com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest.testLoggerError(ConsoleAppenderTest.java:235)\n"));
+                "\tat com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest.testLoggerError(ConsoleAppenderTest.java:"));
 
         MockDiamondServer.tearDownMockServer();
         ConsoleTarget.tearDownMockConsole();

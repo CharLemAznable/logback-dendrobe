@@ -25,40 +25,64 @@ public class EffectorTest {
         assertEquals(Level.DEBUG, root.getLoggerLevel());
         assertNull(root.getConsoleLevel());
         assertEquals(Level.DEBUG_INT, root.getConsoleEffectiveLevelInt());
+        assertNull(root.getDqlLevel());
+        assertEquals(Level.DEBUG_INT, root.getDqlEffectiveLevelInt());
         assertNull(self.getLoggerLevel());
         assertNull(self.getConsoleLevel());
         assertEquals(Level.DEBUG_INT, self.getConsoleEffectiveLevelInt());
+        assertNull(self.getDqlLevel());
+        assertEquals(Level.DEBUG_INT, self.getDqlEffectiveLevelInt());
 
         root.setConsoleLevel(Level.INFO);
+        root.setDqlLevel(Level.WARN);
         assertEquals(Level.DEBUG, root.getLoggerLevel());
         assertEquals(Level.INFO, root.getConsoleLevel());
         assertEquals(Level.INFO_INT, root.getConsoleEffectiveLevelInt());
+        assertEquals(Level.WARN, root.getDqlLevel());
+        assertEquals(Level.WARN_INT, root.getDqlEffectiveLevelInt());
         assertNull(self.getLoggerLevel());
         assertNull(self.getConsoleLevel());
         assertEquals(Level.INFO_INT, self.getConsoleEffectiveLevelInt());
+        assertNull(self.getDqlLevel());
+        assertEquals(Level.WARN_INT, self.getDqlEffectiveLevelInt());
 
         self.setConsoleLevel(Level.WARN);
+        self.setDqlLevel(Level.INFO);
         assertEquals(Level.DEBUG, root.getLoggerLevel());
         assertEquals(Level.INFO, root.getConsoleLevel());
         assertEquals(Level.INFO_INT, root.getConsoleEffectiveLevelInt());
+        assertEquals(Level.WARN, root.getDqlLevel());
+        assertEquals(Level.WARN_INT, root.getDqlEffectiveLevelInt());
         assertNull(self.getLoggerLevel());
         assertEquals(Level.WARN, self.getConsoleLevel());
         assertEquals(Level.WARN_INT, self.getConsoleEffectiveLevelInt());
+        assertEquals(Level.INFO, self.getDqlLevel());
+        assertEquals(Level.INFO_INT, self.getDqlEffectiveLevelInt());
 
         root.setConsoleLevel(null);
+        root.setDqlLevel(null);
         assertEquals(Level.DEBUG, root.getLoggerLevel());
         assertNull(root.getConsoleLevel());
         assertEquals(Level.DEBUG_INT, root.getConsoleEffectiveLevelInt());
+        assertNull(root.getDqlLevel());
+        assertEquals(Level.DEBUG_INT, root.getDqlEffectiveLevelInt());
         assertNull(self.getLoggerLevel());
         assertEquals(Level.WARN, self.getConsoleLevel());
         assertEquals(Level.WARN_INT, self.getConsoleEffectiveLevelInt());
+        assertEquals(Level.INFO, self.getDqlLevel());
+        assertEquals(Level.INFO_INT, self.getDqlEffectiveLevelInt());
 
         self.setConsoleLevel(null);
+        self.setDqlLevel(null);
         assertEquals(Level.DEBUG, root.getLoggerLevel());
         assertNull(root.getConsoleLevel());
         assertEquals(Level.DEBUG_INT, root.getConsoleEffectiveLevelInt());
+        assertNull(root.getDqlLevel());
+        assertEquals(Level.DEBUG_INT, root.getDqlEffectiveLevelInt());
         assertNull(self.getLoggerLevel());
         assertNull(self.getConsoleLevel());
         assertEquals(Level.DEBUG_INT, self.getConsoleEffectiveLevelInt());
+        assertNull(self.getDqlLevel());
+        assertEquals(Level.DEBUG_INT, self.getDqlEffectiveLevelInt());
     }
 }

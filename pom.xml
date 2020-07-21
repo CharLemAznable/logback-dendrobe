@@ -73,19 +73,25 @@
             src/main/java/com/github/charlemaznable/logback/miner/appender/ConsoleTarget.java
         </sonar.exclusions>
 
+        <joor-java-8.version>0.9.13</joor-java-8.version>
         <commons-lang3.version>3.10</commons-lang3.version>
         <guava.version>29.0-jre</guava.version>
         <slf4j-api.version>1.7.30</slf4j-api.version>
         <logback.version>1.2.3</logback.version>
-        <diamond-client.version>0.0.21</diamond-client.version>
+        <diamond-client.version>0.0.22</diamond-client.version>
         <annotations.version>19.0.0</annotations.version>
         <auto-service.version>1.0-rc7</auto-service.version>
+        <eql.version>0.1.13</eql.version>
+        <druid.version>1.1.23</druid.version>
+        <asm-all.version>5.2</asm-all.version>
 
         <lombok.version>1.18.12</lombok.version>
 
         <junit-jupiter.version>5.6.2</junit-jupiter.version>
         <jmockit.version>1.49</jmockit.version>
         <awaitility.version>4.0.3</awaitility.version>
+        <h2.version>1.4.200</h2.version>
+        <joda-time.version>2.10.6</joda-time.version>
 
         <maven-resources-plugin.version>3.1.0</maven-resources-plugin.version>
         <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
@@ -99,6 +105,11 @@
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>org.jooq</groupId>
+            <artifactId>joor-java-8</artifactId>
+            <version>${joor-java-8.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
@@ -139,6 +150,21 @@
             <artifactId>auto-service</artifactId>
             <version>${auto-service.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.bingoohuang</groupId>
+            <artifactId>eql</artifactId>
+            <version>${eql.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid</artifactId>
+            <version>${druid.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm-all</artifactId>
+            <version>${asm-all.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -169,6 +195,18 @@
             <groupId>org.awaitility</groupId>
             <artifactId>awaitility</artifactId>
             <version>${awaitility.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>${h2.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>${joda-time.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

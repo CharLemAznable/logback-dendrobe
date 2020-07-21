@@ -78,6 +78,8 @@ public class ConsoleAppender extends AsyncAppender {
         super.stop();
         this.appender.stop();
         this.encoder.stop();
+
+        this.detachAppender(this.appender);
     }
 
     @Override
@@ -90,7 +92,13 @@ public class ConsoleAppender extends AsyncAppender {
 
     static class InternalAppender extends OutputStreamAppender<ILoggingEvent> {
 
-        protected ConsoleTarget target = ConsoleTarget.SYSTEM_OUT;
+        private ConsoleTarget target = ConsoleTarget.SYSTEM_OUT;
+
+        @Override
+        public void start() {
+            setOutputStream(target.getStream());
+            super.start();
+        }
 
         public void setTarget(String value) {
             val t = ConsoleTarget.findByName(value.trim());
@@ -105,12 +113,6 @@ public class ConsoleAppender extends AsyncAppender {
             val status = new WarnStatus("[" + val + "] should be one of " + Arrays.toString(ConsoleTarget.values()), this);
             status.add(new WarnStatus("Using previously set target, System.out by default.", this));
             addStatus(status);
-        }
-
-        @Override
-        public void start() {
-            setOutputStream(target.getStream());
-            super.start();
         }
     }
 }
