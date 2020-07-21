@@ -84,6 +84,12 @@ public class DqlAppenderTest {
         root.info("no db log not log: {}", notLog);
         self.info("no db log not log: {}", notLog);
 
+        val emptyLog = new EmptyLog();
+        emptyLog.setLogId("1000");
+        emptyLog.setLogContent("no db log empty log");
+        root.info("no db log empty log: {}", emptyLog);
+        self.info("no db log empty log: {}", emptyLog);
+
         val errorLog = new ErrorLog();
         errorLog.setLogId("1000");
         errorLog.setLogContent("no db log error log");
