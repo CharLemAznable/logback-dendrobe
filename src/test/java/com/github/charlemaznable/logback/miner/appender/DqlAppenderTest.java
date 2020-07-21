@@ -67,6 +67,8 @@ public class DqlAppenderTest {
     public void testDqlAppender() {
         val future = MockDiamondServer.updateDiamond("Logback", "test",
                 "context.property[miner]=test\n" +
+                        "root[dql.level]=info\n" +
+                        "root[dql.connection]=\n" +
                         "com.github.charlemaznable.logback.miner.appender.DqlAppenderTest[dql.level]=info\n" +
                         "com.github.charlemaznable.logback.miner.appender.DqlAppenderTest[dql.connection]=" + DB0 + "\n" +
                         "com.github.charlemaznable.logback.miner.appender.DqlAppenderTest[console.level]=off");
@@ -83,12 +85,6 @@ public class DqlAppenderTest {
         notLog.setLogContent("no db log not log");
         root.info("no db log not log: {}", notLog);
         self.info("no db log not log: {}", notLog);
-
-        val emptyLog = new EmptyLog();
-        emptyLog.setLogId("1000");
-        emptyLog.setLogContent("no db log empty log");
-        root.info("no db log empty log: {}", emptyLog);
-        self.info("no db log empty log: {}", emptyLog);
 
         val errorLog = new ErrorLog();
         errorLog.setLogId("1000");
