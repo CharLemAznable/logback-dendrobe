@@ -59,6 +59,7 @@ public class ConsoleAppenderTest {
                 "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[DQL.LEVEL]=OFF\n" +
                         "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[CONSOLE.LEVEL]=TRACE\n" +
                         "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[ADDITIVITY]=no\n" +
+                        "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[CONSOLE.CHARSET]=utf-8\n" +
                         "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[CONSOLE.PATTERN]=%5level %message%n\n" +
                         "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[CONSOLE.TARGET]=test-trace\n");
         await().forever().until(future::isDone);

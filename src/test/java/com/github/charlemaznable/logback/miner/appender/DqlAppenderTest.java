@@ -103,11 +103,29 @@ public class DqlAppenderTest {
         await().pollDelay(Duration.ofSeconds(3)).until(() ->
                 nonNull(new Dql(DB0).limit(1).params("1000").execute(SELECT_SIMPLE_LOG)));
 
-        SimpleLog queryLog = new Dql(DB0).limit(1).returnType(SimpleLog.class)
+        SimpleLog querySimpleLog = new Dql(DB0).limit(1).returnType(SimpleLog.class)
                 .params("1000").execute(SELECT_SIMPLE_LOG);
-        assertEquals(simpleLog.getLogId(), queryLog.getLogId());
-        assertEquals(simpleLog.getLogContent(), queryLog.getLogContent());
-        assertEquals(simpleLog.getLogDate(), queryLog.getLogDate());
-        assertEquals(simpleLog.getLogDateTime(), queryLog.getLogDateTime());
+        assertEquals(simpleLog.getLogId(), querySimpleLog.getLogId());
+        assertEquals(simpleLog.getLogContent(), querySimpleLog.getLogContent());
+        assertEquals(simpleLog.getLogDate(), querySimpleLog.getLogDate());
+        assertEquals(simpleLog.getLogDateTime(), querySimpleLog.getLogDateTime());
+
+        val annotatedLog = new AnnotatedLog();
+        annotatedLog.setALogId("1001");
+        annotatedLog.setALogContent("annotated log");
+        annotatedLog.setALogDate(new Date());
+        annotatedLog.setALogDateTime(DateTime.now());
+        root.info("annotated log: {} >> actual ignored", annotatedLog);
+        self.info("annotated log: {}", annotatedLog);
+
+        await().pollDelay(Duration.ofSeconds(3)).until(() ->
+                nonNull(new Dql(DB0).limit(1).params("1001").execute(SELECT_SIMPLE_LOG)));
+
+        SimpleLog queryAnnotatedLog = new Dql(DB0).limit(1).returnType(SimpleLog.class)
+                .params("1001").execute(SELECT_SIMPLE_LOG);
+        assertEquals(annotatedLog.getALogId(), queryAnnotatedLog.getLogId());
+        assertEquals(annotatedLog.getALogContent(), queryAnnotatedLog.getLogContent());
+        assertEquals(annotatedLog.getALogDate(), queryAnnotatedLog.getLogDate());
+        assertEquals(annotatedLog.getALogDateTime(), queryAnnotatedLog.getLogDateTime());
     }
 }
