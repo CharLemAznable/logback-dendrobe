@@ -1,0 +1,14 @@
+-- noinspection SqlNoDataSourceInspectionForFile
+
+-- [logSqlLog]
+INSERT INTO SIMPLE_LOG
+      (LOG_ID
+      ,LOG_CONTENT
+      ,LOG_DATE
+      ,LOG_DATE_TIME)
+VALUES(#arg.logId#
+      ,CONCAT('(', #property.miner#, '|'
+      , #mdc.tenantId#, '|', #mdc.tenantCode#, ')'
+      , #event.message#, #event.exception#)
+      ,CURRENT_TIMESTAMP()
+      ,CURRENT_TIMESTAMP())

@@ -126,7 +126,8 @@ public class DqlAppender extends AsyncAppender {
             eventConverterMap.put("exception", event -> {
                 val tp = event.getThrowableProxy();
                 if (isNull(tp)) return "";
-                val builder = new StringBuilder();
+                val builder = new StringBuilder().append(tp.getClassName()).append(": ")
+                        .append(tp.getMessage()).append(CoreConstants.LINE_SEPARATOR);
                 for (val step : tp.getStackTraceElementProxyArray()) {
                     builder.append(CoreConstants.TAB).append(step.toString());
                     ThrowableProxyUtil.subjoinPackagingData(builder, step);
@@ -161,7 +162,7 @@ public class DqlAppender extends AsyncAppender {
                 MtcpContext.setTenantCode(MDC.get(TENANT_CODE));
 
                 // 公共参数, 包含event/mdc/ctx-property
-                val eventParamMap = buildParamMap(eventObject);
+                val paramMap = buildParamMap(eventObject);
                 for (val argument : arguments) {
                     val clazz = argument.getClass();
                     val dql = getLogbackBeanDql(clazz, dqlConnection);
@@ -169,10 +170,10 @@ public class DqlAppender extends AsyncAppender {
                     if (isNull(dql)) continue;
 
                     // 设参数key为arg, 加入eql参数上下文
-                    val paramMap = new HashMap<String, Object>(eventParamMap);
-                    paramMap.put("arg", argument);
+                    val currentMap = new HashMap<String, Object>(paramMap);
+                    currentMap.put("arg", argument);
                     // 同时设置一般参数与动态参数
-                    dql.params(paramMap).dynamics(paramMap);
+                    dql.params(currentMap).dynamics(currentMap);
 
                     // 指定sqlFile的情形
                     if (useLogbackSql(clazz, dql)) dql.execute();
@@ -186,20 +187,29 @@ public class DqlAppender extends AsyncAppender {
             }
         }
 
-        private Map<String, String> buildParamMap(ILoggingEvent eventObject) {
-            val paramMap = new HashMap<String, String>();
-            for (val pcEntry : eventConverterMap.entrySet()) {
-                paramMap.put("event." + pcEntry.getKey(),
-                        pcEntry.getValue().apply(eventObject));
+        private Map<String, Object> buildParamMap(ILoggingEvent eventObject) {
+            val paramMap = new HashMap<String, Object>();
+
+            val eventMap = new HashMap<String, String>();
+            for (val eventEntry : eventConverterMap.entrySet()) {
+                eventMap.put(eventEntry.getKey(),
+                        eventEntry.getValue().apply(eventObject));
             }
+            paramMap.put("event", eventMap);
+
+            val mdcMap = new HashMap<String, String>();
             for (val mdcEntry : eventObject.getMDCPropertyMap().entrySet()) {
-                paramMap.put("mdc." + mdcEntry.getKey(), mdcEntry.getValue());
+                mdcMap.put(mdcEntry.getKey(), mdcEntry.getValue());
             }
+            paramMap.put("mdc", mdcMap);
+
+            val propMap = new HashMap<String, String>();
             for (val propEntry : eventObject.getLoggerContextVO().getPropertyMap().entrySet()) {
                 val key = propEntry.getKey();
-                paramMap.put("property." + key, defaultIfNull(
-                        propEntry.getValue(), System.getProperty(key)));
+                propMap.put(key, defaultIfNull(propEntry.getValue(), System.getProperty(key)));
             }
+            paramMap.put("property", propMap);
+
             return paramMap;
         }
     }

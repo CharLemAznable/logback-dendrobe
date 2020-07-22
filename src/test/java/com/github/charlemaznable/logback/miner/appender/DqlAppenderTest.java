@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.n3r.diamond.client.impl.MockDiamondServer;
 import org.n3r.eql.diamond.Dql;
+import org.n3r.eql.mtcp.MtcpContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,6 +17,7 @@ import java.util.Date;
 import static java.util.Objects.nonNull;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DqlAppenderTest {
 
@@ -69,6 +71,7 @@ public class DqlAppenderTest {
                 "context.property[miner]=test\n" +
                         "root[dql.level]=info\n" +
                         "root[dql.connection]=\n" +
+                        "com.github.charlemaznable.logback.miner.appender.DqlAppenderTest[additivity]=no\n" +
                         "com.github.charlemaznable.logback.miner.appender.DqlAppenderTest[dql.level]=info\n" +
                         "com.github.charlemaznable.logback.miner.appender.DqlAppenderTest[dql.connection]=" + DB0 + "\n" +
                         "com.github.charlemaznable.logback.miner.appender.DqlAppenderTest[console.level]=off");
@@ -115,17 +118,61 @@ public class DqlAppenderTest {
         annotatedLog.setALogContent("annotated log");
         annotatedLog.setALogDate(new Date());
         annotatedLog.setALogDateTime(DateTime.now());
-        root.info("annotated log: {} >> actual ignored", annotatedLog);
         self.info("annotated log: {}", annotatedLog);
 
         await().pollDelay(Duration.ofSeconds(3)).until(() ->
-                nonNull(new Dql(DB0).limit(1).params("1001").execute(SELECT_SIMPLE_LOG)));
+                nonNull(new Dql(DB1).limit(1).params("1001").execute(SELECT_SIMPLE_LOG)));
 
-        SimpleLog queryAnnotatedLog = new Dql(DB0).limit(1).returnType(SimpleLog.class)
+        SimpleLog queryAnnotatedLog = new Dql(DB1).limit(1).returnType(SimpleLog.class)
                 .params("1001").execute(SELECT_SIMPLE_LOG);
         assertEquals(annotatedLog.getALogId(), queryAnnotatedLog.getLogId());
         assertEquals(annotatedLog.getALogContent(), queryAnnotatedLog.getLogContent());
         assertEquals(annotatedLog.getALogDate(), queryAnnotatedLog.getLogDate());
         assertEquals(annotatedLog.getALogDateTime(), queryAnnotatedLog.getLogDateTime());
+
+        MtcpContext.setTenantId("testTenantId");
+        MtcpContext.setTenantCode("testTenantCode");
+
+        val sqlLog = new SqlLog();
+        sqlLog.setLogId("1002");
+        self.info("sql log: {}", sqlLog);
+
+        await().pollDelay(Duration.ofSeconds(3)).until(() ->
+                nonNull(new Dql(DB0).limit(1).params("1002").execute(SELECT_SIMPLE_LOG)));
+
+        SqlLog querySqlLog = new Dql(DB0).limit(1).returnType(SqlLog.class)
+                .params("1002").execute(SELECT_SIMPLE_LOG);
+        assertEquals("(test|testTenantId|testTenantCode)" +
+                "sql log: SqlLog(logId=1002, logContent=null)", querySqlLog.getLogContent());
+
+        val sqlLogEx = new SqlLogEx();
+        sqlLogEx.setLogId("1003");
+        self.info("sql log exception: {}", sqlLogEx, new Exception("exception"));
+
+        await().pollDelay(Duration.ofSeconds(3)).until(() ->
+                nonNull(new Dql(DB0).limit(1).params("1003").execute(SELECT_SIMPLE_LOG)));
+
+        SqlLog querySqlLogEx = new Dql(DB0).limit(1).returnType(SqlLog.class)
+                .params("1003").execute(SELECT_SIMPLE_LOG);
+        assertTrue(querySqlLogEx.getLogContent().startsWith("" +
+                "(test|testTenantId|testTenantCode)" +
+                "sql log exception: SqlLogEx(logId=1003, logContent=null)" +
+                "java.lang.Exception: exception\n" +
+                "\tat com.github.charlemaznable.logback.miner.appender.DqlAppenderTest.testDqlAppender"));
+
+        val sqlLogEx2 = new SqlLogEx2();
+        sqlLogEx2.setLogId("1004");
+        self.info("sql log exception: {}", sqlLogEx2, new Exception("exception"));
+
+        await().pollDelay(Duration.ofSeconds(3)).until(() ->
+                nonNull(new Dql(DB0).limit(1).params("1004").execute(SELECT_SIMPLE_LOG)));
+
+        SqlLog querySqlLogEx2 = new Dql(DB0).limit(1).returnType(SqlLog.class)
+                .params("1004").execute(SELECT_SIMPLE_LOG);
+        assertTrue(querySqlLogEx2.getLogContent().startsWith("" +
+                "(test|testTenantId|testTenantCode)" +
+                "sql log exception: SqlLogEx2(logId=1004, logContent=null)" +
+                "java.lang.Exception: exception\n" +
+                "\tat com.github.charlemaznable.logback.miner.appender.DqlAppenderTest.testDqlAppender"));
     }
 }
