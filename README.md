@@ -26,7 +26,13 @@
 
 ##### Maven Dependency
 
-待发布
+```xml
+<dependency>
+  <groupId>com.github.charlemaznable</groupId>
+  <artifactId>logback-miner</artifactId>
+  <version>0.0.1</version>
+</dependency>
+```
 
 ##### Maven Dependency SNAPSHOT
 
@@ -34,7 +40,7 @@
 <dependency>
   <groupId>com.github.charlemaznable</groupId>
   <artifactId>logback-miner</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.0.2-SNAPSHOT</version>
 </dependency>
 ```
 
