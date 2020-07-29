@@ -2,7 +2,6 @@ package com.github.charlemaznable.logback.miner.level;
 
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.util.LoggerNameUtil;
-import lombok.var;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

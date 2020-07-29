@@ -6,7 +6,6 @@ import ch.qos.logback.classic.LoggerContext;
 import com.github.charlemaznable.logback.miner.appender.ConsoleAppender;
 import com.google.auto.service.AutoService;
 import lombok.val;
-import lombok.var;
 
 import static com.github.charlemaznable.logback.miner.configurator.ConfiguratorUtil.fetchLoggerName;
 import static com.github.charlemaznable.logback.miner.level.EffectorContextUtil.getEffectorContext;

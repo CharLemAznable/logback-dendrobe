@@ -68,7 +68,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.version>1.8</java.version>
+        <java.version>11</java.version>
         <sonar.exclusions>
             src/main/java/com/github/charlemaznable/logback/miner/appender/ConsoleTarget.java
         </sonar.exclusions>
@@ -105,11 +105,6 @@
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>org.jooq</groupId>
-            <artifactId>joor-java-8</artifactId>
-            <version>${joor-java-8.version}</version>
-        </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
