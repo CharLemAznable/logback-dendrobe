@@ -8,7 +8,6 @@ import com.github.charlemaznable.logback.miner.annotation.LogbackTable;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import lombok.NoArgsConstructor;
-import lombok.val;
 import org.n3r.diamond.client.Miner;
 import org.n3r.eql.Eql;
 import org.n3r.eql.diamond.Dql;
@@ -60,11 +59,11 @@ class DqlCaches {
                 = newBuilder().build(CacheLoader.from(LogbackBeanDqlCache::loadCache));
 
         static Dql getLogbackBeanDql(Class<?> clazz, String defaultConnection) {
-            val configConnection = cache.getUnchecked(clazz);
-            val connectionName = defaultIfBlank(configConnection, defaultConnection);
+            var configConnection = cache.getUnchecked(clazz);
+            var connectionName = defaultIfBlank(configConnection, defaultConnection);
             if (isBlank(connectionName)) return null;
 
-            val properties = new Miner().getProperties(EQL_CONFIG_GROUP_NAME, connectionName);
+            var properties = new Miner().getProperties(EQL_CONFIG_GROUP_NAME, connectionName);
             if (properties.isEmpty()) return null;
             return new Dql(connectionName);
         }
@@ -84,10 +83,10 @@ class DqlCaches {
                 = newBuilder().build(CacheLoader.from(LogbackSqlCache::loadCache));
 
         static boolean useLogbackSql(Class<?> clazz, Eql dql) {
-            val logbackSqlOptional = cache.getUnchecked(clazz);
+            var logbackSqlOptional = cache.getUnchecked(clazz);
             if (!logbackSqlOptional.isPresent()) return false;
 
-            val logbackSql = logbackSqlOptional.get();
+            var logbackSql = logbackSqlOptional.get();
             if (isNotBlank(logbackSql.sqlFile())) {
                 dql.useSqlFile(logbackSql.sqlFile());
             } else if (Void.class != logbackSql.sqlClass()) {
@@ -105,6 +104,9 @@ class DqlCaches {
         }
     }
 
+    /**
+     * 缓存 - 参数类型默认PojoSql
+     */
     @NoArgsConstructor(access = PRIVATE)
     static class LogbackPojoSqlCache {
 
@@ -116,17 +118,17 @@ class DqlCaches {
         }
 
         static String loadCache(Class<?> clazz) {
-            val tableName = parseTableName(clazz);
-            val insertSql = new StringBuilder("insert into ").append(tableName).append("(");
-            val valuesSql = new StringBuilder(") values(");
+            var tableName = parseTableName(clazz);
+            var insertSql = new StringBuilder("insert into ").append(tableName).append("(");
+            var valuesSql = new StringBuilder(") values(");
 
-            for (val field : parsePojoFields(clazz)) {
-                String columnName = parseColumnName(field);
+            for (var field : parsePojoFields(clazz)) {
+                var columnName = parseColumnName(field);
                 insertSql.append(columnName).append(',');
                 valuesSql.append("#arg.").append(field.getName()).append("#,");
             }
 
-            char c = insertSql.charAt(insertSql.length() - 1);
+            var c = insertSql.charAt(insertSql.length() - 1);
             if (c != ',') throw new IllegalArgumentException(
                     "there is no property to save for class " + clazz);
 
@@ -137,15 +139,15 @@ class DqlCaches {
         }
 
         private static String parseTableName(Class<?> clazz) {
-            val logbackTable = clazz.getAnnotation(LogbackTable.class);
+            var logbackTable = clazz.getAnnotation(LogbackTable.class);
             return nonNull(logbackTable) ? logbackTable.value()
                     : convertCamelToUnderscore(clazz.getSimpleName());
         }
 
         private static List<Field> parsePojoFields(Class<?> clazz) {
-            val declaredFields = clazz.getDeclaredFields();
-            val pojoFields = new ArrayList<Field>();
-            for (val field : declaredFields) {
+            var declaredFields = clazz.getDeclaredFields();
+            var pojoFields = new ArrayList<Field>();
+            for (var field : declaredFields) {
                 if (Modifier.isStatic(field.getModifiers()) ||
                         field.isAnnotationPresent(LogbackSkip.class)) continue;
 
@@ -155,7 +157,7 @@ class DqlCaches {
         }
 
         private static String parseColumnName(Field field) {
-            val logbackColumn = field.getAnnotation(LogbackColumn.class);
+            var logbackColumn = field.getAnnotation(LogbackColumn.class);
             return nonNull(logbackColumn) ? logbackColumn.value()
                     : convertCamelToUnderscore(field.getName());
         }

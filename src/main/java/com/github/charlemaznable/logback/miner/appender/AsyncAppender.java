@@ -9,7 +9,6 @@ import ch.qos.logback.core.spi.FilterReply;
 import com.github.charlemaznable.logback.miner.level.Effector;
 import com.github.charlemaznable.logback.miner.level.EffectorContext;
 import lombok.AllArgsConstructor;
-import lombok.val;
 
 import java.util.function.BiFunction;
 
@@ -30,7 +29,7 @@ public abstract class AsyncAppender extends AsyncAppenderBase<ILoggingEvent> {
     public void setContext(Context context) {
         super.setContext(context);
 
-        val effectorContext = getEffectorContext(context);
+        var effectorContext = getEffectorContext(context);
         if (isNull(effectorContext)) return;
         this.addFilter(new EffectorFilter(effectorContext, this::decide));
     }
@@ -43,7 +42,7 @@ public abstract class AsyncAppender extends AsyncAppenderBase<ILoggingEvent> {
 
         @Override
         public FilterReply decide(ILoggingEvent event) {
-            val effector = effectorContext.getEffector(event.getLoggerName());
+            var effector = effectorContext.getEffector(event.getLoggerName());
             return decideFunction.apply(effector, event.getLevel());
         }
     }

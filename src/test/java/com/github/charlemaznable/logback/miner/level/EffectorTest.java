@@ -3,7 +3,6 @@ package com.github.charlemaznable.logback.miner.level;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,11 +15,11 @@ public class EffectorTest {
 
     @Test
     public void testEffector() {
-        val loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
-        val effectorContext = new EffectorContext(loggerContext);
+        var loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
+        var effectorContext = new EffectorContext(loggerContext);
 
-        val root = effectorContext.getEffector(Logger.ROOT_LOGGER_NAME);
-        val self = effectorContext.getEffector(log.getName());
+        var root = effectorContext.getEffector(Logger.ROOT_LOGGER_NAME);
+        var self = effectorContext.getEffector(log.getName());
 
         assertEquals(Level.DEBUG, root.getLoggerLevel());
         assertNull(root.getConsoleLevel());

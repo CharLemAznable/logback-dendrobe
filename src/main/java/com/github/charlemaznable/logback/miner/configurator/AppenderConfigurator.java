@@ -4,7 +4,6 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.util.COWArrayList;
-import lombok.val;
 
 public abstract class AppenderConfigurator implements Configurator {
 
@@ -17,7 +16,7 @@ public abstract class AppenderConfigurator implements Configurator {
 
     @Override
     public void finish(LoggerContext loggerContext) {
-        for (val appender : appenderList) {
+        for (var appender : appenderList) {
             appender.start();
         }
         appenderList.clear();

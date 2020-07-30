@@ -5,7 +5,6 @@ import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
 import com.github.charlemaznable.logback.miner.appender.DqlAppender;
 import com.google.auto.service.AutoService;
-import lombok.val;
 
 import static com.github.charlemaznable.logback.miner.configurator.ConfiguratorUtil.fetchLoggerName;
 import static com.github.charlemaznable.logback.miner.level.EffectorContextUtil.getEffectorContext;
@@ -21,14 +20,14 @@ public class DqlConfigurator extends AppenderConfigurator {
     @Override
     public void configurate(LoggerContext loggerContext, String key, String value) {
         if (endsWithIgnoreCase(key, DQL_LEVEL_SUFFIX)) {
-            val name = fetchLoggerName(key, DQL_LEVEL_SUFFIX);
-            val effectorContext = getEffectorContext(loggerContext);
+            var name = fetchLoggerName(key, DQL_LEVEL_SUFFIX);
+            var effectorContext = getEffectorContext(loggerContext);
             if (isNull(effectorContext)) return;
             effectorContext.getEffector(name).setDqlLevel(Level.toLevel(value));
 
         } else if (endsWithIgnoreCase(key, DQL_CONNECTION_SUFFIX)) {
-            val name = fetchLoggerName(key, DQL_CONNECTION_SUFFIX);
-            val dqlAppender = fetchDqlAppender(loggerContext.getLogger(name));
+            var name = fetchLoggerName(key, DQL_CONNECTION_SUFFIX);
+            var dqlAppender = fetchDqlAppender(loggerContext.getLogger(name));
             dqlAppender.setDqlConnection(value);
             addAppenderIfAbsent(dqlAppender);
 
@@ -36,7 +35,7 @@ public class DqlConfigurator extends AppenderConfigurator {
     }
 
     private DqlAppender fetchDqlAppender(Logger logger) {
-        val dqlAppenderName = "DqlAppender-" + logger.getName();
+        var dqlAppenderName = "DqlAppender-" + logger.getName();
         var dqlAppender = logger.getAppender(dqlAppenderName);
         if (!(dqlAppender instanceof DqlAppender)) {
             logger.detachAppender(dqlAppender);

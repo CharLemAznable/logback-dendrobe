@@ -8,7 +8,6 @@ import ch.qos.logback.core.OutputStreamAppender;
 import ch.qos.logback.core.spi.FilterReply;
 import ch.qos.logback.core.status.WarnStatus;
 import com.github.charlemaznable.logback.miner.level.Effector;
-import lombok.val;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -101,7 +100,7 @@ public class ConsoleAppender extends AsyncAppender {
         }
 
         public void setTarget(String value) {
-            val t = ConsoleTarget.findByName(value.trim());
+            var t = ConsoleTarget.findByName(value.trim());
             if (t == null) {
                 targetWarn(value);
             } else {
@@ -110,7 +109,7 @@ public class ConsoleAppender extends AsyncAppender {
         }
 
         private void targetWarn(String val) {
-            val status = new WarnStatus("[" + val + "] should be one of " + Arrays.toString(ConsoleTarget.values()), this);
+            var status = new WarnStatus("[" + val + "] should be one of " + Arrays.toString(ConsoleTarget.values()), this);
             status.add(new WarnStatus("Using previously set target, System.out by default.", this));
             addStatus(status);
         }

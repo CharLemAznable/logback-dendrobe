@@ -1,7 +1,6 @@
 package com.github.charlemaznable.logback.miner.appender;
 
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.n3r.diamond.client.impl.MockDiamondServer;
 
@@ -20,7 +19,7 @@ public class ConsoleAppenderTest {
     public void testConsoleAppender() {
         ConsoleTarget.setUpMockConsole();
         MockDiamondServer.setUpMockServer();
-        val future = MockDiamondServer.updateDiamond("Logback", "test",
+        var future = MockDiamondServer.updateDiamond("Logback", "test",
                 "context.maxCallerDataDepth=abc\ncontext.property[miner]=test\n" +
                         "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[ADDITIVITY]=no\n" +
                         "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[LEVEL]=INFO\n" +
@@ -40,7 +39,7 @@ public class ConsoleAppenderTest {
 
         await().pollDelay(Duration.ofSeconds(3)).until(() -> true);
 
-        val outputBuffer = ConsoleTarget.mockBufferByName("miner-config");
+        var outputBuffer = ConsoleTarget.mockBufferByName("miner-config");
         assertNotNull(outputBuffer);
         assertEquals("test  INFO info logging\n" +
                         "test  WARN warn logging\n" +
@@ -55,7 +54,7 @@ public class ConsoleAppenderTest {
     public void testLoggerTrace() {
         ConsoleTarget.setUpMockConsole();
         MockDiamondServer.setUpMockServer();
-        val future = MockDiamondServer.updateDiamond("Logback", "test",
+        var future = MockDiamondServer.updateDiamond("Logback", "test",
                 "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[DQL.LEVEL]=OFF\n" +
                         "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[CONSOLE.LEVEL]=TRACE\n" +
                         "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[ADDITIVITY]=no\n" +
@@ -74,7 +73,7 @@ public class ConsoleAppenderTest {
 
         await().pollDelay(Duration.ofSeconds(3)).until(() -> true);
 
-        val outputBuffer = ConsoleTarget.mockBufferByName("test-trace");
+        var outputBuffer = ConsoleTarget.mockBufferByName("test-trace");
         assertNotNull(outputBuffer);
         assertTrue(outputBuffer.output().startsWith("" +
                 "TRACE trace0\n" +
@@ -93,7 +92,7 @@ public class ConsoleAppenderTest {
     public void testLoggerDebug() {
         ConsoleTarget.setUpMockConsole();
         MockDiamondServer.setUpMockServer();
-        val future = MockDiamondServer.updateDiamond("Logback", "test",
+        var future = MockDiamondServer.updateDiamond("Logback", "test",
                 "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[DQL.LEVEL]=OFF\n" +
                         "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[CONSOLE.LEVEL]=debug\n" +
                         "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[ADDITIVITY]=no\n" +
@@ -113,7 +112,7 @@ public class ConsoleAppenderTest {
 
         await().pollDelay(Duration.ofSeconds(3)).until(() -> true);
 
-        val outputBuffer = ConsoleTarget.mockBufferByName("test-debug");
+        var outputBuffer = ConsoleTarget.mockBufferByName("test-debug");
         assertNotNull(outputBuffer);
         assertTrue(outputBuffer.output().startsWith("" +
                 "DEBUG debug0\n" +
@@ -132,7 +131,7 @@ public class ConsoleAppenderTest {
     public void testLoggerInfo() {
         ConsoleTarget.setUpMockConsole();
         MockDiamondServer.setUpMockServer();
-        val future = MockDiamondServer.updateDiamond("Logback", "test",
+        var future = MockDiamondServer.updateDiamond("Logback", "test",
                 "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[DQL.LEVEL]=OFF\n" +
                         "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[CONSOLE.LEVEL]=info\n" +
                         "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[ADDITIVITY]=no\n" +
@@ -154,7 +153,7 @@ public class ConsoleAppenderTest {
 
         await().pollDelay(Duration.ofSeconds(3)).until(() -> true);
 
-        val outputBuffer = ConsoleTarget.mockBufferByName("test-info");
+        var outputBuffer = ConsoleTarget.mockBufferByName("test-info");
         assertNotNull(outputBuffer);
         assertTrue(outputBuffer.output().startsWith("" +
                 " INFO info0\n" +
@@ -173,7 +172,7 @@ public class ConsoleAppenderTest {
     public void testLoggerWarn() {
         ConsoleTarget.setUpMockConsole();
         MockDiamondServer.setUpMockServer();
-        val future = MockDiamondServer.updateDiamond("Logback", "test",
+        var future = MockDiamondServer.updateDiamond("Logback", "test",
                 "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[DQL.LEVEL]=OFF\n" +
                         "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[CONSOLE.LEVEL]=warn\n" +
                         "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[ADDITIVITY]=no\n" +
@@ -197,7 +196,7 @@ public class ConsoleAppenderTest {
 
         await().pollDelay(Duration.ofSeconds(3)).until(() -> true);
 
-        val outputBuffer = ConsoleTarget.mockBufferByName("test-warn");
+        var outputBuffer = ConsoleTarget.mockBufferByName("test-warn");
         assertNotNull(outputBuffer);
         assertTrue(outputBuffer.output().startsWith("" +
                 " WARN warn0\n" +
@@ -216,7 +215,7 @@ public class ConsoleAppenderTest {
     public void testLoggerError() {
         ConsoleTarget.setUpMockConsole();
         MockDiamondServer.setUpMockServer();
-        val future = MockDiamondServer.updateDiamond("Logback", "test",
+        var future = MockDiamondServer.updateDiamond("Logback", "test",
                 "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[DQL.LEVEL]=OFF\n" +
                         "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[CONSOLE.LEVEL]=error\n" +
                         "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[ADDITIVITY]=no\n" +
@@ -242,7 +241,7 @@ public class ConsoleAppenderTest {
 
         await().pollDelay(Duration.ofSeconds(3)).until(() -> true);
 
-        val outputBuffer = ConsoleTarget.mockBufferByName("test-error");
+        var outputBuffer = ConsoleTarget.mockBufferByName("test-error");
         assertNotNull(outputBuffer);
         assertTrue(outputBuffer.output().startsWith("" +
                 "ERROR error0\n" +

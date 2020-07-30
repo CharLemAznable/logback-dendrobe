@@ -10,14 +10,12 @@ import ch.qos.logback.core.UnsynchronizedAppenderBase;
 import ch.qos.logback.core.spi.FilterReply;
 import com.github.charlemaznable.logback.miner.level.Effector;
 import lombok.Setter;
-import lombok.val;
 import org.n3r.eql.mtcp.MtcpContext;
 import org.slf4j.MDC;
 
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -26,6 +24,7 @@ import static com.github.charlemaznable.logback.miner.appender.DqlCaches.Logback
 import static com.github.charlemaznable.logback.miner.appender.DqlCaches.LogbackBeanPresentCache.isLogbackBeanPresent;
 import static com.github.charlemaznable.logback.miner.appender.DqlCaches.LogbackPojoSqlCache.getLogbackPojoSql;
 import static com.github.charlemaznable.logback.miner.appender.DqlCaches.LogbackSqlCache.useLogbackSql;
+import static com.google.common.collect.Maps.newHashMap;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
@@ -76,10 +75,10 @@ public class DqlAppender extends AsyncAppender {
 
     static class InternalAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
 
-        private static Map<String, Function<ILoggingEvent, String>> eventConverterMap = new HashMap<>();
+        private static Map<String, Function<ILoggingEvent, String>> eventConverterMap = newHashMap();
 
         static {
-            eventConverterMap.put("date", new Function<ILoggingEvent, String>() {
+            eventConverterMap.put("date", new Function<>() {
                 private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss,SSS");
 
                 @Override
@@ -92,7 +91,7 @@ public class DqlAppender extends AsyncAppender {
             eventConverterMap.put("logger", ILoggingEvent::getLoggerName);
             eventConverterMap.put("message", ILoggingEvent::getFormattedMessage);
             eventConverterMap.put("class", event -> {
-                val cda = event.getCallerData();
+                var cda = event.getCallerData();
                 if (cda != null && cda.length > 0) {
                     return cda[0].getClassName();
                 } else {
@@ -100,7 +99,7 @@ public class DqlAppender extends AsyncAppender {
                 }
             });
             eventConverterMap.put("method", event -> {
-                val cda = event.getCallerData();
+                var cda = event.getCallerData();
                 if (cda != null && cda.length > 0) {
                     return cda[0].getMethodName();
                 } else {
@@ -108,7 +107,7 @@ public class DqlAppender extends AsyncAppender {
                 }
             });
             eventConverterMap.put("line", event -> {
-                val cda = event.getCallerData();
+                var cda = event.getCallerData();
                 if (cda != null && cda.length > 0) {
                     return Integer.toString(cda[0].getLineNumber());
                 } else {
@@ -116,7 +115,7 @@ public class DqlAppender extends AsyncAppender {
                 }
             });
             eventConverterMap.put("file", event -> {
-                val cda = event.getCallerData();
+                var cda = event.getCallerData();
                 if (cda != null && cda.length > 0) {
                     return cda[0].getFileName();
                 } else {
@@ -124,11 +123,11 @@ public class DqlAppender extends AsyncAppender {
                 }
             });
             eventConverterMap.put("exception", event -> {
-                val tp = event.getThrowableProxy();
+                var tp = event.getThrowableProxy();
                 if (isNull(tp)) return "";
-                val builder = new StringBuilder().append(tp.getClassName()).append(": ")
+                var builder = new StringBuilder().append(tp.getClassName()).append(": ")
                         .append(tp.getMessage()).append(CoreConstants.LINE_SEPARATOR);
-                for (val step : tp.getStackTraceElementProxyArray()) {
+                for (var step : tp.getStackTraceElementProxyArray()) {
                     builder.append(CoreConstants.TAB).append(step.toString());
                     ThrowableProxyUtil.subjoinPackagingData(builder, step);
                     builder.append(CoreConstants.LINE_SEPARATOR);
@@ -145,11 +144,11 @@ public class DqlAppender extends AsyncAppender {
             if (!isStarted()) return;
 
             // 仅处理含参日志
-            val argumentArray = eventObject.getArgumentArray();
+            var argumentArray = eventObject.getArgumentArray();
             if (isNull(argumentArray)) return;
 
             // 仅处理@LogbackBean注解参数
-            val arguments = Arrays.stream(argumentArray)
+            var arguments = Arrays.stream(argumentArray)
                     .filter(arg -> nonNull(arg) && isLogbackBeanPresent(arg.getClass()))
                     .collect(Collectors.toList());
             if (arguments.isEmpty()) return;
@@ -162,15 +161,15 @@ public class DqlAppender extends AsyncAppender {
                 MtcpContext.setTenantCode(MDC.get(TENANT_CODE));
 
                 // 公共参数, 包含event/mdc/ctx-property
-                val paramMap = buildParamMap(eventObject);
-                for (val argument : arguments) {
-                    val clazz = argument.getClass();
-                    val dql = getLogbackBeanDql(clazz, dqlConnection);
+                var paramMap = buildParamMap(eventObject);
+                for (var argument : arguments) {
+                    var clazz = argument.getClass();
+                    var dql = getLogbackBeanDql(clazz, dqlConnection);
                     // 参数类型注解未指定连接, 且Logger未指定默认连接, 则跳过
                     if (isNull(dql)) continue;
 
                     // 设参数key为arg, 加入eql参数上下文
-                    val currentMap = new HashMap<String, Object>(paramMap);
+                    var currentMap = newHashMap(paramMap);
                     currentMap.put("arg", argument);
                     // 同时设置一般参数与动态参数
                     dql.params(currentMap).dynamics(currentMap);
@@ -188,24 +187,24 @@ public class DqlAppender extends AsyncAppender {
         }
 
         private Map<String, Object> buildParamMap(ILoggingEvent eventObject) {
-            val paramMap = new HashMap<String, Object>();
+            Map<String, Object> paramMap = newHashMap();
 
-            val eventMap = new HashMap<String, String>();
-            for (val eventEntry : eventConverterMap.entrySet()) {
+            Map<String, String> eventMap = newHashMap();
+            for (var eventEntry : eventConverterMap.entrySet()) {
                 eventMap.put(eventEntry.getKey(),
                         eventEntry.getValue().apply(eventObject));
             }
             paramMap.put("event", eventMap);
 
-            val mdcMap = new HashMap<String, String>();
-            for (val mdcEntry : eventObject.getMDCPropertyMap().entrySet()) {
+            Map<String, String> mdcMap = newHashMap();
+            for (var mdcEntry : eventObject.getMDCPropertyMap().entrySet()) {
                 mdcMap.put(mdcEntry.getKey(), mdcEntry.getValue());
             }
             paramMap.put("mdc", mdcMap);
 
-            val propMap = new HashMap<String, String>();
-            for (val propEntry : eventObject.getLoggerContextVO().getPropertyMap().entrySet()) {
-                val key = propEntry.getKey();
+            Map<String, String> propMap = newHashMap();
+            for (var propEntry : eventObject.getLoggerContextVO().getPropertyMap().entrySet()) {
+                var key = propEntry.getKey();
                 propMap.put(key, defaultIfNull(propEntry.getValue(), System.getProperty(key)));
             }
             paramMap.put("property", propMap);

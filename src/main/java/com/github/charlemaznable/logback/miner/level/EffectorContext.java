@@ -24,14 +24,14 @@ public class EffectorContext {
         if (name == null) throw new IllegalArgumentException("name argument cannot be null");
         if (ROOT_LOGGER_NAME.equalsIgnoreCase(name)) return root;
 
-        int i = 0;
+        var i = 0;
         var effector = root;
         var childEffector = effectorCache.get(name);
         if (childEffector != null) return childEffector;
 
         String childName;
         while (true) {
-            int h = LoggerNameUtil.getSeparatorIndexOf(name, i);
+            var h = LoggerNameUtil.getSeparatorIndexOf(name, i);
             if (h == -1) {
                 childName = name;
             } else {

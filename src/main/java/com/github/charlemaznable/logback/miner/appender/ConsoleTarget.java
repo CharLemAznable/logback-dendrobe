@@ -13,6 +13,7 @@ class ConsoleTarget {
 
     static final ConsoleTarget SYSTEM_OUT
             = new ConsoleTarget("System.out", new OutputStream() {
+
         @Override
         public void write(int b) {
             System.out.write(b);
@@ -36,6 +37,7 @@ class ConsoleTarget {
 
     static final ConsoleTarget SYSTEM_ERR
             = new ConsoleTarget("System.err", new OutputStream() {
+
         @Override
         public void write(int b) {
             System.err.write(b);
@@ -71,7 +73,7 @@ class ConsoleTarget {
     }
 
     static ConsoleTarget findByName(String name) {
-        for (ConsoleTarget target : ConsoleTarget.values()) {
+        for (var target : ConsoleTarget.values()) {
             if (target.name.equalsIgnoreCase(name)) {
                 return target;
             }
