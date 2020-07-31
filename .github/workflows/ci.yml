@@ -49,7 +49,7 @@ jobs:
         restore-keys: ${{ runner.os }}-sonar
 
     - name: Build and analyze
-      run: mvn clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Pcoverage
+      run: mvn clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.organization=charlemaznable -Dsonar.projectKey=CharLemAznable_logback-miner
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
