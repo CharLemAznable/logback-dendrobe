@@ -2,6 +2,7 @@ package com.github.charlemaznable.logback.miner.appender;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.val;
 
 import javax.annotation.Nonnull;
 import java.io.OutputStream;
@@ -73,7 +74,7 @@ class ConsoleTarget {
     }
 
     static ConsoleTarget findByName(String name) {
-        for (var target : ConsoleTarget.values()) {
+        for (val target : ConsoleTarget.values()) {
             if (target.name.equalsIgnoreCase(name)) {
                 return target;
             }

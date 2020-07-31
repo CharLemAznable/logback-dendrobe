@@ -1,5 +1,6 @@
 package com.github.charlemaznable.logback.miner.appender;
 
+import lombok.val;
 import org.joda.time.DateTime;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -66,7 +67,7 @@ public class DqlAppenderTest {
 
     @Test
     public void testDqlAppender() {
-        var future = MockDiamondServer.updateDiamond("Logback", "test",
+        val future = MockDiamondServer.updateDiamond("Logback", "test",
                 "context.property[miner]=test\n" +
                         "root[dql.level]=info\n" +
                         "root[dql.connection]=\n" +
@@ -82,19 +83,19 @@ public class DqlAppenderTest {
         root.info("no db log null: {}", (Object) null);
         self.info("no db log null: {}", (Object) null);
 
-        var notLog = new NotLog();
+        val notLog = new NotLog();
         notLog.setLogId("1000");
         notLog.setLogContent("no db log not log");
         root.info("no db log not log: {}", notLog);
         self.info("no db log not log: {}", notLog);
 
-        var errorLog = new ErrorLog();
+        val errorLog = new ErrorLog();
         errorLog.setLogId("1000");
         errorLog.setLogContent("no db log error log");
         root.info("no db log error log: {}", errorLog);
         self.info("no db log error log: {}", errorLog);
 
-        var simpleLog = new SimpleLog();
+        val simpleLog = new SimpleLog();
         simpleLog.setLogId("1000");
         simpleLog.setLogContent("simple log");
         simpleLog.setLogDate(new Date());
@@ -112,7 +113,7 @@ public class DqlAppenderTest {
         assertEquals(simpleLog.getLogDate(), querySimpleLog.getLogDate());
         assertEquals(simpleLog.getLogDateTime(), querySimpleLog.getLogDateTime());
 
-        var annotatedLog = new AnnotatedLog();
+        val annotatedLog = new AnnotatedLog();
         annotatedLog.setALogId("1001");
         annotatedLog.setALogContent("annotated log");
         annotatedLog.setALogDate(new Date());
@@ -132,7 +133,7 @@ public class DqlAppenderTest {
         MtcpContext.setTenantId("testTenantId");
         MtcpContext.setTenantCode("testTenantCode");
 
-        var sqlLog = new SqlLog();
+        val sqlLog = new SqlLog();
         sqlLog.setLogId("1002");
         self.info("sql log: {}", sqlLog);
 
@@ -144,7 +145,7 @@ public class DqlAppenderTest {
         assertEquals("(test|testTenantId|testTenantCode)" +
                 "sql log: SqlLog(logId=1002, logContent=null)", querySqlLog.getLogContent());
 
-        var sqlLogEx = new SqlLogEx();
+        val sqlLogEx = new SqlLogEx();
         sqlLogEx.setLogId("1003");
         self.info("sql log exception: {}", sqlLogEx, new Exception("exception"));
 
@@ -159,7 +160,7 @@ public class DqlAppenderTest {
                 "java.lang.Exception: exception\n" +
                 "\tat com.github.charlemaznable.logback.miner.appender.DqlAppenderTest.testDqlAppender"));
 
-        var sqlLogEx2 = new SqlLogEx2();
+        val sqlLogEx2 = new SqlLogEx2();
         sqlLogEx2.setLogId("1004");
         self.info("sql log exception: {}", sqlLogEx2, new Exception("exception"));
 

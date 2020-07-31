@@ -5,6 +5,7 @@ import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.turbo.TurboFilter;
 import ch.qos.logback.core.spi.FilterReply;
 import lombok.AllArgsConstructor;
+import lombok.val;
 import org.slf4j.Marker;
 
 @AllArgsConstructor
@@ -15,7 +16,7 @@ public class EffectorTurboFilter extends TurboFilter {
     @Override
     public FilterReply decide(Marker marker, Logger logger, Level level,
                               String format, Object[] params, Throwable t) {
-        var effector = effectorContext.getEffector(logger.getName());
+        val effector = effectorContext.getEffector(logger.getName());
         if (effector.getConsoleEffectiveLevelInt() > level.levelInt &&
                 effector.getDqlEffectiveLevelInt() > level.levelInt) {
             return FilterReply.DENY;

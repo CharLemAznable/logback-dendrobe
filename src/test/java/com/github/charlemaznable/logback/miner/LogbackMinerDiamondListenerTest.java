@@ -4,6 +4,7 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.n3r.diamond.client.impl.DiamondSubscriber;
@@ -30,15 +31,15 @@ public class LogbackMinerDiamondListenerTest {
     public void testLogbackMinerDiamondListenerRaw() {
         MockDiamondServer.setUpMockServer();
 
-        var diamondListener = new LogbackMinerDiamondListener();
+        val diamondListener = new LogbackMinerDiamondListener();
 
-        var future1 = MockDiamondServer.updateDiamond(
+        val future1 = MockDiamondServer.updateDiamond(
                 "Logback", "test", "key1=value1\n");
         await().forever().until(future1::isDone);
         assertEquals("value1", diamondListener.getRaw("key1"));
         assertNull(diamondListener.getRaw("key2"));
 
-        var future2 = MockDiamondServer.updateDiamond(
+        val future2 = MockDiamondServer.updateDiamond(
                 "Logback", "test", "key2=value2\n");
         await().forever().until(future2::isDone);
         assertNull(diamondListener.getRaw("key1"));
@@ -51,10 +52,10 @@ public class LogbackMinerDiamondListenerTest {
     public void testLogbackMinerDiamondListener() {
         MockDiamondServer.setUpMockServer();
 
-        var rootLogger = (Logger) LoggerFactory.getLogger("root");
-        var thisLogger = (Logger) log;
+        val rootLogger = (Logger) LoggerFactory.getLogger("root");
+        val thisLogger = (Logger) log;
 
-        var future1 = MockDiamondServer.updateDiamond(
+        val future1 = MockDiamondServer.updateDiamond(
                 "Logback", "test", "ROOT[LEVEL]=INFO\n" +
                         "ROOT[ADDITIVITY]=true\n" +
                         "ROOT[CONSOLE.LEVEL]=DEBUG\n");
@@ -67,7 +68,7 @@ public class LogbackMinerDiamondListenerTest {
         assertTrue(thisLogger.isAdditive());
         assertTrue(thisLogger.isDebugEnabled()); // decide by turbo filter
 
-        var future2 = MockDiamondServer.updateDiamond(
+        val future2 = MockDiamondServer.updateDiamond(
                 "Logback", "test", "ROOT[LEVEL]=warn\n" +
                         "ROOT[ADDITIVITY]=false\n" +
                         "ROOT[CONSOLE.LEVEL]=info\n");
@@ -82,7 +83,7 @@ public class LogbackMinerDiamondListenerTest {
         assertFalse(thisLogger.isDebugEnabled()); // decide by turbo filter
         assertTrue(thisLogger.isInfoEnabled()); // decide by turbo filter
 
-        var future3 = MockDiamondServer.updateDiamond(
+        val future3 = MockDiamondServer.updateDiamond(
                 "Logback", "test", "root[level]=warn\n" +
                         "root[additivity]=no\n" +
                         "root[console.level]=info\n" +
@@ -106,9 +107,9 @@ public class LogbackMinerDiamondListenerTest {
     public void testLogbackMinerDiamondListenerLoggerContext() {
         MockDiamondServer.setUpMockServer();
 
-        var loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
+        val loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
 
-        var future1 = MockDiamondServer.updateDiamond(
+        val future1 = MockDiamondServer.updateDiamond(
                 "Logback", "test", "context.packagingDataEnabled=Y\n" +
                         "context.maxCallerDataDepth=4\n" +
                         "context.frameworkPackages=com.github.charlemaznable.logback.miner\n" +
@@ -120,7 +121,7 @@ public class LogbackMinerDiamondListenerTest {
         assertEquals("com.github.charlemaznable.logback.miner", loggerContext.getFrameworkPackages().get(0));
         assertEquals("test", loggerContext.getProperty("miner"));
 
-        var future2 = MockDiamondServer.updateDiamond(
+        val future2 = MockDiamondServer.updateDiamond(
                 "Logback", "test", "\n");
         await().forever().until(future2::isDone);
         assertFalse(loggerContext.isPackagingDataEnabled());

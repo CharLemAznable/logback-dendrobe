@@ -4,6 +4,7 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
 import lombok.Getter;
+import lombok.val;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -49,7 +50,7 @@ public class Effector {
             consoleEffectiveLevelInt = calcConsoleEffectiveLevelInt(level);
 
             if (nonNull(childrenList)) {
-                for (var child : childrenList) {
+                for (val child : childrenList) {
                     child.handleParentConsoleLevelChange(consoleEffectiveLevelInt);
                 }
             }
@@ -58,7 +59,7 @@ public class Effector {
             dqlEffectiveLevelInt = calcDqlEffectiveLevelInt(level);
 
             if (nonNull(childrenList)) {
-                for (var child : childrenList) {
+                for (val child : childrenList) {
                     child.handleParentDqlLevelChange(dqlEffectiveLevelInt);
                 }
             }
@@ -76,7 +77,7 @@ public class Effector {
         }
 
         if (nonNull(childrenList)) {
-            for (var child : childrenList) {
+            for (val child : childrenList) {
                 child.handleParentConsoleLevelChange(consoleEffectiveLevelInt);
             }
         }
@@ -93,7 +94,7 @@ public class Effector {
         }
 
         if (nonNull(childrenList)) {
-            for (var child : childrenList) {
+            for (val child : childrenList) {
                 child.handleParentDqlLevelChange(dqlEffectiveLevelInt);
             }
         }
@@ -101,7 +102,7 @@ public class Effector {
 
     Effector getChildByName(final String childName) {
         if (isNull(childrenList)) return null;
-        for (var childEffector : childrenList) {
+        for (val childEffector : childrenList) {
             if (childName.equals(childEffector.logger.getName())) {
                 return childEffector;
             }
@@ -111,8 +112,8 @@ public class Effector {
 
     Effector createChildByName(final String childName) {
         if (isNull(childrenList)) childrenList = new CopyOnWriteArrayList<>();
-        var childLogger = loggerContext.getLogger(childName);
-        var childEffector = new Effector(childLogger, this, loggerContext);
+        val childLogger = loggerContext.getLogger(childName);
+        val childEffector = new Effector(childLogger, this, loggerContext);
         childrenList.add(childEffector);
         return childEffector;
     }
@@ -124,7 +125,7 @@ public class Effector {
         dqlLevel = null;
 
         if (childrenList == null) return;
-        for (var child : childrenList) {
+        for (val child : childrenList) {
             child.recursiveReset();
         }
     }
@@ -142,7 +143,7 @@ public class Effector {
             consoleEffectiveLevelInt = newParentConsoleLevelInt;
 
             if (nonNull(childrenList)) {
-                for (var child : childrenList) {
+                for (val child : childrenList) {
                     child.handleParentConsoleLevelChange(newParentConsoleLevelInt);
                 }
             }
@@ -154,7 +155,7 @@ public class Effector {
             dqlEffectiveLevelInt = newParentDqlLevelInt;
 
             if (nonNull(childrenList)) {
-                for (var child : childrenList) {
+                for (val child : childrenList) {
                     child.handleParentDqlLevelChange(newParentDqlLevelInt);
                 }
             }

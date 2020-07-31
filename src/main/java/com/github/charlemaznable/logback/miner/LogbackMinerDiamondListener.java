@@ -8,6 +8,7 @@ import com.github.charlemaznable.logback.miner.configurator.Configurator;
 import com.github.charlemaznable.logback.miner.level.EffectorContext;
 import com.github.charlemaznable.logback.miner.level.EffectorTurboFilter;
 import com.google.common.base.Splitter;
+import lombok.val;
 import org.n3r.diamond.client.DiamondAxis;
 import org.n3r.diamond.client.DiamondListener;
 import org.n3r.diamond.client.DiamondStone;
@@ -65,8 +66,8 @@ public class LogbackMinerDiamondListener implements DiamondListener, LoggerConte
         // 本地配置作为默认配置
         this.minerConfig = new Properties(this.defaultConfig);
         // 本地配置diamond配置坐标
-        var group = this.defaultConfig.getProperty(DIAMOND_GROUP_KEY, DEFAULT_GROUP);
-        var dataId = this.defaultConfig.getProperty(DIAMOND_DATA_ID_KEY, DEFAULT_DATA_ID);
+        val group = this.defaultConfig.getProperty(DIAMOND_GROUP_KEY, DEFAULT_GROUP);
+        val dataId = this.defaultConfig.getProperty(DIAMOND_DATA_ID_KEY, DEFAULT_DATA_ID);
         // diamond配置覆盖默认配置
         this.minerConfig.putAll(new Miner(group).getProperties(dataId));
 
@@ -111,8 +112,8 @@ public class LogbackMinerDiamondListener implements DiamondListener, LoggerConte
     }
 
     private Properties loadLocalConfig() {
-        var result = new Properties();
-        var localConfigURL = currentThread().getContextClassLoader()
+        val result = new Properties();
+        val localConfigURL = currentThread().getContextClassLoader()
                 .getResource("logback-miner.properties");
         if (nonNull(localConfigURL)) {
             InputStream inputStream = null;
@@ -168,18 +169,18 @@ public class LogbackMinerDiamondListener implements DiamondListener, LoggerConte
                     getInt(MAX_CALLER_DATA_DEPTH_KEY, DEFAULT_MAX_CALLEDER_DATA_DEPTH));
             loggerContext.getFrameworkPackages().addAll(getList(FRAMEWORK_PACKAGES_KEY));
 
-            for (var configurator : configurators) {
+            for (val configurator : configurators) {
                 configurator.before(loggerContext);
             }
 
-            for (var key : minerConfig.stringPropertyNames()) {
-                var value = minerConfig.getProperty(key, "");
-                for (var configurator : configurators) {
+            for (val key : minerConfig.stringPropertyNames()) {
+                val value = minerConfig.getProperty(key, "");
+                for (val configurator : configurators) {
                     configurator.configurate(loggerContext, key, value);
                 }
             }
 
-            for (var configurator : configurators) {
+            for (val configurator : configurators) {
                 configurator.finish(loggerContext);
             }
         }
@@ -192,14 +193,14 @@ public class LogbackMinerDiamondListener implements DiamondListener, LoggerConte
 
     @SuppressWarnings("SameParameterValue")
     private boolean getBool(String key, boolean defValue) {
-        var raw = getRaw(key);
+        val raw = getRaw(key);
         if (isBlank(raw)) return defValue;
         return toBool(raw);
     }
 
     @SuppressWarnings("SameParameterValue")
     private int getInt(String key, int defValue) {
-        var raw = getRaw(key);
+        val raw = getRaw(key);
         if (isBlank(raw)) return defValue;
         try {
             return Integer.parseInt(raw);
@@ -210,7 +211,7 @@ public class LogbackMinerDiamondListener implements DiamondListener, LoggerConte
 
     @SuppressWarnings("SameParameterValue")
     private List<String> getList(String key) {
-        var raw = getRaw(key);
+        val raw = getRaw(key);
         if (isBlank(raw)) return new ArrayList<>();
         return Splitter.on(",").omitEmptyStrings()
                 .trimResults().splitToList(raw);

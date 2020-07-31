@@ -3,8 +3,11 @@ package com.github.charlemaznable.logback.miner.configurator;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.Appender;
 import com.github.charlemaznable.logback.miner.appender.ConsoleAppender;
 import com.google.auto.service.AutoService;
+import lombok.val;
 
 import static com.github.charlemaznable.logback.miner.configurator.ConfiguratorUtil.fetchLoggerName;
 import static com.github.charlemaznable.logback.miner.level.EffectorContextUtil.getEffectorContext;
@@ -30,33 +33,33 @@ public class ConsoleConfigurator extends AppenderConfigurator {
     @Override
     public void configurate(LoggerContext loggerContext, String key, String value) {
         if (endsWithIgnoreCase(key, CONSOLE_LEVEL_SUFFIX)) {
-            var name = fetchLoggerName(key, CONSOLE_LEVEL_SUFFIX);
-            var effectorContext = getEffectorContext(loggerContext);
+            val name = fetchLoggerName(key, CONSOLE_LEVEL_SUFFIX);
+            val effectorContext = getEffectorContext(loggerContext);
             if (isNull(effectorContext)) return;
             effectorContext.getEffector(name)
                     .setConsoleLevel(Level.toLevel(value));
 
         } else if (endsWithIgnoreCase(key, CONSOLE_CHARSET_SUFFIX)) {
-            var name = fetchLoggerName(key, CONSOLE_CHARSET_SUFFIX);
-            var consoleAppender = fetchConsoleAppender(loggerContext.getLogger(name));
+            val name = fetchLoggerName(key, CONSOLE_CHARSET_SUFFIX);
+            val consoleAppender = fetchConsoleAppender(loggerContext.getLogger(name));
             consoleAppender.setCharset(value);
             addAppenderIfAbsent(consoleAppender);
 
         } else if (endsWithIgnoreCase(key, CONSOLE_PATTERN_SUFFIX)) {
-            var name = fetchLoggerName(key, CONSOLE_PATTERN_SUFFIX);
-            var consoleAppender = fetchConsoleAppender(loggerContext.getLogger(name));
+            val name = fetchLoggerName(key, CONSOLE_PATTERN_SUFFIX);
+            val consoleAppender = fetchConsoleAppender(loggerContext.getLogger(name));
             consoleAppender.setPattern(value);
             addAppenderIfAbsent(consoleAppender);
 
         } else if (endsWithIgnoreCase(key, CONSOLE_TARGET_SUFFIX)) {
-            var name = fetchLoggerName(key, CONSOLE_TARGET_SUFFIX);
-            var consoleAppender = fetchConsoleAppender(loggerContext.getLogger(name));
+            val name = fetchLoggerName(key, CONSOLE_TARGET_SUFFIX);
+            val consoleAppender = fetchConsoleAppender(loggerContext.getLogger(name));
             consoleAppender.setTarget(value);
             addAppenderIfAbsent(consoleAppender);
 
         } else if (endsWithIgnoreCase(key, CONSOLE_IMMEDIATE_FLUSH_SUFFIX)) {
-            var name = fetchLoggerName(key, CONSOLE_IMMEDIATE_FLUSH_SUFFIX);
-            var consoleAppender = fetchConsoleAppender(loggerContext.getLogger(name));
+            val name = fetchLoggerName(key, CONSOLE_IMMEDIATE_FLUSH_SUFFIX);
+            val consoleAppender = fetchConsoleAppender(loggerContext.getLogger(name));
             consoleAppender.setImmediateFlush(toBool(value));
             addAppenderIfAbsent(consoleAppender);
 
@@ -64,8 +67,8 @@ public class ConsoleConfigurator extends AppenderConfigurator {
     }
 
     private ConsoleAppender fetchConsoleAppender(Logger logger) {
-        var consoleAppenderName = "ConsoleAppender-" + logger.getName();
-        var consoleAppender = logger.getAppender(consoleAppenderName);
+        val consoleAppenderName = "ConsoleAppender-" + logger.getName();
+        Appender<ILoggingEvent> consoleAppender = logger.getAppender(consoleAppenderName);
         if (!(consoleAppender instanceof ConsoleAppender)) {
             logger.detachAppender(consoleAppender);
             consoleAppender = new ConsoleAppender();

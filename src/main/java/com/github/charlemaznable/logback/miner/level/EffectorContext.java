@@ -2,6 +2,7 @@ package com.github.charlemaznable.logback.miner.level;
 
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.util.LoggerNameUtil;
+import lombok.val;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -24,14 +25,14 @@ public class EffectorContext {
         if (name == null) throw new IllegalArgumentException("name argument cannot be null");
         if (ROOT_LOGGER_NAME.equalsIgnoreCase(name)) return root;
 
-        var i = 0;
-        var effector = root;
-        var childEffector = effectorCache.get(name);
+        int i = 0;
+        Effector effector = root;
+        Effector childEffector = effectorCache.get(name);
         if (childEffector != null) return childEffector;
 
         String childName;
         while (true) {
-            var h = LoggerNameUtil.getSeparatorIndexOf(name, i);
+            val h = LoggerNameUtil.getSeparatorIndexOf(name, i);
             if (h == -1) {
                 childName = name;
             } else {
