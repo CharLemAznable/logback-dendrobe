@@ -85,7 +85,7 @@ public class DqlAppenderBatchTest {
     }
 
     @Test
-    public void testDqlAppender() {
+    public void testDqlAppenderBatch() {
         val future = MockDiamondServer.updateDiamond("Logback", "test",
                 "eql[console.level]=off\norg.n3r.eql[console.level]=off\n" +
                         "com.github.charlemaznable.logback.miner.appender.DqlAppenderBatchTest[additivity]=no\n" +
@@ -104,7 +104,7 @@ public class DqlAppenderBatchTest {
         routineRun(threadCount, () -> batchRunLog(TIMES));
         val batchRunLogTime = currentTimeMillis() - startLogTime;
 
-        assertTrue(batchRunLogTime < batchRunTime * 1.05); // 性能损耗小于5%
+        assertTrue(batchRunLogTime < batchRunTime * 1.1); // 性能损耗小于10%
     }
 
     @Getter
