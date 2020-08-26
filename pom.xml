@@ -91,6 +91,7 @@
         <awaitility.version>4.0.3</awaitility.version>
         <h2.version>1.4.200</h2.version>
         <joda-time.version>2.10.6</joda-time.version>
+        <westid.version>0.0.3</westid.version>
 
         <maven-resources-plugin.version>3.1.0</maven-resources-plugin.version>
         <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
@@ -200,6 +201,12 @@
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
             <version>${joda-time.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.bingoohuang</groupId>
+            <artifactId>westid</artifactId>
+            <version>${westid.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
