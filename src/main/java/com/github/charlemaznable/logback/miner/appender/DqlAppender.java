@@ -8,6 +8,7 @@ import ch.qos.logback.core.Context;
 import ch.qos.logback.core.CoreConstants;
 import ch.qos.logback.core.UnsynchronizedAppenderBase;
 import ch.qos.logback.core.spi.FilterReply;
+import com.github.bingoohuang.westid.WestId;
 import com.github.charlemaznable.logback.miner.level.Effector;
 import lombok.Setter;
 import lombok.val;
@@ -18,6 +19,7 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -135,6 +137,7 @@ public class DqlAppender extends AsyncAppender {
                 }
                 return builder.toString();
             });
+            eventConverterMap.put("westId", event -> Objects.toString(WestId.next()));
         }
 
         @Setter
