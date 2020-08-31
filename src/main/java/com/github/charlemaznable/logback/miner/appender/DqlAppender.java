@@ -12,8 +12,6 @@ import com.github.bingoohuang.westid.WestId;
 import com.github.charlemaznable.logback.miner.level.Effector;
 import lombok.Setter;
 import lombok.val;
-import org.n3r.eql.mtcp.MtcpContext;
-import org.slf4j.MDC;
 
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -31,8 +29,6 @@ import static com.google.common.collect.Maps.newHashMap;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
-import static org.n3r.eql.mtcp.MtcpContext.TENANT_CODE;
-import static org.n3r.eql.mtcp.MtcpContext.TENANT_ID;
 
 public class DqlAppender extends AsyncAppender {
 
@@ -158,11 +154,7 @@ public class DqlAppender extends AsyncAppender {
             if (arguments.isEmpty()) return;
 
             try {
-                // this Compatibility maybe extend by ServiceLoader ?
-
-                // Compatible with eql mtcp
-                MtcpContext.setTenantId(MDC.get(TENANT_ID));
-                MtcpContext.setTenantCode(MDC.get(TENANT_CODE));
+                DqlAppendWrapper.preAppend(eventObject);
 
                 // 公共参数, 包含event/mdc/ctx-property
                 val paramMap = buildParamMap(eventObject);
@@ -185,8 +177,7 @@ public class DqlAppender extends AsyncAppender {
                 }
 
             } finally {
-                // Compatible with eql mtcp
-                MtcpContext.clear();
+                DqlAppendWrapper.afterAppend(eventObject);
             }
         }
 

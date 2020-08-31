@@ -5,9 +5,11 @@ import ch.qos.logback.classic.LoggerContext;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.jupiter.api.Test;
+import org.n3r.diamond.client.impl.MockDiamondServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
@@ -16,6 +18,10 @@ public class EffectorTest {
 
     @Test
     public void testEffector() {
+        MockDiamondServer.setUpMockServer();
+        val future = MockDiamondServer.updateDiamond("Logback", "test", "root[level]=debug\n");
+        await().forever().until(future::isDone);
+
         val loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
         val effectorContext = new EffectorContext(loggerContext);
 
@@ -84,5 +90,9 @@ public class EffectorTest {
         assertEquals(Level.DEBUG_INT, self.getConsoleEffectiveLevelInt());
         assertNull(self.getDqlLevel());
         assertEquals(Level.DEBUG_INT, self.getDqlEffectiveLevelInt());
+
+        val finish = MockDiamondServer.updateDiamond("Logback", "test", "root[level]=info\n");
+        await().forever().until(finish::isDone);
+        MockDiamondServer.tearDownMockServer();
     }
 }

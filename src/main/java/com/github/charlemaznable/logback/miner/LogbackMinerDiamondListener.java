@@ -30,8 +30,10 @@ import static java.lang.Thread.currentThread;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.startsWithIgnoreCase;
 import static org.n3r.diamond.client.impl.DiamondUtils.parseStoneToProperties;
 import static org.n3r.diamond.client.impl.DiamondUtils.toBool;
+import static org.slf4j.Logger.ROOT_LOGGER_NAME;
 
 public class LogbackMinerDiamondListener implements DiamondListener, LoggerContextListener {
 
@@ -69,7 +71,8 @@ public class LogbackMinerDiamondListener implements DiamondListener, LoggerConte
         val group = this.defaultConfig.getProperty(DIAMOND_GROUP_KEY, DEFAULT_GROUP);
         val dataId = this.defaultConfig.getProperty(DIAMOND_DATA_ID_KEY, DEFAULT_DATA_ID);
         // diamond配置覆盖默认配置
-        this.minerConfig.putAll(new Miner(group).getProperties(dataId));
+        this.minerConfig.putAll(rebuildProperties(
+                new Miner(group).getProperties(dataId)));
 
         DiamondSubscriber.getInstance().addDiamondListener(
                 DiamondAxis.makeAxis(group, dataId), this);
@@ -80,7 +83,8 @@ public class LogbackMinerDiamondListener implements DiamondListener, LoggerConte
         // 重置为本地默认配置
         minerConfig = new Properties(defaultConfig);
         // diamond配置覆盖默认配置
-        minerConfig.putAll(parseStoneToProperties(diamondStone.getContent()));
+        minerConfig.putAll(rebuildProperties(
+                parseStoneToProperties(diamondStone.getContent())));
 
         resetLoggerContext(loggerContext);
         configureLoggerContext(loggerContext);
@@ -125,6 +129,17 @@ public class LogbackMinerDiamondListener implements DiamondListener, LoggerConte
             } finally {
                 closeQuietly(inputStream);
             }
+        }
+        return rebuildProperties(result);
+    }
+
+    private Properties rebuildProperties(Properties properties) {
+        val result = new Properties();
+
+        for (val key : properties.stringPropertyNames()) {
+            // ROOT logger's name is ignored case
+            result.setProperty(startsWithIgnoreCase(key, ROOT_LOGGER_NAME)
+                    ? key.toUpperCase() : key, properties.getProperty(key));
         }
         return result;
     }
