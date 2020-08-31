@@ -66,6 +66,8 @@ public class DqlAppender extends AsyncAppender {
 
     @Override
     protected FilterReply decide(Effector effector, Level eventLevel) {
+        // configured DqlAppender and event passed EffectorTurboFilter,
+        // but appender level is greater then event level -> DENY
         if (effector.getDqlEffectiveLevelInt() > eventLevel.levelInt) {
             return FilterReply.DENY;
         }

@@ -84,6 +84,8 @@ public class ConsoleAppender extends AsyncAppender {
 
     @Override
     protected FilterReply decide(Effector effector, Level eventLevel) {
+        // configured ConsoleAppender and event passed EffectorTurboFilter,
+        // but appender level is greater then event level -> DENY
         if (effector.getConsoleEffectiveLevelInt() > eventLevel.levelInt) {
             return FilterReply.DENY;
         }

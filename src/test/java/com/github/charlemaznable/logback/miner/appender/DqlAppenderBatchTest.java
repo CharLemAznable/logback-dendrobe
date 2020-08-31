@@ -89,9 +89,10 @@ public class DqlAppenderBatchTest {
         val future = MockDiamondServer.updateDiamond("Logback", "test",
                 "eql[console.level]=off\norg.n3r.eql[console.level]=off\n" +
                         "com.github.charlemaznable.logback.miner.appender.DqlAppenderBatchTest[additivity]=no\n" +
-                        "com.github.charlemaznable.logback.miner.appender.DqlAppenderBatchTest[dql.level]=info\n" +
+                        "com.github.charlemaznable.logback.miner.appender.DqlAppenderBatchTest[level]=info\n" +
                         "com.github.charlemaznable.logback.miner.appender.DqlAppenderBatchTest[dql.connection]=" + DBBatch + "\n" +
-                        "com.github.charlemaznable.logback.miner.appender.DqlAppenderBatchTest[console.level]=off");
+                        "com.github.charlemaznable.logback.miner.appender.DqlAppenderBatchTest[console.level]=off\n" +
+                        "com.github.charlemaznable.logback.miner.appender.DqlAppenderBatchTest[console.target]=error\n");
         await().forever().until(future::isDone);
 
         val threadCount = getRuntime().availableProcessors() + 1;

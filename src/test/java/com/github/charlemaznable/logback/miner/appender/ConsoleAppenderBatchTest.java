@@ -55,7 +55,9 @@ public class ConsoleAppenderBatchTest {
                         "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderBatchTest[CONSOLE.CHARSET]=utf-8\n" +
                         "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderBatchTest[CONSOLE.PATTERN]=%5level %message%n\n" +
                         "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderBatchTest[CONSOLE.TARGET]=batch\n" +
-                        "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderBatchTest[CONSOLE.IMMEDIATEFLUSH]=true\n");
+                        "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderBatchTest[CONSOLE.IMMEDIATEFLUSH]=true\n" +
+                        "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderBatchTest[DQL.LEVEL]=OFF\n" +
+                        "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderBatchTest[DQL.CONNECTION]=ERROR\n");
         await().forever().until(future::isDone);
 
         val threadCount = getRuntime().availableProcessors() + 1;
