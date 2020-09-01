@@ -156,7 +156,7 @@ public class DqlAppender extends AsyncAppender {
             if (arguments.isEmpty()) return;
 
             try {
-                DqlAppendWrapper.preAppend(eventObject);
+                DqlExecuteWrapper.preExecute(eventObject);
 
                 // 公共参数, 包含event/mdc/ctx-property
                 val paramMap = buildParamMap(eventObject);
@@ -179,7 +179,7 @@ public class DqlAppender extends AsyncAppender {
                 }
 
             } finally {
-                DqlAppendWrapper.afterAppend(eventObject);
+                DqlExecuteWrapper.afterExecute(eventObject);
             }
         }
 

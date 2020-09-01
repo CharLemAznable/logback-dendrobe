@@ -11,17 +11,17 @@ import static org.n3r.eql.mtcp.MtcpContext.TENANT_ID;
 /**
  * Compatible with eql mtcp
  */
-@AutoService(DqlAppendExtender.class)
-public class DqlMtcpExtender implements DqlAppendExtender {
+@AutoService(DqlExecuteExtender.class)
+public class DqlMtcpExtender implements DqlExecuteExtender {
 
     @Override
-    public void preAppend(ILoggingEvent eventObject) {
+    public void preExecute(ILoggingEvent eventObject) {
         MtcpContext.setTenantId(MDC.get(TENANT_ID));
         MtcpContext.setTenantCode(MDC.get(TENANT_CODE));
     }
 
     @Override
-    public void afterAppend(ILoggingEvent eventObject) {
+    public void afterExecute(ILoggingEvent eventObject) {
         MtcpContext.clear();
     }
 }
