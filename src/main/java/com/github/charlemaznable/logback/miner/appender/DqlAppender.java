@@ -29,6 +29,7 @@ import static com.google.common.collect.Maps.newHashMap;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 public class DqlAppender extends AsyncAppender {
 
@@ -46,6 +47,10 @@ public class DqlAppender extends AsyncAppender {
 
     public void setDqlConnection(String dqlConnection) {
         this.appender.setDqlConnection(dqlConnection);
+    }
+
+    public void setDqlSql(String dqlSql) {
+        this.appender.setDqlSql(dqlSql);
     }
 
     @Override
@@ -140,26 +145,32 @@ public class DqlAppender extends AsyncAppender {
 
         @Setter
         private String dqlConnection;
+        @Setter
+        private String dqlSql;
 
         @Override
         protected void append(ILoggingEvent eventObject) {
             if (!isStarted()) return;
 
-            // 仅处理含参日志
-            val argumentArray = eventObject.getArgumentArray();
-            if (isNull(argumentArray)) return;
-
-            // 仅处理@LogbackBean注解参数
-            val arguments = Arrays.stream(argumentArray)
-                    .filter(arg -> nonNull(arg) && isLogbackBeanPresent(arg.getClass()))
-                    .collect(Collectors.toList());
-            if (arguments.isEmpty()) return;
-
             try {
                 DqlExecuteWrapper.preExecute(eventObject);
-
                 // 公共参数, 包含event/mdc/ctx-property
                 val paramMap = buildParamMap(eventObject);
+
+                val argumentArray = defaultIfNull(eventObject.getArgumentArray(), new Object[0]);
+                val arguments = Arrays.stream(argumentArray)
+                        .filter(arg -> nonNull(arg) && isLogbackBeanPresent(arg.getClass()))
+                        .collect(Collectors.toList());
+                // 日志不包含@LogbackBean注解的参数, 执行默认连接的默认SQL
+                if (arguments.isEmpty()) {
+                    val dql = getLogbackBeanDql(null, dqlConnection);
+                    // 未指定默认连接或默认SQL, 则跳过
+                    if (isNull(dql) || isBlank(dqlSql)) return;
+                    dql.params(paramMap).dynamics(paramMap).execute(dqlSql);
+                    return;
+                }
+
+                // 遍历@LogbackBean注解的参数
                 for (val argument : arguments) {
                     val clazz = argument.getClass();
                     val dql = getLogbackBeanDql(clazz, dqlConnection);

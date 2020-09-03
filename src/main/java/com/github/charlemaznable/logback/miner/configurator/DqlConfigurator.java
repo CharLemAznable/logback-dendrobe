@@ -19,6 +19,7 @@ public class DqlConfigurator extends AppenderConfigurator {
 
     private static final String DQL_LEVEL_SUFFIX = "[dql.level]";
     private static final String DQL_CONNECTION_SUFFIX = "[dql.connection]";
+    private static final String DQL_SQL_SUFFIX = "[dql.sql]";
 
     @Override
     public void configurate(LoggerContext loggerContext, String key, String value) {
@@ -32,6 +33,12 @@ public class DqlConfigurator extends AppenderConfigurator {
             val name = fetchLoggerName(key, DQL_CONNECTION_SUFFIX);
             val dqlAppender = fetchDqlAppender(loggerContext.getLogger(name));
             dqlAppender.setDqlConnection(value);
+            addAppenderIfAbsent(dqlAppender);
+
+        } else if (endsWithIgnoreCase(key, DQL_SQL_SUFFIX)) {
+            val name = fetchLoggerName(key, DQL_SQL_SUFFIX);
+            val dqlAppender = fetchDqlAppender(loggerContext.getLogger(name));
+            dqlAppender.setDqlSql(value);
             addAppenderIfAbsent(dqlAppender);
 
         }

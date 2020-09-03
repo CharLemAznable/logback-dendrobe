@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
 import java.util.Date;
+import java.util.List;
 
 import static java.util.Objects.nonNull;
 import static org.awaitility.Awaitility.await;
@@ -30,7 +31,9 @@ public class DqlAppenderTest {
             "  `LOG_DATE_TIME` DATETIME," +
             "  PRIMARY KEY (`LOG_ID`)" +
             ");\n";
-    private static final String SELECT_SIMPLE_LOG = "" +
+    private static final String SELECT_SIMPLE_LOGS = "" +
+            "SELECT LOG_ID, LOG_CONTENT, LOG_DATE, LOG_DATE_TIME FROM SIMPLE_LOG ORDER BY LOG_ID";
+    private static final String SELECT_SIMPLE_LOG_BY_ID = "" +
             "SELECT LOG_ID, LOG_CONTENT, LOG_DATE, LOG_DATE_TIME FROM SIMPLE_LOG WHERE LOG_ID = ##";
 
     private static Logger root;
@@ -67,6 +70,7 @@ public class DqlAppenderTest {
 
     @Test
     public void testDqlAppender() {
+        val sql = "INSERT INTO SIMPLE_LOG (LOG_ID,LOG_CONTENT,LOG_DATE,LOG_DATE_TIME) VALUES(#event.westId#,CONCAT('(', #property.miner#, '|', #mdc.tenantId#, '|', #mdc.tenantCode#, ')', #event.message#, #event.exception#),CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP())";
         val future = MockDiamondServer.updateDiamond("Logback", "test",
                 "context.property[miner]=test\n" +
                         "root[dql.level]=info\n" +
@@ -74,6 +78,7 @@ public class DqlAppenderTest {
                         "com.github.charlemaznable.logback.miner.appender.DqlAppenderTest[additivity]=no\n" +
                         "com.github.charlemaznable.logback.miner.appender.DqlAppenderTest[dql.level]=info\n" +
                         "com.github.charlemaznable.logback.miner.appender.DqlAppenderTest[dql.connection]=" + DB0 + "\n" +
+                        "com.github.charlemaznable.logback.miner.appender.DqlAppenderTest[dql.sql]=" + sql + "\n" +
                         "com.github.charlemaznable.logback.miner.appender.DqlAppenderTest[console.level]=off");
         await().forever().until(future::isDone);
 
@@ -103,15 +108,28 @@ public class DqlAppenderTest {
         root.info("simple log: {} >> actual ignored", simpleLog);
         self.info("simple log: {}", simpleLog);
 
-        await().pollDelay(Duration.ofSeconds(3)).until(() ->
-                nonNull(new Dql(DB0).limit(1).params("1000").execute(SELECT_SIMPLE_LOG)));
+        await().pollDelay(Duration.ofSeconds(3)).until(() -> {
+            List<Object> simpleLogs = new Dql(DB0).execute(SELECT_SIMPLE_LOGS);
+            return 4 == simpleLogs.size();
+        });
 
-        SimpleLog querySimpleLog = new Dql(DB0).limit(1).returnType(SimpleLog.class)
-                .params("1000").execute(SELECT_SIMPLE_LOG);
+        List<SimpleLog> simpleLogs = new Dql(DB0).returnType(SimpleLog.class)
+                .execute(SELECT_SIMPLE_LOGS);
+
+        val querySimpleLog = simpleLogs.get(0);
         assertEquals(simpleLog.getLogId(), querySimpleLog.getLogId());
         assertEquals(simpleLog.getLogContent(), querySimpleLog.getLogContent());
         assertEquals(simpleLog.getLogDate(), querySimpleLog.getLogDate());
         assertEquals(simpleLog.getLogDateTime(), querySimpleLog.getLogDateTime());
+
+        val queryNoDbLog = simpleLogs.get(1);
+        assertEquals("(test||)no db log", queryNoDbLog.getLogContent());
+
+        val queryNoDbLogNull = simpleLogs.get(2);
+        assertEquals("(test||)no db log null: null", queryNoDbLogNull.getLogContent());
+
+        val queryNoDbLogNotLog = simpleLogs.get(3);
+        assertEquals("(test||)no db log not log: " + notLog.toString(), queryNoDbLogNotLog.getLogContent());
 
         val annotatedLog = new AnnotatedLog();
         annotatedLog.setALogId("1001");
@@ -121,10 +139,10 @@ public class DqlAppenderTest {
         self.info("annotated log: {}", annotatedLog);
 
         await().pollDelay(Duration.ofSeconds(3)).until(() ->
-                nonNull(new Dql(DB1).limit(1).params("1001").execute(SELECT_SIMPLE_LOG)));
+                nonNull(new Dql(DB1).limit(1).params("1001").execute(SELECT_SIMPLE_LOG_BY_ID)));
 
         SimpleLog queryAnnotatedLog = new Dql(DB1).limit(1).returnType(SimpleLog.class)
-                .params("1001").execute(SELECT_SIMPLE_LOG);
+                .params("1001").execute(SELECT_SIMPLE_LOG_BY_ID);
         assertEquals(annotatedLog.getALogId(), queryAnnotatedLog.getLogId());
         assertEquals(annotatedLog.getALogContent(), queryAnnotatedLog.getLogContent());
         assertEquals(annotatedLog.getALogDate(), queryAnnotatedLog.getLogDate());
@@ -138,10 +156,10 @@ public class DqlAppenderTest {
         self.info("sql log: {}", sqlLog);
 
         await().pollDelay(Duration.ofSeconds(3)).until(() ->
-                nonNull(new Dql(DB0).limit(1).params("1002").execute(SELECT_SIMPLE_LOG)));
+                nonNull(new Dql(DB0).limit(1).params("1002").execute(SELECT_SIMPLE_LOG_BY_ID)));
 
         SqlLog querySqlLog = new Dql(DB0).limit(1).returnType(SqlLog.class)
-                .params("1002").execute(SELECT_SIMPLE_LOG);
+                .params("1002").execute(SELECT_SIMPLE_LOG_BY_ID);
         assertEquals("(test|testTenantId|testTenantCode)" +
                 "sql log: SqlLog(logId=1002, logContent=null)", querySqlLog.getLogContent());
 
@@ -150,10 +168,10 @@ public class DqlAppenderTest {
         self.info("sql log exception: {}", sqlLogEx, new Exception("exception"));
 
         await().pollDelay(Duration.ofSeconds(3)).until(() ->
-                nonNull(new Dql(DB0).limit(1).params("1003").execute(SELECT_SIMPLE_LOG)));
+                nonNull(new Dql(DB0).limit(1).params("1003").execute(SELECT_SIMPLE_LOG_BY_ID)));
 
         SqlLog querySqlLogEx = new Dql(DB0).limit(1).returnType(SqlLog.class)
-                .params("1003").execute(SELECT_SIMPLE_LOG);
+                .params("1003").execute(SELECT_SIMPLE_LOG_BY_ID);
         assertTrue(querySqlLogEx.getLogContent().startsWith("" +
                 "(test|testTenantId|testTenantCode)" +
                 "sql log exception: SqlLogEx(logId=1003, logContent=null)" +
@@ -165,10 +183,10 @@ public class DqlAppenderTest {
         self.info("sql log exception: {}", sqlLogEx2, new Exception("exception"));
 
         await().pollDelay(Duration.ofSeconds(3)).until(() ->
-                nonNull(new Dql(DB0).limit(1).params("1004").execute(SELECT_SIMPLE_LOG)));
+                nonNull(new Dql(DB0).limit(1).params("1004").execute(SELECT_SIMPLE_LOG_BY_ID)));
 
         SqlLog querySqlLogEx2 = new Dql(DB0).limit(1).returnType(SqlLog.class)
-                .params("1004").execute(SELECT_SIMPLE_LOG);
+                .params("1004").execute(SELECT_SIMPLE_LOG_BY_ID);
         assertTrue(querySqlLogEx2.getLogContent().startsWith("" +
                 "(test|testTenantId|testTenantCode)" +
                 "sql log exception: SqlLogEx2(logId=1004, logContent=null)" +

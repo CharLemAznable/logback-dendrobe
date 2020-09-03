@@ -60,7 +60,7 @@ class DqlCaches {
                 = newBuilder().build(CacheLoader.from(LogbackBeanDqlCache::loadCache));
 
         static Dql getLogbackBeanDql(Class<?> clazz, String defaultConnection) {
-            val configConnection = cache.getUnchecked(clazz);
+            val configConnection = null != clazz ? cache.getUnchecked(clazz) : null;
             val connectionName = defaultIfBlank(configConnection, defaultConnection);
             if (isBlank(connectionName)) return null;
 
@@ -96,7 +96,8 @@ class DqlCaches {
                 dql.useSqlFile(clazz);
             }
 
-            dql.id(defaultIfBlank(logbackSql.sqlId(), "log" + clazz.getSimpleName()));
+            dql.id(defaultIfBlank(logbackSql.sqlId(),
+                    "log" + clazz.getSimpleName()));
             return true;
         }
 
