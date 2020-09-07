@@ -29,6 +29,11 @@ public class Effector {
     private Level dqlLevel;
     @Getter
     private int dqlEffectiveLevelInt;
+    // vertx
+    @Getter
+    private Level vertxLevel;
+    @Getter
+    private int vertxEffectiveLevelInt;
 
     public Effector(Logger logger, Effector parent, LoggerContext loggerContext) {
         this.logger = logger;
@@ -37,6 +42,7 @@ public class Effector {
 
         this.consoleEffectiveLevelInt = calcConsoleEffectiveLevelInt(logger.getLevel());
         this.dqlEffectiveLevelInt = calcDqlEffectiveLevelInt(logger.getLevel());
+        this.vertxEffectiveLevelInt = calcVertxEffectiveLevelInt(logger.getLevel());
     }
 
     public Level getLoggerLevel() {
@@ -47,22 +53,13 @@ public class Effector {
         logger.setLevel(level);
 
         if (isNull(consoleLevel)) {
-            consoleEffectiveLevelInt = calcConsoleEffectiveLevelInt(level);
-
-            if (nonNull(childrenList)) {
-                for (val child : childrenList) {
-                    child.handleParentConsoleLevelChange(consoleEffectiveLevelInt);
-                }
-            }
+            setConsoleEffectiveLevel(null);
         }
         if (isNull(dqlLevel)) {
-            dqlEffectiveLevelInt = calcDqlEffectiveLevelInt(level);
-
-            if (nonNull(childrenList)) {
-                for (val child : childrenList) {
-                    child.handleParentDqlLevelChange(dqlEffectiveLevelInt);
-                }
-            }
+            setDqlEffectiveLevel(null);
+        }
+        if (isNull(vertxLevel)) {
+            setVertxEffectiveLevel(null);
         }
     }
 
@@ -70,34 +67,21 @@ public class Effector {
         if (this.consoleLevel == consoleLevel) return;
 
         this.consoleLevel = consoleLevel;
-        if (isNull(consoleLevel)) {
-            consoleEffectiveLevelInt = calcConsoleEffectiveLevelInt(getLoggerLevel());
-        } else {
-            consoleEffectiveLevelInt = consoleLevel.levelInt;
-        }
-
-        if (nonNull(childrenList)) {
-            for (val child : childrenList) {
-                child.handleParentConsoleLevelChange(consoleEffectiveLevelInt);
-            }
-        }
+        setConsoleEffectiveLevel(consoleLevel);
     }
 
     public synchronized void setDqlLevel(Level dqlLevel) {
         if (this.dqlLevel == dqlLevel) return;
 
         this.dqlLevel = dqlLevel;
-        if (isNull(dqlLevel)) {
-            dqlEffectiveLevelInt = calcDqlEffectiveLevelInt(getLoggerLevel());
-        } else {
-            dqlEffectiveLevelInt = dqlLevel.levelInt;
-        }
+        setDqlEffectiveLevel(dqlLevel);
+    }
 
-        if (nonNull(childrenList)) {
-            for (val child : childrenList) {
-                child.handleParentDqlLevelChange(dqlEffectiveLevelInt);
-            }
-        }
+    public synchronized void setVertxLevel(Level vertxLevel) {
+        if (this.vertxLevel == vertxLevel) return;
+
+        this.vertxLevel = vertxLevel;
+        setVertxEffectiveLevel(vertxLevel);
     }
 
     Effector getChildByName(final String childName) {
@@ -123,6 +107,8 @@ public class Effector {
         consoleLevel = null;
         dqlEffectiveLevelInt = Level.DEBUG_INT;
         dqlLevel = null;
+        vertxEffectiveLevelInt = Level.DEBUG_INT;
+        vertxLevel = null;
 
         if (childrenList == null) return;
         for (val child : childrenList) {
@@ -136,6 +122,52 @@ public class Effector {
 
     private int calcDqlEffectiveLevelInt(Level loggerLevel) {
         return isNull(loggerLevel) ? parent.dqlEffectiveLevelInt : loggerLevel.levelInt;
+    }
+
+    private int calcVertxEffectiveLevelInt(Level loggerLevel) {
+        return isNull(loggerLevel) ? parent.vertxEffectiveLevelInt : loggerLevel.levelInt;
+    }
+
+    private void setConsoleEffectiveLevel(Level consoleLevel) {
+        if (isNull(consoleLevel)) {
+            consoleEffectiveLevelInt = calcConsoleEffectiveLevelInt(getLoggerLevel());
+        } else {
+            consoleEffectiveLevelInt = consoleLevel.levelInt;
+        }
+
+        if (nonNull(childrenList)) {
+            for (val child : childrenList) {
+                child.handleParentConsoleLevelChange(consoleEffectiveLevelInt);
+            }
+        }
+    }
+
+    private void setDqlEffectiveLevel(Level dqlLevel) {
+        if (isNull(dqlLevel)) {
+            dqlEffectiveLevelInt = calcDqlEffectiveLevelInt(getLoggerLevel());
+        } else {
+            dqlEffectiveLevelInt = dqlLevel.levelInt;
+        }
+
+        if (nonNull(childrenList)) {
+            for (val child : childrenList) {
+                child.handleParentDqlLevelChange(dqlEffectiveLevelInt);
+            }
+        }
+    }
+
+    private void setVertxEffectiveLevel(Level vertxLevel) {
+        if (isNull(vertxLevel)) {
+            vertxEffectiveLevelInt = calcVertxEffectiveLevelInt(getLoggerLevel());
+        } else {
+            vertxEffectiveLevelInt = vertxLevel.levelInt;
+        }
+
+        if (nonNull(childrenList)) {
+            for (val child : childrenList) {
+                child.handleParentVertxLevelChange(vertxEffectiveLevelInt);
+            }
+        }
     }
 
     private synchronized void handleParentConsoleLevelChange(int newParentConsoleLevelInt) {
@@ -157,6 +189,18 @@ public class Effector {
             if (nonNull(childrenList)) {
                 for (val child : childrenList) {
                     child.handleParentDqlLevelChange(newParentDqlLevelInt);
+                }
+            }
+        }
+    }
+
+    private synchronized void handleParentVertxLevelChange(int newParentVertxLevelInt) {
+        if (isNull(vertxLevel) && isNull(getLoggerLevel())) {
+            vertxEffectiveLevelInt = newParentVertxLevelInt;
+
+            if (nonNull(childrenList)) {
+                for (val child : childrenList) {
+                    child.handleParentVertxLevelChange(newParentVertxLevelInt);
                 }
             }
         }

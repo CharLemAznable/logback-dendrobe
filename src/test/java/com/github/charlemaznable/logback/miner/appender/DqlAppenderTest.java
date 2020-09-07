@@ -108,7 +108,7 @@ public class DqlAppenderTest {
         root.info("simple log: {} >> actual ignored", simpleLog);
         self.info("simple log: {}", simpleLog);
 
-        await().pollDelay(Duration.ofSeconds(3)).until(() -> {
+        await().forever().pollDelay(Duration.ofSeconds(3)).until(() -> {
             List<Object> simpleLogs = new Dql(DB0).execute(SELECT_SIMPLE_LOGS);
             return 4 == simpleLogs.size();
         });

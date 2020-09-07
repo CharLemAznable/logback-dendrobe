@@ -175,6 +175,7 @@ public class ConsoleAppenderTest {
         MockDiamondServer.setUpMockServer();
         val future = MockDiamondServer.updateDiamond("Logback", "test",
                 "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[DQL.LEVEL]=OFF\n" +
+                        "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[VERTX.LEVEL]=OFF\n" +
                         "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[CONSOLE.LEVEL]=warn\n" +
                         "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[ADDITIVITY]=no\n" +
                         "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[CONSOLE.PATTERN]=%5level %message%n\n" +
@@ -218,6 +219,7 @@ public class ConsoleAppenderTest {
         MockDiamondServer.setUpMockServer();
         val future = MockDiamondServer.updateDiamond("Logback", "test",
                 "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[DQL.LEVEL]=OFF\n" +
+                        "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[VERTX.LEVEL]=OFF\n" +
                         "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[CONSOLE.LEVEL]=error\n" +
                         "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[ADDITIVITY]=no\n" +
                         "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[CONSOLE.PATTERN]=%5level %message%n\n" +
