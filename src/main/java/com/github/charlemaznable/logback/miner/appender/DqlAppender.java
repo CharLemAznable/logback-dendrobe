@@ -46,19 +46,8 @@ public class DqlAppender extends AsyncAppender {
     }
 
     @Override
-    public void start() {
-        this.addAppender(this.appender);
-
-        this.appender.start();
-        super.start();
-    }
-
-    @Override
-    public void stop() {
-        super.stop();
-        this.appender.stop();
-
-        this.detachAppender(this.appender);
+    protected UnsynchronizedAppenderBase<ILoggingEvent> internalAppend() {
+        return this.appender;
     }
 
     @Override

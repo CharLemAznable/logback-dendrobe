@@ -4,6 +4,7 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.AsyncAppenderBase;
 import ch.qos.logback.core.Context;
+import ch.qos.logback.core.UnsynchronizedAppenderBase;
 import ch.qos.logback.core.filter.Filter;
 import ch.qos.logback.core.spi.FilterReply;
 import com.github.charlemaznable.logback.miner.level.Effector;
@@ -18,7 +19,25 @@ import static java.util.Objects.isNull;
 
 public abstract class AsyncAppender extends AsyncAppenderBase<ILoggingEvent> {
 
+    protected abstract UnsynchronizedAppenderBase<ILoggingEvent> internalAppend();
+
     protected abstract FilterReply decide(Effector effector, Level eventLevel);
+
+    @Override
+    public void start() {
+        this.addAppender(internalAppend());
+
+        internalAppend().start();
+        super.start();
+    }
+
+    @Override
+    public void stop() {
+        super.stop();
+        internalAppend().stop();
+
+        this.detachAppender(internalAppend());
+    }
 
     @Override
     protected void preprocess(ILoggingEvent event) {

@@ -5,6 +5,7 @@ import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Context;
 import ch.qos.logback.core.OutputStreamAppender;
+import ch.qos.logback.core.UnsynchronizedAppenderBase;
 import ch.qos.logback.core.spi.FilterReply;
 import ch.qos.logback.core.status.WarnStatus;
 import com.github.charlemaznable.logback.miner.level.Effector;
@@ -66,20 +67,19 @@ public class ConsoleAppender extends AsyncAppender {
 
     @Override
     public void start() {
-        this.addAppender(this.appender);
-
         this.encoder.start();
-        this.appender.start();
         super.start();
     }
 
     @Override
     public void stop() {
         super.stop();
-        this.appender.stop();
         this.encoder.stop();
+    }
 
-        this.detachAppender(this.appender);
+    @Override
+    protected UnsynchronizedAppenderBase<ILoggingEvent> internalAppend() {
+        return this.appender;
     }
 
     @Override
