@@ -20,14 +20,14 @@ public class ConsoleAppenderTest {
     public void testConsoleAppender() {
         ConsoleTarget.setUpMockConsole();
         MockDiamondServer.setUpMockServer();
-        val future = MockDiamondServer.updateDiamond("Logback", "test",
+        val future = MockDiamondServer.updateDiamond("Logback", "test", "" +
                 "context.maxCallerDataDepth=abc\ncontext.property[miner]=test\n" +
-                        "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[ADDITIVITY]=no\n" +
-                        "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[LEVEL]=INFO\n" +
-                        "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[CONSOLE.CHARSET]=utf\n" +
-                        "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[CONSOLE.PATTERN]=%property{miner} %5level %message%n\n" +
-                        "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[CONSOLE.TARGET]=miner-config\n" +
-                        "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[CONSOLE.IMMEDIATEFLUSH]=true\n");
+                "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[ADDITIVITY]=no\n" +
+                "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[LEVEL]=INFO\n" +
+                "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[CONSOLE.CHARSET]=utf\n" +
+                "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[CONSOLE.PATTERN]=%property{miner} %5level %message%n\n" +
+                "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[CONSOLE.TARGET]=miner-config\n" +
+                "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[CONSOLE.IMMEDIATEFLUSH]=true\n");
         await().forever().until(future::isDone);
 
         assertEquals("Logger[com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest]", log.toString());
@@ -55,13 +55,14 @@ public class ConsoleAppenderTest {
     public void testLoggerTrace() {
         ConsoleTarget.setUpMockConsole();
         MockDiamondServer.setUpMockServer();
-        val future = MockDiamondServer.updateDiamond("Logback", "test",
+        val future = MockDiamondServer.updateDiamond("Logback", "test", "" +
                 "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[DQL.LEVEL]=OFF\n" +
-                        "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[CONSOLE.LEVEL]=TRACE\n" +
-                        "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[ADDITIVITY]=no\n" +
-                        "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[CONSOLE.CHARSET]=utf-8\n" +
-                        "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[CONSOLE.PATTERN]=%5level %message%n\n" +
-                        "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[CONSOLE.TARGET]=test-trace\n");
+                "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[VERTX.LEVEL]=OFF\n" +
+                "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[CONSOLE.LEVEL]=TRACE\n" +
+                "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[ADDITIVITY]=no\n" +
+                "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[CONSOLE.CHARSET]=utf-8\n" +
+                "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[CONSOLE.PATTERN]=%5level %message%n\n" +
+                "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[CONSOLE.TARGET]=test-trace\n");
         await().forever().until(future::isDone);
 
         assertTrue(log.isTraceEnabled());
@@ -93,12 +94,13 @@ public class ConsoleAppenderTest {
     public void testLoggerDebug() {
         ConsoleTarget.setUpMockConsole();
         MockDiamondServer.setUpMockServer();
-        val future = MockDiamondServer.updateDiamond("Logback", "test",
+        val future = MockDiamondServer.updateDiamond("Logback", "test", "" +
                 "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[DQL.LEVEL]=OFF\n" +
-                        "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[CONSOLE.LEVEL]=debug\n" +
-                        "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[ADDITIVITY]=no\n" +
-                        "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[CONSOLE.PATTERN]=%5level %message%n\n" +
-                        "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[CONSOLE.TARGET]=test-debug\n");
+                "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[VERTX.LEVEL]=OFF\n" +
+                "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[CONSOLE.LEVEL]=debug\n" +
+                "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[ADDITIVITY]=no\n" +
+                "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[CONSOLE.PATTERN]=%5level %message%n\n" +
+                "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[CONSOLE.TARGET]=test-debug\n");
         await().forever().until(future::isDone);
 
         assertFalse(log.isTraceEnabled());
@@ -132,12 +134,13 @@ public class ConsoleAppenderTest {
     public void testLoggerInfo() {
         ConsoleTarget.setUpMockConsole();
         MockDiamondServer.setUpMockServer();
-        val future = MockDiamondServer.updateDiamond("Logback", "test",
+        val future = MockDiamondServer.updateDiamond("Logback", "test", "" +
                 "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[DQL.LEVEL]=OFF\n" +
-                        "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[CONSOLE.LEVEL]=info\n" +
-                        "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[ADDITIVITY]=no\n" +
-                        "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[CONSOLE.PATTERN]=%5level %message%n\n" +
-                        "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[CONSOLE.TARGET]=test-info\n");
+                "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[VERTX.LEVEL]=OFF\n" +
+                "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[CONSOLE.LEVEL]=info\n" +
+                "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[ADDITIVITY]=no\n" +
+                "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[CONSOLE.PATTERN]=%5level %message%n\n" +
+                "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[CONSOLE.TARGET]=test-info\n");
         await().forever().until(future::isDone);
 
         assertFalse(log.isTraceEnabled());
@@ -173,13 +176,13 @@ public class ConsoleAppenderTest {
     public void testLoggerWarn() {
         ConsoleTarget.setUpMockConsole();
         MockDiamondServer.setUpMockServer();
-        val future = MockDiamondServer.updateDiamond("Logback", "test",
+        val future = MockDiamondServer.updateDiamond("Logback", "test", "" +
                 "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[DQL.LEVEL]=OFF\n" +
-                        "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[VERTX.LEVEL]=OFF\n" +
-                        "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[CONSOLE.LEVEL]=warn\n" +
-                        "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[ADDITIVITY]=no\n" +
-                        "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[CONSOLE.PATTERN]=%5level %message%n\n" +
-                        "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[CONSOLE.TARGET]=test-warn\n");
+                "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[VERTX.LEVEL]=OFF\n" +
+                "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[CONSOLE.LEVEL]=warn\n" +
+                "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[ADDITIVITY]=no\n" +
+                "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[CONSOLE.PATTERN]=%5level %message%n\n" +
+                "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[CONSOLE.TARGET]=test-warn\n");
         await().forever().until(future::isDone);
 
         assertFalse(log.isTraceEnabled());
@@ -217,13 +220,13 @@ public class ConsoleAppenderTest {
     public void testLoggerError() {
         ConsoleTarget.setUpMockConsole();
         MockDiamondServer.setUpMockServer();
-        val future = MockDiamondServer.updateDiamond("Logback", "test",
+        val future = MockDiamondServer.updateDiamond("Logback", "test", "" +
                 "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[DQL.LEVEL]=OFF\n" +
-                        "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[VERTX.LEVEL]=OFF\n" +
-                        "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[CONSOLE.LEVEL]=error\n" +
-                        "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[ADDITIVITY]=no\n" +
-                        "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[CONSOLE.PATTERN]=%5level %message%n\n" +
-                        "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[CONSOLE.TARGET]=test-error\n");
+                "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[VERTX.LEVEL]=OFF\n" +
+                "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[CONSOLE.LEVEL]=error\n" +
+                "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[ADDITIVITY]=no\n" +
+                "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[CONSOLE.PATTERN]=%5level %message%n\n" +
+                "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[CONSOLE.TARGET]=test-error\n");
         await().forever().until(future::isDone);
 
         assertFalse(log.isTraceEnabled());

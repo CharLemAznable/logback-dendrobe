@@ -24,7 +24,8 @@ public class DqlAppenderTest {
 
     private static final String DB0 = "db0";
     private static final String DB1 = "db1";
-    private static final String CREATE_TABLE_SIMPLE_LOG = "CREATE TABLE `SIMPLE_LOG` (" +
+    private static final String CREATE_TABLE_SIMPLE_LOG = "" +
+            "CREATE TABLE `SIMPLE_LOG` (" +
             "  `LOG_ID` BIGINT NOT NULL," +
             "  `LOG_CONTENT` TEXT," +
             "  `LOG_DATE` DATETIME," +
@@ -42,16 +43,16 @@ public class DqlAppenderTest {
     @BeforeAll
     public static void beforeAll() {
         MockDiamondServer.setUpMockServer();
-        MockDiamondServer.setConfigInfo("EqlConfig", DB0,
+        MockDiamondServer.setConfigInfo("EqlConfig", DB0, "" +
                 "driver=org.h2.Driver\n" +
-                        "url=jdbc:h2:mem:db0;DB_CLOSE_DELAY=-1;MODE=MySQL;DATABASE_TO_LOWER=TRUE\n" +
-                        "user=\n" +
-                        "password=\n");
-        MockDiamondServer.setConfigInfo("EqlConfig", DB1,
+                "url=jdbc:h2:mem:db0;DB_CLOSE_DELAY=-1;MODE=MySQL;DATABASE_TO_LOWER=TRUE\n" +
+                "user=\n" +
+                "password=\n");
+        MockDiamondServer.setConfigInfo("EqlConfig", DB1, "" +
                 "driver=org.h2.Driver\n" +
-                        "url=jdbc:h2:mem:db1;DB_CLOSE_DELAY=-1;MODE=MySQL;DATABASE_TO_LOWER=TRUE\n" +
-                        "user=\n" +
-                        "password=\n");
+                "url=jdbc:h2:mem:db1;DB_CLOSE_DELAY=-1;MODE=MySQL;DATABASE_TO_LOWER=TRUE\n" +
+                "user=\n" +
+                "password=\n");
 
         new Dql(DB0).execute("" +
                 CREATE_TABLE_SIMPLE_LOG);
@@ -71,15 +72,16 @@ public class DqlAppenderTest {
     @Test
     public void testDqlAppender() {
         val sql = "INSERT INTO SIMPLE_LOG (LOG_ID,LOG_CONTENT,LOG_DATE,LOG_DATE_TIME) VALUES(#event.westId#,CONCAT('(', #property.miner#, '|', #mdc.tenantId#, '|', #mdc.tenantCode#, ')', #event.message#, #event.exception#),CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP())";
-        val future = MockDiamondServer.updateDiamond("Logback", "test",
+        val future = MockDiamondServer.updateDiamond("Logback", "test", "" +
                 "context.property[miner]=test\n" +
-                        "root[dql.level]=info\n" +
-                        "root[dql.connection]=\n" +
-                        "com.github.charlemaznable.logback.miner.appender.DqlAppenderTest[additivity]=no\n" +
-                        "com.github.charlemaznable.logback.miner.appender.DqlAppenderTest[dql.level]=info\n" +
-                        "com.github.charlemaznable.logback.miner.appender.DqlAppenderTest[dql.connection]=" + DB0 + "\n" +
-                        "com.github.charlemaznable.logback.miner.appender.DqlAppenderTest[dql.sql]=" + sql + "\n" +
-                        "com.github.charlemaznable.logback.miner.appender.DqlAppenderTest[console.level]=off");
+                "root[dql.level]=info\n" +
+                "root[dql.connection]=\n" +
+                "com.github.charlemaznable.logback.miner.appender.DqlAppenderTest[additivity]=no\n" +
+                "com.github.charlemaznable.logback.miner.appender.DqlAppenderTest[dql.level]=info\n" +
+                "com.github.charlemaznable.logback.miner.appender.DqlAppenderTest[dql.connection]=" + DB0 + "\n" +
+                "com.github.charlemaznable.logback.miner.appender.DqlAppenderTest[dql.sql]=" + sql + "\n" +
+                "com.github.charlemaznable.logback.miner.appender.DqlAppenderTest[console.level]=off\n" +
+                "com.github.charlemaznable.logback.miner.appender.DqlAppenderTest[vertx.level]=off\n");
         await().forever().until(future::isDone);
 
         root.info("no db log");
@@ -108,7 +110,7 @@ public class DqlAppenderTest {
         root.info("simple log: {} >> actual ignored", simpleLog);
         self.info("simple log: {}", simpleLog);
 
-        await().forever().pollDelay(Duration.ofSeconds(3)).until(() -> {
+        await().timeout(Duration.ofSeconds(30)).pollDelay(Duration.ofSeconds(3)).until(() -> {
             List<Object> simpleLogs = new Dql(DB0).execute(SELECT_SIMPLE_LOGS);
             return 4 == simpleLogs.size();
         });

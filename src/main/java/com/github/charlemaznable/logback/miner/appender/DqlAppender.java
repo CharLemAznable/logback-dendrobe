@@ -1,30 +1,22 @@
 package com.github.charlemaznable.logback.miner.appender;
 
 import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.spi.CallerData;
 import ch.qos.logback.classic.spi.ILoggingEvent;
-import ch.qos.logback.classic.spi.ThrowableProxyUtil;
 import ch.qos.logback.core.Context;
-import ch.qos.logback.core.CoreConstants;
 import ch.qos.logback.core.UnsynchronizedAppenderBase;
 import ch.qos.logback.core.spi.FilterReply;
-import com.github.bingoohuang.westid.WestId;
 import com.github.charlemaznable.logback.miner.level.Effector;
 import lombok.Setter;
 import lombok.val;
 
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Date;
-import java.util.Map;
-import java.util.Objects;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.github.charlemaznable.logback.miner.appender.DqlCaches.LogbackBeanDqlCache.getLogbackBeanDql;
 import static com.github.charlemaznable.logback.miner.appender.DqlCaches.LogbackBeanPresentCache.isLogbackBeanPresent;
 import static com.github.charlemaznable.logback.miner.appender.DqlCaches.LogbackPojoSqlCache.getLogbackPojoSql;
 import static com.github.charlemaznable.logback.miner.appender.DqlCaches.LogbackSqlCache.useLogbackSql;
+import static com.github.charlemaznable.logback.miner.appender.LoggingEventElf.buildEventMap;
 import static com.google.common.collect.Maps.newHashMap;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -81,68 +73,6 @@ public class DqlAppender extends AsyncAppender {
 
     static class InternalAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
 
-        private static Map<String, Function<ILoggingEvent, String>> eventConverterMap = newHashMap();
-
-        static {
-            eventConverterMap.put("date", new Function<ILoggingEvent, String>() {
-                private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss,SSS");
-
-                @Override
-                public String apply(ILoggingEvent event) {
-                    return sdf.format(new Date(event.getTimeStamp()));
-                }
-            });
-            eventConverterMap.put("level", event -> event.getLevel().toString());
-            eventConverterMap.put("thread", ILoggingEvent::getThreadName);
-            eventConverterMap.put("logger", ILoggingEvent::getLoggerName);
-            eventConverterMap.put("message", ILoggingEvent::getFormattedMessage);
-            eventConverterMap.put("class", event -> {
-                val cda = event.getCallerData();
-                if (cda != null && cda.length > 0) {
-                    return cda[0].getClassName();
-                } else {
-                    return CallerData.NA;
-                }
-            });
-            eventConverterMap.put("method", event -> {
-                val cda = event.getCallerData();
-                if (cda != null && cda.length > 0) {
-                    return cda[0].getMethodName();
-                } else {
-                    return CallerData.NA;
-                }
-            });
-            eventConverterMap.put("line", event -> {
-                val cda = event.getCallerData();
-                if (cda != null && cda.length > 0) {
-                    return Integer.toString(cda[0].getLineNumber());
-                } else {
-                    return CallerData.NA;
-                }
-            });
-            eventConverterMap.put("file", event -> {
-                val cda = event.getCallerData();
-                if (cda != null && cda.length > 0) {
-                    return cda[0].getFileName();
-                } else {
-                    return CallerData.NA;
-                }
-            });
-            eventConverterMap.put("exception", event -> {
-                val tp = event.getThrowableProxy();
-                if (isNull(tp)) return "";
-                val builder = new StringBuilder().append(tp.getClassName()).append(": ")
-                        .append(tp.getMessage()).append(CoreConstants.LINE_SEPARATOR);
-                for (val step : tp.getStackTraceElementProxyArray()) {
-                    builder.append(CoreConstants.TAB).append(step.toString());
-                    ThrowableProxyUtil.subjoinPackagingData(builder, step);
-                    builder.append(CoreConstants.LINE_SEPARATOR);
-                }
-                return builder.toString();
-            });
-            eventConverterMap.put("westId", event -> Objects.toString(WestId.next()));
-        }
-
         @Setter
         private String dqlConnection;
         @Setter
@@ -155,7 +85,7 @@ public class DqlAppender extends AsyncAppender {
             try {
                 DqlExecuteWrapper.preExecute(eventObject);
                 // 公共参数, 包含event/mdc/ctx-property
-                val paramMap = buildParamMap(eventObject);
+                val paramMap = buildEventMap(eventObject);
 
                 val argumentArray = defaultIfNull(eventObject.getArgumentArray(), new Object[0]);
                 val arguments = Arrays.stream(argumentArray)
@@ -192,32 +122,6 @@ public class DqlAppender extends AsyncAppender {
             } finally {
                 DqlExecuteWrapper.afterExecute(eventObject);
             }
-        }
-
-        private Map<String, Object> buildParamMap(ILoggingEvent eventObject) {
-            Map<String, Object> paramMap = newHashMap();
-
-            Map<String, String> eventMap = newHashMap();
-            for (val eventEntry : eventConverterMap.entrySet()) {
-                eventMap.put(eventEntry.getKey(),
-                        eventEntry.getValue().apply(eventObject));
-            }
-            paramMap.put("event", eventMap);
-
-            Map<String, String> mdcMap = newHashMap();
-            for (val mdcEntry : eventObject.getMDCPropertyMap().entrySet()) {
-                mdcMap.put(mdcEntry.getKey(), mdcEntry.getValue());
-            }
-            paramMap.put("mdc", mdcMap);
-
-            Map<String, String> propMap = newHashMap();
-            for (val propEntry : eventObject.getLoggerContextVO().getPropertyMap().entrySet()) {
-                val key = propEntry.getKey();
-                propMap.put(key, defaultIfNull(propEntry.getValue(), System.getProperty(key)));
-            }
-            paramMap.put("property", propMap);
-
-            return paramMap;
         }
     }
 }

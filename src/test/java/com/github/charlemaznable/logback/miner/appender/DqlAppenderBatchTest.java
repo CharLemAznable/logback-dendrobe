@@ -27,7 +27,8 @@ public class DqlAppenderBatchTest {
     public final int TIMES = 1000;
 
     private static final String DBBatch = "db_batch";
-    private static final String CREATE_TABLE_SIMPLE_LOG = "CREATE TABLE `SIMPLE_LOG` (" +
+    private static final String CREATE_TABLE_SIMPLE_LOG = "" +
+            "CREATE TABLE `SIMPLE_LOG` (" +
             "  `LOG_ID` BIGINT NOT NULL," +
             "  `LOG_CONTENT` TEXT," +
             "  `LOG_DATE` DATETIME," +
@@ -37,11 +38,11 @@ public class DqlAppenderBatchTest {
     @BeforeAll
     public static void beforeAll() {
         MockDiamondServer.setUpMockServer();
-        MockDiamondServer.setConfigInfo("EqlConfig", DBBatch,
+        MockDiamondServer.setConfigInfo("EqlConfig", DBBatch, "" +
                 "driver=org.h2.Driver\n" +
-                        "url=jdbc:h2:mem:db_batch;DB_CLOSE_DELAY=-1;MODE=MySQL;DATABASE_TO_LOWER=TRUE\n" +
-                        "user=\n" +
-                        "password=\n");
+                "url=jdbc:h2:mem:db_batch;DB_CLOSE_DELAY=-1;MODE=MySQL;DATABASE_TO_LOWER=TRUE\n" +
+                "user=\n" +
+                "password=\n");
 
         new Dql(DBBatch).execute("" +
                 CREATE_TABLE_SIMPLE_LOG);
@@ -86,13 +87,15 @@ public class DqlAppenderBatchTest {
 
     @Test
     public void testDqlAppenderBatch() {
-        val future = MockDiamondServer.updateDiamond("Logback", "test",
+        val future = MockDiamondServer.updateDiamond("Logback", "test", "" +
                 "eql[console.level]=off\norg.n3r.eql[console.level]=off\n" +
-                        "com.github.charlemaznable.logback.miner.appender.DqlAppenderBatchTest[additivity]=no\n" +
-                        "com.github.charlemaznable.logback.miner.appender.DqlAppenderBatchTest[level]=info\n" +
-                        "com.github.charlemaznable.logback.miner.appender.DqlAppenderBatchTest[dql.connection]=" + DBBatch + "\n" +
-                        "com.github.charlemaznable.logback.miner.appender.DqlAppenderBatchTest[console.level]=off\n" +
-                        "com.github.charlemaznable.logback.miner.appender.DqlAppenderBatchTest[console.target]=error\n");
+                "com.github.charlemaznable.logback.miner.appender.DqlAppenderBatchTest[additivity]=no\n" +
+                "com.github.charlemaznable.logback.miner.appender.DqlAppenderBatchTest[level]=info\n" +
+                "com.github.charlemaznable.logback.miner.appender.DqlAppenderBatchTest[dql.connection]=" + DBBatch + "\n" +
+                "com.github.charlemaznable.logback.miner.appender.DqlAppenderBatchTest[console.level]=off\n" +
+                "com.github.charlemaznable.logback.miner.appender.DqlAppenderBatchTest[console.target]=error\n" +
+                "com.github.charlemaznable.logback.miner.appender.DqlAppenderBatchTest[vertx.level]=off\n" +
+                "com.github.charlemaznable.logback.miner.appender.DqlAppenderBatchTest[vertx.name]=error\n");
         await().forever().until(future::isDone);
 
         val threadCount = getRuntime().availableProcessors() + 1;
