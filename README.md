@@ -113,7 +113,3 @@ context.property[property-name]=property-value
   * 可使用```VertxManager#putExternalVertx```方法配置自定义的Vertx实例, 需自行控制自定义Vertx实例的生命周期.
   * 可使用```VertxManager#getVertx```方法获取指定标识的Vertx实例.
   * 日志事件消息的接收端处理器类型为```io.vertx.core.Handler<io.vertx.core.eventbus.Message<io.vertx.core.json.JsonObject>>```, 其中JsonObject包含```event```, ```mdc```和```property```三个子JsonObject.
-
-#### 待开发功能
-
-1. 使用Vert.x Event Bus实现集群化日志收集
