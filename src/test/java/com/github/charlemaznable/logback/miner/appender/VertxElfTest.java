@@ -2,6 +2,7 @@ package com.github.charlemaznable.logback.miner.appender;
 
 import com.hazelcast.config.Config;
 import com.hazelcast.core.HazelcastInstance;
+import io.vertx.core.VertxOptions;
 import io.vertx.spi.cluster.hazelcast.ConfigUtil;
 import io.vertx.spi.cluster.hazelcast.HazelcastClusterManager;
 import lombok.val;
@@ -12,12 +13,14 @@ import org.n3r.diamond.client.impl.MockDiamondServer;
 
 import java.util.concurrent.TimeUnit;
 
+import static com.github.charlemaznable.logback.miner.appender.VertxElf.buildVertx;
 import static com.github.charlemaznable.logback.miner.appender.VertxElf.closeVertx;
 import static com.github.charlemaznable.logback.miner.appender.VertxElf.closeVertxQuietly;
 import static com.github.charlemaznable.logback.miner.appender.VertxManager.VERTX_CONFIG_GROUP_NAME;
 import static com.github.charlemaznable.logback.miner.appender.VertxElf.parseStoneToVertxOptions;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -52,6 +55,10 @@ public class VertxElfTest {
         assertTrue(vertxOptions.getClusterManager() instanceof CustomHazelcastClusterManager);
         val hazelcastClusterManager = (CustomHazelcastClusterManager) vertxOptions.getClusterManager();
         assertNotNull(hazelcastClusterManager.getConfig());
+
+        val vertx = buildVertx(new VertxOptions());
+        assertFalse(vertx.isClustered());
+        closeVertxQuietly(vertx);
 
         assertDoesNotThrow(() -> closeVertxQuietly(null));
         assertDoesNotThrow(() -> closeVertx(null));
