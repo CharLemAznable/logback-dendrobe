@@ -78,7 +78,7 @@
         <slf4j-api.version>1.7.30</slf4j-api.version>
         <logback.version>1.2.3</logback.version>
         <diamond-client.version>0.0.22</diamond-client.version>
-        <annotations.version>19.0.0</annotations.version>
+        <annotations.version>20.1.0</annotations.version>
         <auto-service.version>1.0-rc7</auto-service.version>
         <eql.version>0.1.13</eql.version>
         <druid.version>1.1.23</druid.version>
@@ -88,13 +88,13 @@
 
         <lombok.version>1.18.12</lombok.version>
 
-        <junit-jupiter.version>5.6.2</junit-jupiter.version>
+        <junit-jupiter.version>5.7.0</junit-jupiter.version>
         <jmockit.version>1.49</jmockit.version>
         <awaitility.version>4.0.3</awaitility.version>
         <h2.version>1.4.200</h2.version>
         <joda-time.version>2.10.6</joda-time.version>
 
-        <maven-resources-plugin.version>3.1.0</maven-resources-plugin.version>
+        <maven-resources-plugin.version>3.2.0</maven-resources-plugin.version>
         <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
         <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
         <jacoco-maven-plugin.version>0.8.5</jacoco-maven-plugin.version>
