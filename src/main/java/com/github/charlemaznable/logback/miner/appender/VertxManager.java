@@ -30,11 +30,18 @@ public final class VertxManager {
         eventBus.register(new Object() {
             @Subscribe
             public void configVertx(String vertxName) {
+                // 内部配置的vertx
                 val configStone = new Miner().getStone(
                         VERTX_CONFIG_GROUP_NAME, vertxName);
                 if (isNull(configStone)) {
-                    // 不存在对应的diamond配置 -> 移除配置缓存, 移除vertx实例并关闭
-                    vertxConfigs.remove(vertxName);
+                    // 不存在对应的diamond配置
+                    // 移除配置缓存
+                    val previousConfig = vertxConfigs.remove(vertxName);
+                    // 缓存不存在, 表示之前的vertx为外部导入的vertx, 则直接返回
+                    if (isNull(previousConfig)) return;
+                    // 缓存存在, 表示之前的vertx为内部配置的vertx
+                    // 则此处需要移除此内部配置的vertx
+                    // 移除内部配置的vertx实例并关闭
                     val previous = vertxs.remove(vertxName);
                     if (nonNull(previous)) previous.close();
                     return;
@@ -44,6 +51,8 @@ public final class VertxManager {
                 if (configStone.equals(vertxConfigs.get(vertxName))) return;
                 // 校验配置
                 val vertxOptions = parseStoneToVertxOptions(configStone);
+                // 不论之前的vertx是内部配置的还是外部导入的
+                // 此处都需要以当前的内部配置vertx覆盖之
                 // 保存配置缓存
                 vertxConfigs.put(vertxName, configStone);
                 // 移除之前的vertx实例并同步关闭
@@ -56,8 +65,10 @@ public final class VertxManager {
             @Subscribe
             public void configVertx(ExternalVertx externalVertx) {
                 val vertxName = externalVertx.getVertxName();
+                // 不论之前的vertx是内部配置的还是外部导入的
+                // 此处都需要以当前的外部导入vertx覆盖之
                 // 清除同名配置缓存
-                vertxConfigs.put(vertxName, null);
+                vertxConfigs.remove(vertxName);
                 // 移除之前的vertx实例并同步关闭
                 val previous = vertxs.remove(vertxName);
                 if (nonNull(previous)) closeVertx(previous);
