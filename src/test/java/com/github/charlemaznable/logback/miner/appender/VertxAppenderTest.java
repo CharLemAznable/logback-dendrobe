@@ -9,12 +9,16 @@ import lombok.val;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.n3r.diamond.client.DiamondAxis;
 import org.n3r.diamond.client.impl.MockDiamondServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
+import static com.google.common.collect.Maps.newHashMap;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.awaitility.Awaitility.await;
@@ -57,7 +61,7 @@ public class VertxAppenderTest {
     public void testVertxAppender() {
         MockDiamondServer.setUpMockServer();
 
-        // 1. default
+        // 1. 内部配置, 从无到有
         MockDiamondServer.setConfigInfo("VertxConfig", "DEFAULT", "" +
                 "workerPoolSize=42\n" +
                 "eventBusOptions.clustered=on\n");
@@ -81,7 +85,7 @@ public class VertxAppenderTest {
         self.info("self vertx log");
         await().untilAsserted(() -> assertEquals("self vertx log", lastEventMessage));
 
-        // 2. reload, vertx config not change
+        // 2. 内部配置, VertxConfig未更改
         val future2 = MockDiamondServer.updateDiamond("Logback", "test", "" +
                 "root[console.level]=info\n" +
                 "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[additivity]=no\n" +
@@ -94,7 +98,7 @@ public class VertxAppenderTest {
 
         assertNotNull(VertxManager.getVertx("DEFAULT"));
 
-        // 3. reload, vertx config changed: close previous and new instance
+        // 3. 内部配置, VertxConfig更改
         MockDiamondServer.setConfigInfo("VertxConfig", "DEFAULT", "" +
                 "workerPoolSize=24\n" +
                 "eventBusOptions.clustered=on\n");
@@ -119,19 +123,81 @@ public class VertxAppenderTest {
         self.info("self vertx log new");
         await().untilAsserted(() -> assertEquals("self vertx log new", lastEventMessage));
 
-        // 4. put from external, close previous
-        VertxManager.putExternalVertx("DEFAULT", vertx);
+        // 4. 内部配置, VertxConfig删除
+        ConcurrentHashMap<DiamondAxis, String> mocks = on(MockDiamondServer.class).field("mocks").get();
+        mocks.remove(DiamondAxis.makeAxis("VertxConfig", "DEFAULT"));
+        val future4 = MockDiamondServer.updateDiamond("Logback", "test", "" +
+                "root[console.level]=info\n" +
+                "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[additivity]=no\n" +
+                "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.level]=info\n" +
+                "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.address]=logback.miner\n" +
+                "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.name]=DEFAULT\n" +
+                "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[console.level]=off\n" +
+                "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[dql.level]=off\n");
+        await().forever().until(future4::isDone);
 
-        await().timeout(Duration.ofSeconds(20)).until(() -> {
-            val vertx = VertxManager.getVertx("DEFAULT");
-            if (isNull(vertx)) return false;
+        await().until(() -> isNull(VertxManager.getVertx("DEFAULT")));
 
-            int defaultWorkerPoolSize = on(vertx).field("defaultWorkerPoolSize").get();
-            return 10 == defaultWorkerPoolSize;
-        });
-        root.info("root vertx log ex");
-        self.info("self vertx log ex");
-        await().untilAsserted(() -> assertEquals("self vertx log ex", lastEventMessage));
+        MockDiamondServer.tearDownMockServer();
+    }
+
+    @Test
+    public void testVertxAppenderExternal() {
+        MockDiamondServer.setUpMockServer();
+
+        val future1 = MockDiamondServer.updateDiamond("Logback", "test", "" +
+                "root[console.level]=info\n" +
+                "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[additivity]=no\n" +
+                "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.level]=info\n" +
+                "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.name]=CUSTOM\n" +
+                "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.address]=logback.miner\n" +
+                "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[console.level]=off\n" +
+                "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[dql.level]=off\n");
+        await().forever().until(future1::isDone);
+
+        // 1. 外部导入, 从无到有
+        val vertxOptions = new VertxOptions();
+        vertxOptions.setWorkerPoolSize(42);
+        vertxOptions.getEventBusOptions().setClustered(true);
+        val vertx = VertxElf.buildVertx(vertxOptions);
+        VertxManager.putExternalVertx("CUSTOM", vertx);
+
+        if (isNull(VertxManager.getVertx("CUSTOM"))) {
+            root.info("none vertx log");
+            self.info("none vertx log");
+        }
+
+        await().until(() -> nonNull(VertxManager.getVertx("CUSTOM")));
+        root.info("root vertx log custom");
+        self.info("self vertx log custom");
+        await().untilAsserted(() -> assertEquals("self vertx log custom", lastEventMessage));
+
+        // 2. 重新加载, 不影响外部导入
+        val future2 = MockDiamondServer.updateDiamond("Logback", "test", "" +
+                "root[console.level]=info\n" +
+                "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[additivity]=no\n" +
+                "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.level]=info\n" +
+                "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.address]=logback.miner\n" +
+                "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.name]=CUSTOM\n" +
+                "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[console.level]=off\n" +
+                "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[dql.level]=off\n");
+        await().forever().until(future2::isDone);
+
+        await().pollDelay(Duration.ofSeconds(5)).until(() -> true);
+        root.info("root vertx log reload");
+        self.info("self vertx log reload");
+        await().untilAsserted(() -> assertEquals("self vertx log reload", lastEventMessage));
+
+        // 3. 清除外部导入, 不影响vertx实例运行
+        VertxManager.putExternalVertx("CUSTOM", null);
+
+        await().until(() -> isNull(VertxManager.getVertx("CUSTOM")));
+        Map<String, String> messageMap = newHashMap();
+        messageMap.put("message", "external message");
+        Map<String, Object> eventMap = newHashMap();
+        eventMap.put("event", messageMap);
+        vertx.eventBus().publish("logback.miner", new JsonObject(eventMap));
+        await().untilAsserted(() -> assertEquals("external message", lastEventMessage));
 
         MockDiamondServer.tearDownMockServer();
     }

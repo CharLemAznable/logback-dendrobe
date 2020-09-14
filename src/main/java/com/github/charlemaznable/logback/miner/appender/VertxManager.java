@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.val;
 import org.n3r.diamond.client.Miner;
 
+import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -37,7 +38,7 @@ public final class VertxManager {
                     // 不存在对应的diamond配置
                     // 移除配置缓存
                     val previousConfig = vertxConfigs.remove(vertxName);
-                    // 缓存不存在, 表示之前的vertx为外部导入的vertx, 则直接返回
+                    // 缓存不存在, 表示之前的vertx不存在/为外部导入的vertx, 则直接返回
                     if (isNull(previousConfig)) return;
                     // 缓存存在, 表示之前的vertx为内部配置的vertx
                     // 则此处需要移除此内部配置的vertx
@@ -54,10 +55,12 @@ public final class VertxManager {
                 // 不论之前的vertx是内部配置的还是外部导入的
                 // 此处都需要以当前的内部配置vertx覆盖之
                 // 保存配置缓存
-                vertxConfigs.put(vertxName, configStone);
+                val previousConfig = vertxConfigs.put(vertxName, configStone);
                 // 移除之前的vertx实例并同步关闭
                 val previous = vertxs.remove(vertxName);
-                if (nonNull(previous)) closeVertx(previous);
+                // 缓存存在, 表示之前的vertx为内部配置的vertx
+                // 则此处需要同步关闭, 否则对外部导入的vertx不做操作
+                if (nonNull(previousConfig) && nonNull(previous)) closeVertx(previous);
                 // 同步新建vertx实例并加入
                 vertxs.put(vertxName, buildVertx(vertxOptions));
             }
@@ -68,12 +71,15 @@ public final class VertxManager {
                 // 不论之前的vertx是内部配置的还是外部导入的
                 // 此处都需要以当前的外部导入vertx覆盖之
                 // 清除同名配置缓存
-                vertxConfigs.remove(vertxName);
-                // 移除之前的vertx实例并同步关闭
+                val previousConfig = vertxConfigs.remove(vertxName);
+                // 移除之前的vertx实例
                 val previous = vertxs.remove(vertxName);
-                if (nonNull(previous)) closeVertx(previous);
+                // 缓存存在, 表示之前的vertx为内部配置的vertx
+                // 则此处需要同步关闭, 否则对外部导入的vertx不做操作
+                if (nonNull(previousConfig) && nonNull(previous)) closeVertx(previous);
                 // 加入新的vertx实例
-                vertxs.put(vertxName, externalVertx.getVertx());
+                val vertx = externalVertx.getVertx();
+                if (nonNull(vertx)) vertxs.put(vertxName, vertx);
             }
         });
     }
@@ -83,8 +89,8 @@ public final class VertxManager {
         return vertxs.get(vertxName);
     }
 
-    public static void putExternalVertx(String vertxName, Vertx vertx) {
-        if (isNull(vertxName) || isNull(vertx)) return;
+    public static void putExternalVertx(String vertxName, @Nullable Vertx vertx) {
+        if (isNull(vertxName)) return;
         eventBus.post(new ExternalVertx(vertxName, vertx));
     }
 
