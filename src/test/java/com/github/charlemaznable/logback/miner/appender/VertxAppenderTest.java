@@ -23,8 +23,10 @@ import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.awaitility.Awaitility.await;
 import static org.joor.Reflect.on;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class VertxAppenderTest {
 
@@ -199,6 +201,87 @@ public class VertxAppenderTest {
         vertx.eventBus().publish("logback.miner", new JsonObject(eventMap));
         await().untilAsserted(() -> assertEquals("external message", lastEventMessage));
 
+        VertxElf.closeVertx(vertx);
+
         MockDiamondServer.tearDownMockServer();
+    }
+
+    @Test
+    public void testVertxAppenderCross() {
+        MockDiamondServer.setUpMockServer();
+
+        // 1. 内部配置转外部导入
+        MockDiamondServer.setConfigInfo("VertxConfig", "CROSS", "" +
+                "workerPoolSize=42\n" +
+                "eventBusOptions.clustered=on\n");
+        val future1 = MockDiamondServer.updateDiamond("Logback", "test", "" +
+                "root[console.level]=info\n" +
+                "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[additivity]=no\n" +
+                "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.level]=info\n" +
+                "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.name]=CROSS\n" +
+                "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.address]=logback.miner\n" +
+                "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[console.level]=off\n" +
+                "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[dql.level]=off\n");
+        await().forever().until(future1::isDone);
+
+        await().until(() -> nonNull(VertxManager.getVertx("CROSS")));
+        root.info("root vertx log cross internal");
+        self.info("self vertx log cross internal");
+        await().untilAsserted(() -> assertEquals("self vertx log cross internal", lastEventMessage));
+
+        val vertxOptions = new VertxOptions();
+        vertxOptions.setWorkerPoolSize(24);
+        vertxOptions.getEventBusOptions().setClustered(true);
+        val vertx = VertxElf.buildVertx(vertxOptions);
+        VertxManager.putExternalVertx("CROSS", vertx);
+
+        await().timeout(Duration.ofSeconds(20)).until(() -> {
+            val vertxTemp = VertxManager.getVertx("CROSS");
+            if (isNull(vertxTemp)) return false;
+
+            int defaultWorkerPoolSize = on(vertxTemp).field("defaultWorkerPoolSize").get();
+            return 24 == defaultWorkerPoolSize;
+        });
+        root.info("root vertx log cross external");
+        self.info("self vertx log cross external");
+        await().untilAsserted(() -> assertEquals("self vertx log cross external", lastEventMessage));
+
+        // 2. 重新加载, 外部导入被内部配置覆盖
+        val future2 = MockDiamondServer.updateDiamond("Logback", "test", "" +
+                "root[console.level]=info\n" +
+                "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[additivity]=no\n" +
+                "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.level]=info\n" +
+                "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.address]=logback.miner\n" +
+                "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.name]=CROSS\n" +
+                "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[console.level]=off\n" +
+                "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[dql.level]=off\n");
+        await().forever().until(future2::isDone);
+
+        await().timeout(Duration.ofSeconds(20)).until(() -> {
+            val vertxTemp = VertxManager.getVertx("CROSS");
+            if (isNull(vertxTemp)) return false;
+
+            int defaultWorkerPoolSize = on(vertxTemp).field("defaultWorkerPoolSize").get();
+            return 42 == defaultWorkerPoolSize;
+        });
+        root.info("root vertx log cross internal2");
+        self.info("self vertx log cross internal2");
+        await().untilAsserted(() -> assertEquals("self vertx log cross internal2", lastEventMessage));
+
+        // 3. 外部导入不受影响
+        Map<String, String> messageMap = newHashMap();
+        messageMap.put("message", "external message");
+        Map<String, Object> eventMap = newHashMap();
+        eventMap.put("event", messageMap);
+        vertx.eventBus().publish("logback.miner", new JsonObject(eventMap));
+        await().untilAsserted(() -> assertEquals("external message", lastEventMessage));
+
+        MockDiamondServer.tearDownMockServer();
+    }
+
+    @Test
+    public void testVertxAppenderCoverage() {
+        assertNull(VertxManager.getVertx(null));
+        assertDoesNotThrow(() -> VertxManager.putExternalVertx(null, null));
     }
 }
