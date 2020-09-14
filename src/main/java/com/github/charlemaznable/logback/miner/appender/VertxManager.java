@@ -14,6 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static com.github.charlemaznable.logback.miner.appender.VertxElf.buildVertx;
 import static com.github.charlemaznable.logback.miner.appender.VertxElf.closeVertx;
+import static com.github.charlemaznable.logback.miner.appender.VertxElf.closeVertxQuietly;
 import static com.github.charlemaznable.logback.miner.appender.VertxElf.parseStoneToVertxOptions;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -43,8 +44,7 @@ public final class VertxManager {
                     // 缓存存在, 表示之前的vertx为内部配置的vertx
                     // 则此处需要移除此内部配置的vertx
                     // 移除内部配置的vertx实例并关闭
-                    val previous = vertxs.remove(vertxName);
-                    if (nonNull(previous)) previous.close();
+                    closeVertxQuietly(vertxs.remove(vertxName));
                     return;
                 }
 
@@ -56,11 +56,11 @@ public final class VertxManager {
                 // 此处都需要以当前的内部配置vertx覆盖之
                 // 保存配置缓存
                 val previousConfig = vertxConfigs.put(vertxName, configStone);
-                // 移除之前的vertx实例并同步关闭
+                // 移除之前的vertx实例
                 val previous = vertxs.remove(vertxName);
                 // 缓存存在, 表示之前的vertx为内部配置的vertx
-                // 则此处需要同步关闭, 否则对外部导入的vertx不做操作
-                if (nonNull(previousConfig) && nonNull(previous)) closeVertx(previous);
+                // 则此处需要同步关闭, 对外部导入的vertx不做操作
+                if (nonNull(previousConfig)) closeVertx(previous);
                 // 同步新建vertx实例并加入
                 vertxs.put(vertxName, buildVertx(vertxOptions));
             }
@@ -75,8 +75,8 @@ public final class VertxManager {
                 // 移除之前的vertx实例
                 val previous = vertxs.remove(vertxName);
                 // 缓存存在, 表示之前的vertx为内部配置的vertx
-                // 则此处需要同步关闭, 否则对外部导入的vertx不做操作
-                if (nonNull(previousConfig) && nonNull(previous)) closeVertx(previous);
+                // 则此处需要同步关闭, 对外部导入的vertx不做操作
+                if (nonNull(previousConfig)) closeVertx(previous);
                 // 加入新的vertx实例
                 val vertx = externalVertx.getVertx();
                 if (nonNull(vertx)) vertxs.put(vertxName, vertx);

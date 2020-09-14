@@ -12,6 +12,7 @@ import org.slf4j.helpers.Util;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
+import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.equalsAnyIgnoreCase;
 import static org.n3r.diamond.client.impl.DiamondUtils.parseObject;
 import static org.n3r.diamond.client.impl.DiamondUtils.parseStoneToProperties;
@@ -38,8 +39,15 @@ class VertxElf {
         }
     }
 
+    static void closeVertxQuietly(Vertx vertx) {
+        if (isNull(vertx)) return;
+        vertx.close();
+    }
+
     @SneakyThrows
     static void closeVertx(Vertx vertx) {
+        if (isNull(vertx)) return;
+
         val completableFuture = new CompletableFuture<Void>();
         vertx.close(asyncResult -> {
             if (asyncResult.failed()) {

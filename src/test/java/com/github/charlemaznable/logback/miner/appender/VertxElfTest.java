@@ -12,8 +12,11 @@ import org.n3r.diamond.client.impl.MockDiamondServer;
 
 import java.util.concurrent.TimeUnit;
 
+import static com.github.charlemaznable.logback.miner.appender.VertxElf.closeVertx;
+import static com.github.charlemaznable.logback.miner.appender.VertxElf.closeVertxQuietly;
 import static com.github.charlemaznable.logback.miner.appender.VertxManager.VERTX_CONFIG_GROUP_NAME;
 import static com.github.charlemaznable.logback.miner.appender.VertxElf.parseStoneToVertxOptions;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -49,6 +52,9 @@ public class VertxElfTest {
         assertTrue(vertxOptions.getClusterManager() instanceof CustomHazelcastClusterManager);
         val hazelcastClusterManager = (CustomHazelcastClusterManager) vertxOptions.getClusterManager();
         assertNotNull(hazelcastClusterManager.getConfig());
+
+        assertDoesNotThrow(() -> closeVertxQuietly(null));
+        assertDoesNotThrow(() -> closeVertx(null));
 
         MockDiamondServer.tearDownMockServer();
     }
