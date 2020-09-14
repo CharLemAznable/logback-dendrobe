@@ -79,6 +79,11 @@ context.property[property-name]=property-value
 
 {root-or-class-name-or-package-name}[dql.level]=info
 {root-or-class-name-or-package-name}[dql.connection]=DEFAULT
+{root-or-class-name-or-package-name}[dql.sql]=
+
+{root-or-class-name-or-package-name}[vertx.level]=info
+{root-or-class-name-or-package-name}[vertx.name]=
+{root-or-class-name-or-package-name}[vertx.address]={root-or-class-name-or-package-name}
 ```
 
 可在本地配置文件```logback-miner.properties```内添加同名配置, 作为默认配置, 优先级低于diamond配置.
@@ -90,6 +95,7 @@ context.property[property-name]=property-value
   * ```[level]```配置: 设置默认日志级别.
   * ```[console.level]```配置: 设置控制台输出日志级别, 覆盖当前日志的默认日志级别.
   * ```[dql.level]```配置: 设置数据库插入日志级别, 覆盖当前日志的默认日志级别.
+  * ```[vertx.level]```配置: 设置VertxEventBus日志级别, 覆盖当前日志的默认日志级别.
   * 控制台输出日志/数据库插入日志级别未设置时, 优先使用当前日志的默认日志级别, 若未设置默认日志级别, 则使用父级日志的对应日志级别.
 
 2. 日志参数Bean注解
@@ -99,6 +105,14 @@ context.property[property-name]=property-value
   * 日志参数Bean默认插入的日志表名为类名的下划线格式, e.g. ```class TestLog```插入表```table TEST_LOG```, 可使用```@LogbackTable```注解另行指定.
   * 日志参数Bean默认插入的日志字段为类型声明的非静态字段, 列名为字段名的下划线格式, 可使用```@LogbackColumn```注解另行指定, 或使用```@LogbackSkip```注解指定排除.
   * 可使用```@LogbackSql```注解另行指定插入日志的```sqlFile```和```sqlId```, 默认为当前类型的```[log{类名}]```.
+
+3. VertxEventBus 日志事件总线
+
+  * ```[vertx.name]```配置Vertx实例标识, 如果存在```diamond group:VertxConfig dataId:[vertx.name]```配置, 则自动加载并初始化Vertx实例用于发送日志事件消息.
+  * ```[vertx.address]```配置日志事件消息发送的地址.
+  * 可使用```VertxManager#putExternalVertx```方法配置自定义的Vertx实例, 需自行控制自定义Vertx实例的生命周期.
+  * 可使用```VertxManager#getVertx```方法获取指定标识的Vertx实例.
+  * 日志事件消息的接收端处理器类型为```io.vertx.core.Handler<io.vertx.core.eventbus.Message<io.vertx.core.json.JsonObject>>```, 其中JsonObject包含```event```, ```mdc```和```property```三个子JsonObject.
 
 #### 待开发功能
 
