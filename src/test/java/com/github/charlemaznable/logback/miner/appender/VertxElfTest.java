@@ -6,9 +6,11 @@ import io.vertx.core.VertxOptions;
 import io.vertx.spi.cluster.hazelcast.ConfigUtil;
 import io.vertx.spi.cluster.hazelcast.HazelcastClusterManager;
 import lombok.val;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.n3r.diamond.client.Miner;
 import org.n3r.diamond.client.cache.ParamsAppliable;
+import org.n3r.diamond.client.impl.DiamondSubscriber;
 import org.n3r.diamond.client.impl.MockDiamondServer;
 
 import java.util.concurrent.TimeUnit;
@@ -16,8 +18,10 @@ import java.util.concurrent.TimeUnit;
 import static com.github.charlemaznable.logback.miner.appender.VertxElf.buildVertx;
 import static com.github.charlemaznable.logback.miner.appender.VertxElf.closeVertx;
 import static com.github.charlemaznable.logback.miner.appender.VertxElf.closeVertxQuietly;
-import static com.github.charlemaznable.logback.miner.appender.VertxManager.VERTX_CONFIG_GROUP_NAME;
 import static com.github.charlemaznable.logback.miner.appender.VertxElf.parseStoneToVertxOptions;
+import static com.github.charlemaznable.logback.miner.appender.VertxManager.VERTX_CONFIG_GROUP_NAME;
+import static java.util.Objects.nonNull;
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -26,6 +30,12 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class VertxElfTest {
+
+    @BeforeAll
+    public static void beforeAll() {
+        await().forever().until(() -> nonNull(
+                DiamondSubscriber.getInstance().getDiamondRemoteChecker()));
+    }
 
     @Test
     public void testVertxOptionsElf() {

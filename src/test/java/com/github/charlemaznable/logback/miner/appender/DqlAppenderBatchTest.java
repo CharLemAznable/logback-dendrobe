@@ -10,6 +10,7 @@ import lombok.val;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.n3r.diamond.client.impl.DiamondSubscriber;
 import org.n3r.diamond.client.impl.MockDiamondServer;
 import org.n3r.eql.diamond.Dql;
 
@@ -18,6 +19,7 @@ import java.util.Date;
 import static java.lang.Runtime.getRuntime;
 import static java.lang.System.currentTimeMillis;
 import static java.time.Duration.ofMillis;
+import static java.util.Objects.nonNull;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -37,6 +39,8 @@ public class DqlAppenderBatchTest {
 
     @BeforeAll
     public static void beforeAll() {
+        await().forever().until(() -> nonNull(
+                DiamondSubscriber.getInstance().getDiamondRemoteChecker()));
         MockDiamondServer.setUpMockServer();
         MockDiamondServer.setConfigInfo("EqlConfig", DBBatch, "" +
                 "driver=org.h2.Driver\n" +

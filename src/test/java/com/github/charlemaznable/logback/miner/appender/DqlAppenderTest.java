@@ -5,6 +5,7 @@ import org.joda.time.DateTime;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.n3r.diamond.client.impl.DiamondSubscriber;
 import org.n3r.diamond.client.impl.MockDiamondServer;
 import org.n3r.eql.diamond.Dql;
 import org.n3r.eql.mtcp.MtcpContext;
@@ -42,6 +43,8 @@ public class DqlAppenderTest {
 
     @BeforeAll
     public static void beforeAll() {
+        await().forever().until(() -> nonNull(
+                DiamondSubscriber.getInstance().getDiamondRemoteChecker()));
         MockDiamondServer.setUpMockServer();
         MockDiamondServer.setConfigInfo("EqlConfig", DB0, "" +
                 "driver=org.h2.Driver\n" +

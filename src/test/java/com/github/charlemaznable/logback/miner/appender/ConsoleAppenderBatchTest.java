@@ -3,12 +3,15 @@ package com.github.charlemaznable.logback.miner.appender;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.n3r.diamond.client.impl.DiamondSubscriber;
 import org.n3r.diamond.client.impl.MockDiamondServer;
 
 import static java.lang.Runtime.getRuntime;
 import static java.lang.System.currentTimeMillis;
 import static java.time.Duration.ofMillis;
+import static java.util.Objects.nonNull;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -16,6 +19,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class ConsoleAppenderBatchTest {
 
     public final int TIMES = 1000;
+
+    @BeforeAll
+    public static void beforeAll() {
+        await().forever().until(() -> nonNull(
+                DiamondSubscriber.getInstance().getDiamondRemoteChecker()));
+    }
 
     @SneakyThrows
     public void batchRun(int times) {

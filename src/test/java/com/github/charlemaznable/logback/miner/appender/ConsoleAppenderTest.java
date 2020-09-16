@@ -2,11 +2,14 @@ package com.github.charlemaznable.logback.miner.appender;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.n3r.diamond.client.impl.DiamondSubscriber;
 import org.n3r.diamond.client.impl.MockDiamondServer;
 
 import java.time.Duration;
 
+import static java.util.Objects.nonNull;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -15,6 +18,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Slf4j
 public class ConsoleAppenderTest {
+
+    @BeforeAll
+    public static void beforeAll() {
+        await().forever().until(() -> nonNull(
+                DiamondSubscriber.getInstance().getDiamondRemoteChecker()));
+    }
 
     @Test
     public void testConsoleAppender() {
