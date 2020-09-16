@@ -8,6 +8,7 @@ import com.github.charlemaznable.logback.miner.configurator.Configurator;
 import com.github.charlemaznable.logback.miner.level.EffectorContext;
 import com.github.charlemaznable.logback.miner.level.EffectorTurboFilter;
 import com.google.common.base.Splitter;
+import lombok.Getter;
 import lombok.val;
 import org.n3r.diamond.client.DiamondAxis;
 import org.n3r.diamond.client.DiamondListener;
@@ -58,6 +59,9 @@ public class LogbackMinerDiamondListener implements DiamondListener, LoggerConte
     private EffectorContext effectorContext;
     private EffectorTurboFilter effectorTurboFilter;
 
+    @Getter
+    private volatile boolean listening;
+
     static {
         configurators = ServiceLoader.load(Configurator.class);
     }
@@ -70,12 +74,14 @@ public class LogbackMinerDiamondListener implements DiamondListener, LoggerConte
         // 本地配置diamond配置坐标
         val group = this.defaultConfig.getProperty(DIAMOND_GROUP_KEY, DEFAULT_GROUP);
         val dataId = this.defaultConfig.getProperty(DIAMOND_DATA_ID_KEY, DEFAULT_DATA_ID);
+
         // diamond配置覆盖默认配置
         this.minerConfig.putAll(rebuildProperties(
                 new Miner(group).getProperties(dataId)));
 
         DiamondSubscriber.getInstance().addDiamondListener(
                 DiamondAxis.makeAxis(group, dataId), this);
+        this.listening = true;
     }
 
     @Override
@@ -167,6 +173,8 @@ public class LogbackMinerDiamondListener implements DiamondListener, LoggerConte
             loggerContext.setMaxCallerDataDepth(DEFAULT_MAX_CALLEDER_DATA_DEPTH);
             loggerContext.getFrameworkPackages().clear();
             loggerContext.reset();
+            // LogbackLoggingSystem#markAsInitialized
+            loggerContext.putObject(SPRING_BOOT_LOGGING_SYSTEM, new Object());
         }
     }
 

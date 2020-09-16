@@ -85,7 +85,8 @@ public class VertxAppenderTest {
         await().until(() -> nonNull(VertxManager.getVertx("DEFAULT")));
         root.info("root vertx log");
         self.info("self vertx log");
-        await().untilAsserted(() -> assertEquals("self vertx log", lastEventMessage));
+        await().timeout(Duration.ofSeconds(20)).untilAsserted(() ->
+                assertEquals("self vertx log", lastEventMessage));
 
         // 2. 内部配置, VertxConfig未更改
         val future2 = MockDiamondServer.updateDiamond("Logback", "test", "" +
@@ -123,7 +124,8 @@ public class VertxAppenderTest {
         });
         root.info("root vertx log new");
         self.info("self vertx log new");
-        await().untilAsserted(() -> assertEquals("self vertx log new", lastEventMessage));
+        await().timeout(Duration.ofSeconds(20)).untilAsserted(() ->
+                assertEquals("self vertx log new", lastEventMessage));
 
         // 4. 内部配置, VertxConfig删除
         ConcurrentHashMap<DiamondAxis, String> mocks = on(MockDiamondServer.class).field("mocks").get();
@@ -172,7 +174,8 @@ public class VertxAppenderTest {
         await().until(() -> nonNull(VertxManager.getVertx("CUSTOM")));
         root.info("root vertx log custom");
         self.info("self vertx log custom");
-        await().untilAsserted(() -> assertEquals("self vertx log custom", lastEventMessage));
+        await().timeout(Duration.ofSeconds(20)).untilAsserted(() ->
+                assertEquals("self vertx log custom", lastEventMessage));
 
         // 2. 重新加载, 不影响外部导入
         val future2 = MockDiamondServer.updateDiamond("Logback", "test", "" +
@@ -188,7 +191,8 @@ public class VertxAppenderTest {
         await().pollDelay(Duration.ofSeconds(5)).until(() -> true);
         root.info("root vertx log reload");
         self.info("self vertx log reload");
-        await().untilAsserted(() -> assertEquals("self vertx log reload", lastEventMessage));
+        await().timeout(Duration.ofSeconds(20)).untilAsserted(() ->
+                assertEquals("self vertx log reload", lastEventMessage));
 
         // 3. 清除外部导入, 不影响vertx实例运行
         VertxManager.putExternalVertx("CUSTOM", null);
@@ -199,7 +203,8 @@ public class VertxAppenderTest {
         Map<String, Object> eventMap = newHashMap();
         eventMap.put("event", messageMap);
         vertx.eventBus().publish("logback.miner", new JsonObject(eventMap));
-        await().untilAsserted(() -> assertEquals("external message", lastEventMessage));
+        await().timeout(Duration.ofSeconds(20)).untilAsserted(() ->
+                assertEquals("external message", lastEventMessage));
 
         VertxElf.closeVertx(vertx);
 
@@ -227,7 +232,8 @@ public class VertxAppenderTest {
         await().until(() -> nonNull(VertxManager.getVertx("CROSS")));
         root.info("root vertx log cross internal");
         self.info("self vertx log cross internal");
-        await().untilAsserted(() -> assertEquals("self vertx log cross internal", lastEventMessage));
+        await().timeout(Duration.ofSeconds(20)).untilAsserted(() ->
+                assertEquals("self vertx log cross internal", lastEventMessage));
 
         val vertxOptions = new VertxOptions();
         vertxOptions.setWorkerPoolSize(24);
@@ -244,7 +250,8 @@ public class VertxAppenderTest {
         });
         root.info("root vertx log cross external");
         self.info("self vertx log cross external");
-        await().untilAsserted(() -> assertEquals("self vertx log cross external", lastEventMessage));
+        await().timeout(Duration.ofSeconds(20)).untilAsserted(() ->
+                assertEquals("self vertx log cross external", lastEventMessage));
 
         // 2. 重新加载, 外部导入被内部配置覆盖
         val future2 = MockDiamondServer.updateDiamond("Logback", "test", "" +
@@ -266,7 +273,8 @@ public class VertxAppenderTest {
         });
         root.info("root vertx log cross internal2");
         self.info("self vertx log cross internal2");
-        await().untilAsserted(() -> assertEquals("self vertx log cross internal2", lastEventMessage));
+        await().timeout(Duration.ofSeconds(20)).untilAsserted(() ->
+                assertEquals("self vertx log cross internal2", lastEventMessage));
 
         // 3. 外部导入不受影响
         Map<String, String> messageMap = newHashMap();
@@ -274,7 +282,8 @@ public class VertxAppenderTest {
         Map<String, Object> eventMap = newHashMap();
         eventMap.put("event", messageMap);
         vertx.eventBus().publish("logback.miner", new JsonObject(eventMap));
-        await().untilAsserted(() -> assertEquals("external message", lastEventMessage));
+        await().timeout(Duration.ofSeconds(20)).untilAsserted(() ->
+                assertEquals("external message", lastEventMessage));
 
         MockDiamondServer.tearDownMockServer();
     }

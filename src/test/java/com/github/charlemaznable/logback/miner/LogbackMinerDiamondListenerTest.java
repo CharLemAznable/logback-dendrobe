@@ -32,6 +32,7 @@ public class LogbackMinerDiamondListenerTest {
         MockDiamondServer.setUpMockServer();
 
         val diamondListener = new LogbackMinerDiamondListener();
+        await().forever().until(diamondListener::isListening);
 
         val future1 = MockDiamondServer.updateDiamond(
                 "Logback", "test", "key1=value1\n");
