@@ -75,13 +75,18 @@ public class LogbackMinerDiamondListener implements DiamondListener, LoggerConte
         val group = this.defaultConfig.getProperty(DIAMOND_GROUP_KEY, DEFAULT_GROUP);
         val dataId = this.defaultConfig.getProperty(DIAMOND_DATA_ID_KEY, DEFAULT_DATA_ID);
 
-        // diamond配置覆盖默认配置
-        this.minerConfig.putAll(rebuildProperties(
-                new Miner(group).getProperties(dataId)));
+        new Thread(() -> {
+            // diamond配置覆盖默认配置
+            val diamondAxis = DiamondAxis.makeAxis(group, dataId);
+            val diamondStone = new DiamondStone();
+            diamondStone.setContent(new Miner().getStone(group, dataId));
+            diamondStone.setDiamondAxis(diamondAxis);
+            accept(diamondStone);
 
-        DiamondSubscriber.getInstance().addDiamondListener(
-                DiamondAxis.makeAxis(group, dataId), this);
-        this.listening = true;
+            DiamondSubscriber.getInstance().addDiamondListener(
+                    diamondAxis, LogbackMinerDiamondListener.this);
+            listening = true;
+        }).start();
     }
 
     @Override
