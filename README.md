@@ -74,7 +74,7 @@ context.property[property-name]=property-value
 
 {root-or-class-name-or-package-name}[console.level]=info
 {root-or-class-name-or-package-name}[console.charset]=utf-8
-{root-or-class-name-or-package-name}[console.pattern]=%date [%-20thread] %5level %logger{50}\\(%line\\): %message%n
+{root-or-class-name-or-package-name}[console.pattern]=%date [%20.20thread] %5level %50.50logger{50}\\(%4.4line\\): %message%n
 {root-or-class-name-or-package-name}[console.target]=System.out
 {root-or-class-name-or-package-name}[console.immediateFlush]=true
 

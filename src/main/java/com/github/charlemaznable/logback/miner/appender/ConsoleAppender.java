@@ -18,7 +18,7 @@ import java.util.Arrays;
 public class ConsoleAppender extends AsyncAppender {
 
     public static final String DEFAULT_CONSOLE_PATTERN
-            = "%date [%-20thread] %5level %logger{50}\\(%line\\): %message%n";
+            = "%date [%20.20thread] %5level %50.50logger{50}\\(%4.4line\\): %message%n";
     public static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
     public static final String DEFAULT_TARGET = ConsoleTarget.SYSTEM_OUT.getName();
     public static final boolean DEFAULT_IMMEDIATE_FLUSH = true;
