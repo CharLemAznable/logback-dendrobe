@@ -6,7 +6,6 @@ import io.vertx.core.Vertx;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.val;
-import org.n3r.diamond.client.Miner;
 
 import javax.annotation.Nullable;
 import java.util.Map;
@@ -15,14 +14,14 @@ import java.util.concurrent.ConcurrentHashMap;
 import static com.github.charlemaznable.logback.miner.appender.VertxElf.buildVertx;
 import static com.github.charlemaznable.logback.miner.appender.VertxElf.closeVertx;
 import static com.github.charlemaznable.logback.miner.appender.VertxElf.closeVertxQuietly;
-import static com.github.charlemaznable.logback.miner.appender.VertxElf.parseStoneToVertxOptions;
+import static com.github.charlemaznable.vertx.diamond.VertxDiamondElf.getVertxOptionsStone;
+import static com.github.charlemaznable.vertx.diamond.VertxDiamondElf.parseStoneToVertxOptions;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static java.util.concurrent.Executors.newFixedThreadPool;
 
 public final class VertxManager {
 
-    public static final String VERTX_CONFIG_GROUP_NAME = "VertxConfig";
     private static final Map<String, Vertx> vertxs = new ConcurrentHashMap<>();
     private static final Map<String, String> vertxConfigs = new ConcurrentHashMap<>();
     private static final AsyncEventBus eventBus;
@@ -33,8 +32,7 @@ public final class VertxManager {
             @Subscribe
             public void configVertx(String vertxName) {
                 // 内部配置的vertx
-                val configStone = new Miner().getStone(
-                        VERTX_CONFIG_GROUP_NAME, vertxName);
+                val configStone = getVertxOptionsStone(vertxName);
                 if (isNull(configStone)) {
                     // 不存在对应的diamond配置
                     // 移除配置缓存

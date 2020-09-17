@@ -73,6 +73,7 @@
             src/main/java/com/github/charlemaznable/logback/miner/appender/ConsoleTarget.java
         </sonar.exclusions>
 
+        <vertx-diamond-config.version>0.0.1-SNAPSHOT</vertx-diamond-config.version>
         <commons-lang3.version>3.11</commons-lang3.version>
         <guava.version>29.0-jre</guava.version>
         <slf4j-api.version>1.7.30</slf4j-api.version>
@@ -106,6 +107,11 @@
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>com.github.charlemaznable</groupId>
+            <artifactId>vertx-diamond-config</artifactId>
+            <version>${vertx-diamond-config.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>

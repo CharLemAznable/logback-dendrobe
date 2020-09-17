@@ -20,6 +20,7 @@ import java.time.Duration;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static com.github.charlemaznable.vertx.diamond.VertxDiamondElf.VERTX_OPTIONS_GROUP_NAME;
 import static com.google.common.collect.Maps.newHashMap;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -69,7 +70,7 @@ public class VertxAppenderTest {
         MockDiamondServer.setUpMockServer();
 
         // 1. 内部配置, 从无到有
-        MockDiamondServer.setConfigInfo("VertxConfig", "DEFAULT", "" +
+        MockDiamondServer.setConfigInfo(VERTX_OPTIONS_GROUP_NAME, "DEFAULT", "" +
                 "workerPoolSize=42\n" +
                 "eventBusOptions.clustered=on\n");
         val future1 = MockDiamondServer.updateDiamond("Logback", "test", "" +
@@ -107,7 +108,7 @@ public class VertxAppenderTest {
         assertNotNull(VertxManager.getVertx("DEFAULT"));
 
         // 3. 内部配置, VertxConfig更改
-        MockDiamondServer.setConfigInfo("VertxConfig", "DEFAULT", "" +
+        MockDiamondServer.setConfigInfo(VERTX_OPTIONS_GROUP_NAME, "DEFAULT", "" +
                 "workerPoolSize=24\n" +
                 "eventBusOptions.clustered=on\n");
         val future3 = MockDiamondServer.updateDiamond("Logback", "test", "" +
@@ -134,7 +135,7 @@ public class VertxAppenderTest {
 
         // 4. 内部配置, VertxConfig删除
         ConcurrentHashMap<DiamondAxis, String> mocks = on(MockDiamondServer.class).field("mocks").get();
-        mocks.remove(DiamondAxis.makeAxis("VertxConfig", "DEFAULT"));
+        mocks.remove(DiamondAxis.makeAxis(VERTX_OPTIONS_GROUP_NAME, "DEFAULT"));
         val future4 = MockDiamondServer.updateDiamond("Logback", "test", "" +
                 "root[console.level]=info\n" +
                 "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[additivity]=no\n" +
@@ -221,7 +222,7 @@ public class VertxAppenderTest {
         MockDiamondServer.setUpMockServer();
 
         // 1. 内部配置转外部导入
-        MockDiamondServer.setConfigInfo("VertxConfig", "CROSS", "" +
+        MockDiamondServer.setConfigInfo(VERTX_OPTIONS_GROUP_NAME, "CROSS", "" +
                 "workerPoolSize=42\n" +
                 "eventBusOptions.clustered=on\n");
         val future1 = MockDiamondServer.updateDiamond("Logback", "test", "" +
