@@ -109,7 +109,7 @@ context.property[property-name]=property-value
 
 3. Vert.x EventBus 日志事件总线
 
-  * ```[vertx.name]```配置Vert.x实例标识, 如果存在```diamond group:VertxConfig dataId:[vertx.name]```配置, 则自动加载并初始化Vert.x实例用于发送日志事件消息.
+  * ```[vertx.name]```配置Vert.x实例标识, 如果存在```diamond group:VertxOptions dataId:[vertx.name]```配置, 则自动加载并初始化Vert.x实例用于发送日志事件消息.
   * ```[vertx.address]```配置日志事件消息发送的地址.
   * 可使用```VertxManager#putExternalVertx```方法配置自定义的Vert.x实例, 需自行控制自定义Vert.x实例的生命周期.
   * 可使用```VertxManager#getVertx```方法获取指定标识的Vert.x实例.
