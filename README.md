@@ -50,7 +50,7 @@
 2. 简化日志配置, 将xml格式替换为properties格式
 3. 日志默认配置, 默认使用异步日志队列输出格式化日志到标准输出
 4. 特定类型的日志参数Bean映射插入数据库日志表
-5. 通过配置Vertx集群, 将日志事件转化为EventBus消息
+5. 通过配置Vert.x集群, 将日志事件转化为EventBus消息
 
 #### 快速开始
 
@@ -96,7 +96,7 @@ context.property[property-name]=property-value
   * ```[level]```配置: 设置默认日志级别.
   * ```[console.level]```配置: 设置控制台输出日志级别, 覆盖当前日志的默认日志级别.
   * ```[dql.level]```配置: 设置数据库插入日志级别, 覆盖当前日志的默认日志级别.
-  * ```[vertx.level]```配置: 设置VertxEventBus日志级别, 覆盖当前日志的默认日志级别.
+  * ```[vertx.level]```配置: 设置Vert.x EventBus日志级别, 覆盖当前日志的默认日志级别.
   * 控制台输出日志/数据库插入日志级别未设置时, 优先使用当前日志的默认日志级别, 若未设置默认日志级别, 则使用父级日志的对应日志级别.
 
 2. 日志参数Bean注解
@@ -107,10 +107,10 @@ context.property[property-name]=property-value
   * 日志参数Bean默认插入的日志字段为类型声明的非静态字段, 列名为字段名的下划线格式, 可使用```@LogbackColumn```注解另行指定, 或使用```@LogbackSkip```注解指定排除.
   * 可使用```@LogbackSql```注解另行指定插入日志的```sqlFile```和```sqlId```, 默认为当前类型的```[log{类名}]```.
 
-3. VertxEventBus 日志事件总线
+3. Vert.x EventBus 日志事件总线
 
-  * ```[vertx.name]```配置Vertx实例标识, 如果存在```diamond group:VertxConfig dataId:[vertx.name]```配置, 则自动加载并初始化Vertx实例用于发送日志事件消息.
+  * ```[vertx.name]```配置Vert.x实例标识, 如果存在```diamond group:VertxConfig dataId:[vertx.name]```配置, 则自动加载并初始化Vert.x实例用于发送日志事件消息.
   * ```[vertx.address]```配置日志事件消息发送的地址.
-  * 可使用```VertxManager#putExternalVertx```方法配置自定义的Vertx实例, 需自行控制自定义Vertx实例的生命周期.
-  * 可使用```VertxManager#getVertx```方法获取指定标识的Vertx实例.
+  * 可使用```VertxManager#putExternalVertx```方法配置自定义的Vert.x实例, 需自行控制自定义Vert.x实例的生命周期.
+  * 可使用```VertxManager#getVertx```方法获取指定标识的Vert.x实例.
   * 日志事件消息的接收端处理器类型为```io.vertx.core.Handler<io.vertx.core.eventbus.Message<io.vertx.core.json.JsonObject>>```, 其中JsonObject包含```event```, ```mdc```和```property```三个子JsonObject.
