@@ -82,10 +82,10 @@
         <annotations.version>20.1.0</annotations.version>
         <auto-service.version>1.0-rc7</auto-service.version>
         <eql.version>0.1.13</eql.version>
-        <druid.version>1.1.23</druid.version>
+        <druid.version>1.1.24</druid.version>
         <asm-all.version>5.2</asm-all.version>
         <westid.version>0.0.3</westid.version>
-        <vertx.version>3.9.2</vertx.version>
+        <vertx.version>3.9.3</vertx.version>
 
         <lombok.version>1.18.12</lombok.version>
 
