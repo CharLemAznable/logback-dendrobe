@@ -26,6 +26,7 @@ import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.awaitility.Awaitility.await;
 import static org.joor.Reflect.on;
+import static org.joor.Reflect.onClass;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -134,7 +135,7 @@ public class VertxAppenderTest {
                 assertEquals("self vertx log new", lastEventMessage));
 
         // 4. 内部配置, VertxConfig删除
-        ConcurrentHashMap<DiamondAxis, String> mocks = on(MockDiamondServer.class).field("mocks").get();
+        ConcurrentHashMap<DiamondAxis, String> mocks = onClass(MockDiamondServer.class).field("mocks").get();
         mocks.remove(DiamondAxis.makeAxis(VERTX_OPTIONS_GROUP_NAME, "DEFAULT"));
         val future4 = MockDiamondServer.updateDiamond("Logback", "test", "" +
                 "root[console.level]=info\n" +
