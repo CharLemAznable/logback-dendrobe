@@ -1,20 +1,16 @@
 package com.github.charlemaznable.logback.miner.configurator;
 
 import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
-import ch.qos.logback.classic.spi.ILoggingEvent;
-import ch.qos.logback.core.Appender;
-import com.github.charlemaznable.logback.miner.appender.ConsoleAppender;
 import com.google.auto.service.AutoService;
 import lombok.val;
 
+import static com.github.charlemaznable.logback.miner.configurator.ConfiguratorUtil.fetchConsoleAppender;
 import static com.github.charlemaznable.logback.miner.configurator.ConfiguratorUtil.fetchLoggerName;
 import static com.github.charlemaznable.logback.miner.level.EffectorContextUtil.getEffectorContext;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.endsWithIgnoreCase;
 import static org.n3r.diamond.client.impl.DiamondUtils.toBool;
-import static org.slf4j.Logger.ROOT_LOGGER_NAME;
 
 @AutoService(Configurator.class)
 public class ConsoleConfigurator extends AppenderConfigurator {
@@ -24,11 +20,6 @@ public class ConsoleConfigurator extends AppenderConfigurator {
     private static final String CONSOLE_PATTERN_SUFFIX = "[console.pattern]";
     private static final String CONSOLE_TARGET_SUFFIX = "[console.target]";
     private static final String CONSOLE_IMMEDIATE_FLUSH_SUFFIX = "[console.immediateFlush]";
-
-    @Override
-    public void before(LoggerContext loggerContext) {
-        addAppenderIfAbsent(fetchConsoleAppender(loggerContext.getLogger(ROOT_LOGGER_NAME)));
-    }
 
     @Override
     public void configurate(LoggerContext loggerContext, String key, String value) {
@@ -64,18 +55,5 @@ public class ConsoleConfigurator extends AppenderConfigurator {
             addAppenderIfAbsent(consoleAppender);
 
         }
-    }
-
-    private ConsoleAppender fetchConsoleAppender(Logger logger) {
-        val consoleAppenderName = "ConsoleAppender-" + logger.getName();
-        Appender<ILoggingEvent> consoleAppender = logger.getAppender(consoleAppenderName);
-        if (!(consoleAppender instanceof ConsoleAppender)) {
-            logger.detachAppender(consoleAppender);
-            consoleAppender = new ConsoleAppender();
-            consoleAppender.setName(consoleAppenderName);
-            consoleAppender.setContext(logger.getLoggerContext());
-            logger.addAppender(consoleAppender);
-        }
-        return (ConsoleAppender) consoleAppender;
     }
 }

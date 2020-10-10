@@ -197,10 +197,6 @@ public class LogbackMinerDiamondListener implements DiamondListener, LoggerConte
                     getInt(MAX_CALLER_DATA_DEPTH_KEY, DEFAULT_MAX_CALLEDER_DATA_DEPTH));
             loggerContext.getFrameworkPackages().addAll(getList(FRAMEWORK_PACKAGES_KEY));
 
-            for (val configurator : configurators) {
-                configurator.before(loggerContext);
-            }
-
             for (val key : minerConfig.stringPropertyNames()) {
                 val value = minerConfig.getProperty(key, "");
                 for (val configurator : configurators) {
@@ -209,7 +205,7 @@ public class LogbackMinerDiamondListener implements DiamondListener, LoggerConte
             }
 
             for (val configurator : configurators) {
-                configurator.finish(loggerContext);
+                configurator.postConfigurate(loggerContext);
             }
         }
     }

@@ -11,12 +11,7 @@ public abstract class AppenderConfigurator implements Configurator {
     private COWArrayList<Appender> appenderList = new COWArrayList<>(new Appender[0]);
 
     @Override
-    public void before(LoggerContext loggerContext) {
-        // empty method
-    }
-
-    @Override
-    public void finish(LoggerContext loggerContext) {
+    public void postConfigurate(LoggerContext loggerContext) {
         for (val appender : appenderList) {
             appender.start();
         }
