@@ -75,25 +75,25 @@
 
         <vertx-diamond-config.version>0.0.3-SNAPSHOT</vertx-diamond-config.version>
         <commons-lang3.version>3.11</commons-lang3.version>
-        <guava.version>29.0-jre</guava.version>
+        <guava.version>30.0-jre</guava.version>
         <slf4j-api.version>1.7.30</slf4j-api.version>
         <logback.version>1.2.3</logback.version>
         <diamond-client.version>0.0.22</diamond-client.version>
         <annotations.version>20.1.0</annotations.version>
         <auto-service.version>1.0-rc7</auto-service.version>
         <eql.version>0.1.13</eql.version>
-        <druid.version>1.2.1</druid.version>
+        <druid.version>1.2.2</druid.version>
         <asm-all.version>5.2</asm-all.version>
         <westid.version>0.0.3</westid.version>
-        <vertx.version>3.9.3</vertx.version>
+        <vertx.version>3.9.4</vertx.version>
 
-        <lombok.version>1.18.14</lombok.version>
+        <lombok.version>1.18.16</lombok.version>
 
         <junit-jupiter.version>5.7.0</junit-jupiter.version>
         <jmockit.version>1.49</jmockit.version>
         <awaitility.version>4.0.3</awaitility.version>
         <h2.version>1.4.200</h2.version>
-        <joda-time.version>2.10.6</joda-time.version>
+        <joda-time.version>2.10.8</joda-time.version>
 
         <maven-resources-plugin.version>3.2.0</maven-resources-plugin.version>
         <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
