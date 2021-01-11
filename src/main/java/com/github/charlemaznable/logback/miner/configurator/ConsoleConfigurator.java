@@ -27,8 +27,8 @@ public class ConsoleConfigurator extends AppenderConfigurator {
             val name = fetchLoggerName(key, CONSOLE_LEVEL_SUFFIX);
             val effectorContext = getEffectorContext(loggerContext);
             if (isNull(effectorContext)) return;
-            effectorContext.getEffector(name)
-                    .setConsoleLevel(Level.toLevel(value));
+            effectorContext.getEffector(name).setConsoleLevel(Level.toLevel(value));
+            addAppenderIfAbsent(fetchConsoleAppender(loggerContext.getLogger(name)));
 
         } else if (endsWithIgnoreCase(key, CONSOLE_CHARSET_SUFFIX)) {
             val name = fetchLoggerName(key, CONSOLE_CHARSET_SUFFIX);

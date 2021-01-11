@@ -26,6 +26,7 @@ public class VertxConfigurator extends AppenderConfigurator {
             val effectorContext = getEffectorContext(loggerContext);
             if (isNull(effectorContext)) return;
             effectorContext.getEffector(name).setVertxLevel(Level.toLevel(value));
+            addAppenderIfAbsent(fetchVertxAppender(loggerContext.getLogger(name)));
 
         } else if (endsWithIgnoreCase(key, VERTX_NAME_SUFFIX)) {
             val name = fetchLoggerName(key, VERTX_NAME_SUFFIX);

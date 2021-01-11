@@ -25,6 +25,7 @@ public class DqlConfigurator extends AppenderConfigurator {
             val effectorContext = getEffectorContext(loggerContext);
             if (isNull(effectorContext)) return;
             effectorContext.getEffector(name).setDqlLevel(Level.toLevel(value));
+            addAppenderIfAbsent(fetchDqlAppender(loggerContext.getLogger(name)));
 
         } else if (endsWithIgnoreCase(key, DQL_CONNECTION_SUFFIX)) {
             val name = fetchLoggerName(key, DQL_CONNECTION_SUFFIX);
