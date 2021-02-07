@@ -2,8 +2,8 @@ package com.github.charlemaznable.logback.miner.appender;
 
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import com.google.auto.service.AutoService;
+import lombok.val;
 import org.n3r.eql.mtcp.MtcpContext;
-import org.slf4j.MDC;
 
 import static org.n3r.eql.mtcp.MtcpContext.TENANT_CODE;
 import static org.n3r.eql.mtcp.MtcpContext.TENANT_ID;
@@ -16,8 +16,9 @@ public class DqlMtcpExtender implements DqlExecuteExtender {
 
     @Override
     public void preExecute(ILoggingEvent eventObject) {
-        MtcpContext.setTenantId(MDC.get(TENANT_ID));
-        MtcpContext.setTenantCode(MDC.get(TENANT_CODE));
+        val mdc = eventObject.getMDCPropertyMap();
+        MtcpContext.setTenantId(mdc.get(TENANT_ID));
+        MtcpContext.setTenantCode(mdc.get(TENANT_CODE));
     }
 
     @Override
