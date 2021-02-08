@@ -27,6 +27,7 @@ public class DqlAppenderTest {
 
     private static final String DB0 = "db0";
     private static final String DB1 = "db1";
+    private static final String DB_MTCP = "db.mtcp";
     private static final String CREATE_TABLE_SIMPLE_LOG = "" +
             "CREATE TABLE `SIMPLE_LOG` (" +
             "  `LOG_ID` BIGINT NOT NULL," +
@@ -58,6 +59,12 @@ public class DqlAppenderTest {
                 "url=jdbc:h2:mem:db1;DB_CLOSE_DELAY=-1;MODE=MySQL;DATABASE_TO_LOWER=TRUE\n" +
                 "user=\n" +
                 "password=\n");
+        MockDiamondServer.setConfigInfo("EqlConfig", DB_MTCP, "" +
+                "driver=org.h2.Driver\n" +
+                "url=jdbc:h2:mem:db0;DB_CLOSE_DELAY=-1;MODE=MySQL;DATABASE_TO_LOWER=TRUE\n" +
+                "user=\n" +
+                "password=\n" +
+                "connection.impl=com.github.charlemaznable.logback.miner.appender.MtcpAssertConnection\n");
 
         new Dql(DB0).execute("" +
                 CREATE_TABLE_SIMPLE_LOG);
@@ -199,5 +206,19 @@ public class DqlAppenderTest {
                 "sql log exception: SqlLogEx2(logId=1004, logContent=null)" +
                 "java.lang.Exception: exception\n" +
                 "\tat com.github.charlemaznable.logback.miner.appender.DqlAppenderTest.testDqlAppender"));
+
+        val sqlLogMtcp = new SqlLogMtcp();
+        sqlLogMtcp.setLogId("1005");
+        self.info("sql log: {}", sqlLogMtcp);
+
+        await().pollDelay(Duration.ofSeconds(3)).until(() ->
+                nonNull(new Dql(DB0).limit(1).params("1005").execute(SELECT_SIMPLE_LOG_BY_ID)));
+
+        SqlLog querySqlLogMtcp = new Dql(DB0).limit(1).returnType(SqlLog.class)
+                .params("1005").execute(SELECT_SIMPLE_LOG_BY_ID);
+        assertEquals("(test|testTenantId|testTenantCode)" +
+                "sql log: SqlLogMtcp(logId=1005, logContent=null)", querySqlLogMtcp.getLogContent());
+
+        MtcpContext.clearTenant();
     }
 }
