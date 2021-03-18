@@ -16,9 +16,9 @@ import org.n3r.eql.diamond.Dql;
 
 import java.util.Date;
 
-import static com.github.charlemaznable.elf.Await.awaitOfMillis;
 import static java.lang.Runtime.getRuntime;
 import static java.lang.System.currentTimeMillis;
+import static java.time.Duration.ofMillis;
 import static java.util.Objects.nonNull;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -60,14 +60,14 @@ public class DqlAppenderBatchTest {
     @SneakyThrows
     public void batchRun(int times) {
         for (int i = 0; i < times; ++i) {
-            awaitOfMillis(10);
+            await().pollDelay(ofMillis(10)).until(() -> true);
         }
     }
 
     @SneakyThrows
     public void batchRunLog(int times) {
         for (int i = 0; i < times; ++i) {
-            awaitOfMillis(10);
+            await().pollDelay(ofMillis(10)).until(() -> true);
             val simpleLog = new SimpleLog();
             simpleLog.setLogId(Long.toString(WestId.next()));
             simpleLog.setLogContent("simple log");

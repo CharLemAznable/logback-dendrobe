@@ -86,12 +86,12 @@
         <asm-all.version>5.2</asm-all.version>
         <westid.version>0.0.3</westid.version>
         <vertx.version>3.9.5</vertx.version>
-        <awaitility.version>4.0.3</awaitility.version>
 
         <lombok.version>1.18.18</lombok.version>
 
         <junit-jupiter.version>5.7.1</junit-jupiter.version>
         <jmockit.version>1.49</jmockit.version>
+        <awaitility.version>4.0.3</awaitility.version>
         <h2.version>1.4.200</h2.version>
         <joda-time.version>2.10.10</joda-time.version>
 
@@ -177,11 +177,6 @@
             <artifactId>vertx-core</artifactId>
             <version>${vertx.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.awaitility</groupId>
-            <artifactId>awaitility</artifactId>
-            <version>${awaitility.version}</version>
-        </dependency>
 
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -206,6 +201,12 @@
             <groupId>org.jmockit</groupId>
             <artifactId>jmockit</artifactId>
             <version>${jmockit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.awaitility</groupId>
+            <artifactId>awaitility</artifactId>
+            <version>${awaitility.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

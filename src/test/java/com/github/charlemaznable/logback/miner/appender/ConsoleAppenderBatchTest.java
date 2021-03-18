@@ -8,9 +8,9 @@ import org.junit.jupiter.api.Test;
 import org.n3r.diamond.client.impl.DiamondSubscriber;
 import org.n3r.diamond.client.impl.MockDiamondServer;
 
-import static com.github.charlemaznable.elf.Await.awaitOfMillis;
 import static java.lang.Runtime.getRuntime;
 import static java.lang.System.currentTimeMillis;
+import static java.time.Duration.ofMillis;
 import static java.util.Objects.nonNull;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -29,14 +29,14 @@ public class ConsoleAppenderBatchTest {
     @SneakyThrows
     public void batchRun(int times) {
         for (int i = 0; i < times; ++i) {
-            awaitOfMillis(10);
+            await().pollDelay(ofMillis(10)).until(() -> true);
         }
     }
 
     @SneakyThrows
     public void batchRunLog(int times) {
         for (int i = 0; i < times; ++i) {
-            awaitOfMillis(10);
+            await().pollDelay(ofMillis(10)).until(() -> true);
             log.info("message");
         }
     }

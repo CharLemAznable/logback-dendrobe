@@ -20,7 +20,6 @@ import java.time.Duration;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static com.github.charlemaznable.elf.Await.awaitOfSeconds;
 import static com.github.charlemaznable.vertx.diamond.VertxDiamondElf.VERTX_OPTIONS_GROUP_NAME;
 import static com.google.common.collect.Maps.newHashMap;
 import static java.util.Objects.isNull;
@@ -196,7 +195,7 @@ public class VertxAppenderTest {
                 "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[dql.level]=off\n");
         await().forever().until(future2::isDone);
 
-        awaitOfSeconds(5);
+        await().pollDelay(Duration.ofSeconds(5)).until(() -> true);
         root.info("root vertx log reload");
         self.info("self vertx log reload");
         await().timeout(Duration.ofSeconds(20)).untilAsserted(() ->
