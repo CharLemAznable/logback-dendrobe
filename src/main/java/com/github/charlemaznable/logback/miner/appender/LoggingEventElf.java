@@ -2,8 +2,6 @@ package com.github.charlemaznable.logback.miner.appender;
 
 import ch.qos.logback.classic.spi.CallerData;
 import ch.qos.logback.classic.spi.ILoggingEvent;
-import ch.qos.logback.classic.spi.ThrowableProxyUtil;
-import ch.qos.logback.core.CoreConstants;
 import com.github.bingoohuang.westid.WestId;
 import lombok.val;
 
@@ -14,7 +12,6 @@ import java.util.Objects;
 import java.util.function.Function;
 
 import static com.google.common.collect.Maps.newHashMap;
-import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 
 class LoggingEventElf {
@@ -66,19 +63,10 @@ class LoggingEventElf {
                 return CallerData.NA;
             }
         });
-        eventConverterMap.put("exception", event -> {
-            val tp = event.getThrowableProxy();
-            if (isNull(tp)) return "";
-            val builder = new StringBuilder().append(tp.getClassName()).append(": ")
-                    .append(tp.getMessage()).append(CoreConstants.LINE_SEPARATOR);
-            for (val step : tp.getStackTraceElementProxyArray()) {
-                builder.append(CoreConstants.TAB).append(step.toString());
-                ThrowableProxyUtil.subjoinPackagingData(builder, step);
-                builder.append(CoreConstants.LINE_SEPARATOR);
-            }
-            return builder.toString();
-        });
-        eventConverterMap.put("westId", event -> Objects.toString(WestId.next()));
+        eventConverterMap.put("exception", event ->
+                ThrowableProxyElf.toString(event.getThrowableProxy()));
+        eventConverterMap.put("westId", event ->
+                Objects.toString(WestId.next()));
     }
 
     static Map<String, Object> buildEventMap(ILoggingEvent eventObject) {
