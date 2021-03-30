@@ -74,8 +74,8 @@
         </sonar.exclusions>
 
         <vertx-diamond-config.version>0.1.1-SNAPSHOT</vertx-diamond-config.version>
-        <commons-lang3.version>3.11</commons-lang3.version>
-        <guava.version>30.1-jre</guava.version>
+        <commons-lang3.version>3.12.0</commons-lang3.version>
+        <guava.version>30.1.1-jre</guava.version>
         <slf4j-api.version>1.7.30</slf4j-api.version>
         <logback.version>1.2.3</logback.version>
         <diamond-client.version>0.0.22</diamond-client.version>
@@ -85,7 +85,7 @@
         <druid.version>1.2.5</druid.version>
         <asm-all.version>5.2</asm-all.version>
         <westid.version>0.0.3</westid.version>
-        <vertx.version>3.9.5</vertx.version>
+        <vertx.version>3.9.6</vertx.version>
 
         <lombok.version>1.18.18</lombok.version>
 
