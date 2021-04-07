@@ -7,6 +7,7 @@ import lombok.val;
 
 import static com.github.charlemaznable.logback.miner.configurator.ConfiguratorUtil.fetchDqlAppender;
 import static com.github.charlemaznable.logback.miner.configurator.ConfiguratorUtil.fetchLoggerName;
+import static com.github.charlemaznable.logback.miner.configurator.ConfiguratorUtil.getLogger;
 import static com.github.charlemaznable.logback.miner.level.EffectorContextUtil.getEffectorContext;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.endsWithIgnoreCase;
@@ -25,17 +26,17 @@ public class DqlConfigurator extends AppenderConfigurator {
             val effectorContext = getEffectorContext(loggerContext);
             if (isNull(effectorContext)) return;
             effectorContext.getEffector(name).setDqlLevel(Level.toLevel(value));
-            addAppenderIfAbsent(fetchDqlAppender(loggerContext.getLogger(name)));
+            addAppenderIfAbsent(fetchDqlAppender(getLogger(loggerContext, name)));
 
         } else if (endsWithIgnoreCase(key, DQL_CONNECTION_SUFFIX)) {
             val name = fetchLoggerName(key, DQL_CONNECTION_SUFFIX);
-            val dqlAppender = fetchDqlAppender(loggerContext.getLogger(name));
+            val dqlAppender = fetchDqlAppender(getLogger(loggerContext, name));
             dqlAppender.setDqlConnection(value);
             addAppenderIfAbsent(dqlAppender);
 
         } else if (endsWithIgnoreCase(key, DQL_SQL_SUFFIX)) {
             val name = fetchLoggerName(key, DQL_SQL_SUFFIX);
-            val dqlAppender = fetchDqlAppender(loggerContext.getLogger(name));
+            val dqlAppender = fetchDqlAppender(getLogger(loggerContext, name));
             dqlAppender.setDqlSql(value);
             addAppenderIfAbsent(dqlAppender);
         }

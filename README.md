@@ -69,7 +69,7 @@ context.frameworkPackages=
 
 context.property[property-name]=property-value
 
-{root-or-class-name-or-package-name}[additivity]=true
+{root-or-class-name-or-package-name}[additivity]=false
 {root-or-class-name-or-package-name}[level]=INFO
 
 {root-or-class-name-or-package-name}[console.level]=info

@@ -8,6 +8,7 @@ import lombok.val;
 
 import static com.github.charlemaznable.logback.miner.configurator.ConfiguratorUtil.fetchLoggerName;
 import static com.github.charlemaznable.logback.miner.configurator.ConfiguratorUtil.fetchVertxAppender;
+import static com.github.charlemaznable.logback.miner.configurator.ConfiguratorUtil.getLogger;
 import static com.github.charlemaznable.logback.miner.level.EffectorContextUtil.getEffectorContext;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.endsWithIgnoreCase;
@@ -26,18 +27,18 @@ public class VertxConfigurator extends AppenderConfigurator {
             val effectorContext = getEffectorContext(loggerContext);
             if (isNull(effectorContext)) return;
             effectorContext.getEffector(name).setVertxLevel(Level.toLevel(value));
-            addAppenderIfAbsent(fetchVertxAppender(loggerContext.getLogger(name)));
+            addAppenderIfAbsent(fetchVertxAppender(getLogger(loggerContext, name)));
 
         } else if (endsWithIgnoreCase(key, VERTX_NAME_SUFFIX)) {
             val name = fetchLoggerName(key, VERTX_NAME_SUFFIX);
-            val vertxAppender = fetchVertxAppender(loggerContext.getLogger(name));
+            val vertxAppender = fetchVertxAppender(getLogger(loggerContext, name));
             vertxAppender.setVertxName(value);
             addAppenderIfAbsent(vertxAppender);
             VertxManager.configVertx(value);
 
         } else if (endsWithIgnoreCase(key, VERTX_ADDRESS_SUFFIX)) {
             val name = fetchLoggerName(key, VERTX_ADDRESS_SUFFIX);
-            val vertxAppender = fetchVertxAppender(loggerContext.getLogger(name));
+            val vertxAppender = fetchVertxAppender(getLogger(loggerContext, name));
             vertxAppender.setVertxAddress(value);
             addAppenderIfAbsent(vertxAppender);
         }

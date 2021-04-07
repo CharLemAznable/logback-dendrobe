@@ -93,7 +93,6 @@ public class DqlAppenderBatchTest {
     public void testDqlAppenderBatch() {
         val future = MockDiamondServer.updateDiamond("Logback", "test", "" +
                 "eql[console.level]=off\norg.n3r.eql[console.level]=off\n" +
-                "com.github.charlemaznable.logback.miner.appender.DqlAppenderBatchTest[additivity]=no\n" +
                 "com.github.charlemaznable.logback.miner.appender.DqlAppenderBatchTest[level]=info\n" +
                 "com.github.charlemaznable.logback.miner.appender.DqlAppenderBatchTest[dql.connection]=" + DBBatch + "\n" +
                 "com.github.charlemaznable.logback.miner.appender.DqlAppenderBatchTest[console.level]=off\n" +

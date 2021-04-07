@@ -1,6 +1,7 @@
 package com.github.charlemaznable.logback.miner.configurator;
 
 import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
 import com.github.charlemaznable.logback.miner.appender.ConsoleAppender;
@@ -18,6 +19,12 @@ public class ConfiguratorUtil {
 
     public static String fetchLoggerName(String key, String suffix) {
         return key.substring(0, key.length() - suffix.length());
+    }
+
+    static Logger getLogger(LoggerContext loggerContext, String name) {
+        val logger = loggerContext.getLogger(name);
+        logger.setAdditive(false);
+        return logger;
     }
 
     static ConsoleAppender fetchConsoleAppender(Logger logger) {

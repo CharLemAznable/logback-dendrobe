@@ -7,6 +7,7 @@ import lombok.val;
 
 import static com.github.charlemaznable.logback.miner.configurator.ConfiguratorUtil.fetchConsoleAppender;
 import static com.github.charlemaznable.logback.miner.configurator.ConfiguratorUtil.fetchLoggerName;
+import static com.github.charlemaznable.logback.miner.configurator.ConfiguratorUtil.getLogger;
 import static com.github.charlemaznable.logback.miner.level.EffectorContextUtil.getEffectorContext;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringUtils.endsWithIgnoreCase;
@@ -28,29 +29,29 @@ public class ConsoleConfigurator extends AppenderConfigurator {
             val effectorContext = getEffectorContext(loggerContext);
             if (isNull(effectorContext)) return;
             effectorContext.getEffector(name).setConsoleLevel(Level.toLevel(value));
-            addAppenderIfAbsent(fetchConsoleAppender(loggerContext.getLogger(name)));
+            addAppenderIfAbsent(fetchConsoleAppender(getLogger(loggerContext, name)));
 
         } else if (endsWithIgnoreCase(key, CONSOLE_CHARSET_SUFFIX)) {
             val name = fetchLoggerName(key, CONSOLE_CHARSET_SUFFIX);
-            val consoleAppender = fetchConsoleAppender(loggerContext.getLogger(name));
+            val consoleAppender = fetchConsoleAppender(getLogger(loggerContext, name));
             consoleAppender.setCharset(value);
             addAppenderIfAbsent(consoleAppender);
 
         } else if (endsWithIgnoreCase(key, CONSOLE_PATTERN_SUFFIX)) {
             val name = fetchLoggerName(key, CONSOLE_PATTERN_SUFFIX);
-            val consoleAppender = fetchConsoleAppender(loggerContext.getLogger(name));
+            val consoleAppender = fetchConsoleAppender(getLogger(loggerContext, name));
             consoleAppender.setPattern(value);
             addAppenderIfAbsent(consoleAppender);
 
         } else if (endsWithIgnoreCase(key, CONSOLE_TARGET_SUFFIX)) {
             val name = fetchLoggerName(key, CONSOLE_TARGET_SUFFIX);
-            val consoleAppender = fetchConsoleAppender(loggerContext.getLogger(name));
+            val consoleAppender = fetchConsoleAppender(getLogger(loggerContext, name));
             consoleAppender.setTarget(value);
             addAppenderIfAbsent(consoleAppender);
 
         } else if (endsWithIgnoreCase(key, CONSOLE_IMMEDIATE_FLUSH_SUFFIX)) {
             val name = fetchLoggerName(key, CONSOLE_IMMEDIATE_FLUSH_SUFFIX);
-            val consoleAppender = fetchConsoleAppender(loggerContext.getLogger(name));
+            val consoleAppender = fetchConsoleAppender(getLogger(loggerContext, name));
             consoleAppender.setImmediateFlush(toBool(value));
             addAppenderIfAbsent(consoleAppender);
         }

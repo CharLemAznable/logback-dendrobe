@@ -59,7 +59,6 @@ public class ConsoleAppenderBatchTest {
         ConsoleTarget.setUpMockConsole();
         MockDiamondServer.setUpMockServer();
         val future = MockDiamondServer.updateDiamond("Logback", "test", "" +
-                "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderBatchTest[ADDITIVITY]=no\n" +
                 "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderBatchTest[LEVEL]=INFO\n" +
                 "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderBatchTest[CONSOLE.CHARSET]=utf-8\n" +
                 "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderBatchTest[CONSOLE.PATTERN]=%5level %message%n\n" +
