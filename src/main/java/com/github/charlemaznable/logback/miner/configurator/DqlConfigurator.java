@@ -38,7 +38,6 @@ public class DqlConfigurator extends AppenderConfigurator {
             val dqlAppender = fetchDqlAppender(loggerContext.getLogger(name));
             dqlAppender.setDqlSql(value);
             addAppenderIfAbsent(dqlAppender);
-
         }
     }
 }

@@ -6,8 +6,10 @@ import lombok.val;
 
 import static ch.qos.logback.classic.Level.toLevel;
 import static com.github.charlemaznable.logback.miner.configurator.ConfiguratorUtil.fetchConsoleAppender;
+import static com.github.charlemaznable.logback.miner.configurator.ConfiguratorUtil.fetchDqlAppender;
 import static com.github.charlemaznable.logback.miner.configurator.ConfiguratorUtil.fetchLoggerName;
 import static com.github.charlemaznable.logback.miner.configurator.ConfiguratorUtil.fetchPropertyKey;
+import static com.github.charlemaznable.logback.miner.configurator.ConfiguratorUtil.fetchVertxAppender;
 import static org.apache.commons.lang3.StringUtils.endsWithIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.startsWithIgnoreCase;
 import static org.n3r.diamond.client.impl.DiamondUtils.toBool;
@@ -40,13 +42,15 @@ public class BasicConfigurator extends AppenderConfigurator {
             val logger = loggerContext.getLogger(name);
             logger.setLevel(toLevel(value));
             addAppenderIfAbsent(fetchConsoleAppender(logger));
-
         }
     }
 
     @Override
     public void postConfigurate(LoggerContext loggerContext) {
-        addAppenderIfAbsent(fetchConsoleAppender(loggerContext.getLogger(ROOT_LOGGER_NAME)));
+        val rootLogger = loggerContext.getLogger(ROOT_LOGGER_NAME);
+        addAppenderIfAbsent(fetchConsoleAppender(rootLogger));
+        addAppenderIfAbsent(fetchDqlAppender(rootLogger));
+        addAppenderIfAbsent(fetchVertxAppender(rootLogger));
         super.postConfigurate(loggerContext);
     }
 }

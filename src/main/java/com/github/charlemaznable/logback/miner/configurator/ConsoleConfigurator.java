@@ -53,7 +53,6 @@ public class ConsoleConfigurator extends AppenderConfigurator {
             val consoleAppender = fetchConsoleAppender(loggerContext.getLogger(name));
             consoleAppender.setImmediateFlush(toBool(value));
             addAppenderIfAbsent(consoleAppender);
-
         }
     }
 }

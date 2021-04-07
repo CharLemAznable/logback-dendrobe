@@ -40,7 +40,6 @@ public class VertxConfigurator extends AppenderConfigurator {
             val vertxAppender = fetchVertxAppender(loggerContext.getLogger(name));
             vertxAppender.setVertxAddress(value);
             addAppenderIfAbsent(vertxAppender);
-
         }
     }
 }
