@@ -8,16 +8,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import static ch.qos.logback.classic.Level.toLevel;
-import static com.github.charlemaznable.logback.miner.configurator.ConfiguratorUtil.fetchConsoleAppender;
-import static com.github.charlemaznable.logback.miner.configurator.ConfiguratorUtil.fetchDqlAppender;
 import static com.github.charlemaznable.logback.miner.configurator.ConfiguratorUtil.fetchLoggerName;
 import static com.github.charlemaznable.logback.miner.configurator.ConfiguratorUtil.fetchPropertyKey;
-import static com.github.charlemaznable.logback.miner.configurator.ConfiguratorUtil.fetchVertxAppender;
 import static com.github.charlemaznable.logback.miner.configurator.ConfiguratorUtil.getLogger;
 import static org.apache.commons.lang3.StringUtils.endsWithIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.startsWithIgnoreCase;
 import static org.n3r.diamond.client.impl.DiamondUtils.toBool;
-import static org.slf4j.Logger.ROOT_LOGGER_NAME;
 
 @AutoService(Configurator.class)
 public class BasicConfigurator extends AppenderConfigurator {
@@ -40,29 +36,21 @@ public class BasicConfigurator extends AppenderConfigurator {
         } else if (endsWithIgnoreCase(key, ADDITIVITY_SUFFIX)) {
             val name = fetchLoggerName(key, ADDITIVITY_SUFFIX);
             loggerAdditiveMap.put(name, toBool(value));
-            addAppenderIfAbsent(fetchConsoleAppender(getLogger(loggerContext, name)));
 
         } else if (endsWithIgnoreCase(key, LEVEL_SUFFIX)) {
             val name = fetchLoggerName(key, LEVEL_SUFFIX);
-            val logger = getLogger(loggerContext, name);
-            logger.setLevel(toLevel(value));
-            addAppenderIfAbsent(fetchConsoleAppender(logger));
+            getLogger(loggerContext, name).setLevel(toLevel(value));
         }
     }
 
     @Override
     public void postConfigurate(LoggerContext loggerContext) {
-        val rootLogger = loggerContext.getLogger(ROOT_LOGGER_NAME);
-        addAppenderIfAbsent(fetchConsoleAppender(rootLogger));
-        addAppenderIfAbsent(fetchDqlAppender(rootLogger));
-        addAppenderIfAbsent(fetchVertxAppender(rootLogger));
+        super.postConfigurate(loggerContext);
 
         for (val entry : loggerAdditiveMap.entrySet()) {
             getLogger(loggerContext, entry.getKey())
                     .setAdditive(entry.getValue());
         }
         loggerAdditiveMap.clear();
-
-        super.postConfigurate(loggerContext);
     }
 }

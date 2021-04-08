@@ -27,6 +27,32 @@ public class ConfiguratorUtil {
         return logger;
     }
 
+    static ConsoleAppender buildConsoleAppender(Logger logger) {
+        val consoleAppenderName = "ConsoleAppender-" + logger.getName();
+        val consoleAppender = new ConsoleAppender();
+        consoleAppender.setName(consoleAppenderName);
+        consoleAppender.setContext(logger.getLoggerContext());
+        return consoleAppender;
+    }
+
+    static DqlAppender buildDqlAppender(Logger logger) {
+        val dqlAppenderName = "DqlAppender-" + logger.getName();
+        val dqlAppender = new DqlAppender();
+        dqlAppender.setName(dqlAppenderName);
+        dqlAppender.setContext(logger.getLoggerContext());
+        return dqlAppender;
+    }
+
+    static VertxAppender buildVertxAppender(Logger logger) {
+        val vertxAppenderName = "VertxAppender-" + logger.getName();
+        val vertxAppender = new VertxAppender();
+        vertxAppender.setName(vertxAppenderName);
+        vertxAppender.setContext(logger.getLoggerContext());
+        // default vertx address is logger name
+        vertxAppender.setVertxAddress(logger.getName());
+        return vertxAppender;
+    }
+
     static ConsoleAppender fetchConsoleAppender(Logger logger) {
         val consoleAppenderName = "ConsoleAppender-" + logger.getName();
         Appender<ILoggingEvent> consoleAppender = logger.getAppender(consoleAppenderName);

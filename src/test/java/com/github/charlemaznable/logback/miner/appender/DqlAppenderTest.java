@@ -86,13 +86,10 @@ public class DqlAppenderTest {
         val sql = "INSERT INTO SIMPLE_LOG (LOG_ID,LOG_CONTENT,LOG_DATE,LOG_DATE_TIME) VALUES(#event.westId#,CONCAT('(', #property.miner#, '|', #mdc.tenantId#, '|', #mdc.tenantCode#, ')', #event.message#, #event.exception#),CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP())";
         val future = MockDiamondServer.updateDiamond("Logback", "test", "" +
                 "context.property[miner]=test\n" +
-                "root[dql.level]=info\n" +
-                "root[dql.connection]=\n" +
+                "com.github.charlemaznable.logback.miner.appender.DqlAppenderTest[appenders]=dql\n" +
                 "com.github.charlemaznable.logback.miner.appender.DqlAppenderTest[dql.level]=info\n" +
                 "com.github.charlemaznable.logback.miner.appender.DqlAppenderTest[dql.connection]=" + DB0 + "\n" +
-                "com.github.charlemaznable.logback.miner.appender.DqlAppenderTest[dql.sql]=" + sql + "\n" +
-                "com.github.charlemaznable.logback.miner.appender.DqlAppenderTest[console.level]=off\n" +
-                "com.github.charlemaznable.logback.miner.appender.DqlAppenderTest[vertx.level]=off\n");
+                "com.github.charlemaznable.logback.miner.appender.DqlAppenderTest[dql.sql]=" + sql + "\n");
         await().forever().until(future::isDone);
 
         root.info("no db log");
