@@ -76,7 +76,6 @@ public class VertxAppenderTest {
                 "eventBusOptions.clustered=on\n");
         val future1 = MockDiamondServer.updateDiamond("Logback", "test", "" +
                 "root[console.level]=info\n" +
-                "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[appenders]=vertx\n" +
                 "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.level]=info\n" +
                 "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.name]=DEFAULT\n" +
                 "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.address]=logback.miner\n" +
@@ -98,7 +97,6 @@ public class VertxAppenderTest {
         // 2. 内部配置, VertxConfig未更改
         val future2 = MockDiamondServer.updateDiamond("Logback", "test", "" +
                 "root[console.level]=info\n" +
-                "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[appenders]=dql,vertx\n" +
                 "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.level]=info\n" +
                 "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.address]=logback.miner\n" +
                 "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.name]=DEFAULT\n" +
@@ -114,7 +112,6 @@ public class VertxAppenderTest {
                 "eventBusOptions.clustered=on\n");
         val future3 = MockDiamondServer.updateDiamond("Logback", "test", "" +
                 "root[console.level]=info\n" +
-                "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[appenders]=console,dql,vertx\n" +
                 "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.level]=info\n" +
                 "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.name]=DEFAULT\n" +
                 "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.address]=logback.miner\n" +
@@ -139,7 +136,6 @@ public class VertxAppenderTest {
         mocks.remove(DiamondAxis.makeAxis(VERTX_OPTIONS_GROUP_NAME, "DEFAULT"));
         val future4 = MockDiamondServer.updateDiamond("Logback", "test", "" +
                 "root[console.level]=info\n" +
-                "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[appenders]=console,dql,vertx\n" +
                 "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.level]=info\n" +
                 "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.address]=logback.miner\n" +
                 "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.name]=DEFAULT\n" +
@@ -158,7 +154,6 @@ public class VertxAppenderTest {
 
         val future1 = MockDiamondServer.updateDiamond("Logback", "test", "" +
                 "root[console.level]=info\n" +
-                "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[appenders]=console,dql,vertx\n" +
                 "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.level]=info\n" +
                 "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.name]=CUSTOM\n" +
                 "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.address]=logback.miner\n" +
@@ -187,7 +182,6 @@ public class VertxAppenderTest {
         // 2. 重新加载, 不影响外部导入
         val future2 = MockDiamondServer.updateDiamond("Logback", "test", "" +
                 "root[console.level]=info\n" +
-                "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[appenders]=console,dql,vertx\n" +
                 "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.level]=info\n" +
                 "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.address]=logback.miner\n" +
                 "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.name]=CUSTOM\n" +
@@ -228,7 +222,6 @@ public class VertxAppenderTest {
                 "eventBusOptions.clustered=on\n");
         val future1 = MockDiamondServer.updateDiamond("Logback", "test", "" +
                 "root[console.level]=info\n" +
-                "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[appenders]=console,dql,vertx\n" +
                 "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.level]=info\n" +
                 "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.name]=CROSS\n" +
                 "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.address]=logback.miner\n" +
@@ -263,7 +256,6 @@ public class VertxAppenderTest {
         // 2. 重新加载, 外部导入被内部配置覆盖
         val future2 = MockDiamondServer.updateDiamond("Logback", "test", "" +
                 "root[console.level]=info\n" +
-                "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[appenders]=console,dql,vertx\n" +
                 "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.level]=info\n" +
                 "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.address]=logback.miner\n" +
                 "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.name]=CROSS\n" +

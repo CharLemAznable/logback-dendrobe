@@ -27,12 +27,14 @@ public class VertxAppender extends AsyncAppender {
         this.appender.setContext(context);
     }
 
-    public void setVertxName(String vertxName) {
+    public VertxAppender setVertxName(String vertxName) {
         this.appender.setVertxName(vertxName);
+        return this;
     }
 
-    public void setVertxAddress(String vertxAddress) {
+    public VertxAppender setVertxAddress(String vertxAddress) {
         this.appender.setVertxAddress(vertxAddress);
+        return this;
     }
 
     @Override

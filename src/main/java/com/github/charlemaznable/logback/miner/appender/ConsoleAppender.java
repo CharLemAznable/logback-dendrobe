@@ -44,25 +44,29 @@ public class ConsoleAppender extends AsyncAppender {
         this.encoder.setContext(context);
     }
 
-    public void setCharset(String charsetName) {
+    public ConsoleAppender setCharset(String charsetName) {
         try {
             this.encoder.setCharset(Charset.forName(charsetName));
         } catch (Exception e) {
             addStatus(new WarnStatus("Set Charset Error: " + charsetName, this));
             this.encoder.setCharset(DEFAULT_CHARSET);
         }
+        return this;
     }
 
-    public void setPattern(String patternString) {
+    public ConsoleAppender setPattern(String patternString) {
         this.encoder.setPattern(patternString);
+        return this;
     }
 
-    public void setTarget(String targetName) {
+    public ConsoleAppender setTarget(String targetName) {
         this.appender.setTarget(targetName);
+        return this;
     }
 
-    public void setImmediateFlush(boolean immediateFlush) {
+    public ConsoleAppender setImmediateFlush(boolean immediateFlush) {
         this.appender.setImmediateFlush(immediateFlush);
+        return this;
     }
 
     @Override

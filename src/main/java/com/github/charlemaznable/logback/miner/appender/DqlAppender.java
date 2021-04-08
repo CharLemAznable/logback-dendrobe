@@ -37,12 +37,14 @@ public class DqlAppender extends AsyncAppender {
         this.appender.setContext(context);
     }
 
-    public void setDqlConnection(String dqlConnection) {
+    public DqlAppender setDqlConnection(String dqlConnection) {
         this.appender.setDqlConnection(dqlConnection);
+        return this;
     }
 
-    public void setDqlSql(String dqlSql) {
+    public DqlAppender setDqlSql(String dqlSql) {
         this.appender.setDqlSql(dqlSql);
+        return this;
     }
 
     @Override
