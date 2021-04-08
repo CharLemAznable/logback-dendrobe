@@ -13,7 +13,7 @@ import static org.n3r.diamond.client.impl.DiamondUtils.toBool;
 @AutoService(Configurator.class)
 public class ConsoleConfigurator extends AppenderConfigurator {
 
-    private static final String CONSOLE_ENABLED_SUFFIX = "[console.enabled]";
+    private static final String CONSOLE_SUFFIX = "[console]";
     private static final String CONSOLE_LEVEL_SUFFIX = "[console.level]";
     private static final String CONSOLE_CHARSET_SUFFIX = "[console.charset]";
     private static final String CONSOLE_PATTERN_SUFFIX = "[console.pattern]";
@@ -22,9 +22,9 @@ public class ConsoleConfigurator extends AppenderConfigurator {
 
     @Override
     public void configurate(LoggerContext loggerContext, String key, String value) {
-        if (endsWithIgnoreCase(key, CONSOLE_ENABLED_SUFFIX)) {
+        if (endsWithIgnoreCase(key, CONSOLE_SUFFIX)) {
             addAppenderIfAbsent(fetchConsoleAppender(fetchLogger(
-                    loggerContext, key, CONSOLE_ENABLED_SUFFIX)));
+                    loggerContext, key, CONSOLE_SUFFIX)));
 
         } else if (endsWithIgnoreCase(key, CONSOLE_LEVEL_SUFFIX)) {
             fetchEffector(loggerContext, key, CONSOLE_LEVEL_SUFFIX)

@@ -76,6 +76,7 @@ public class VertxAppenderTest {
                 "eventBusOptions.clustered=on\n");
         val future1 = MockDiamondServer.updateDiamond("Logback", "test", "" +
                 "root[console.level]=info\n" +
+                "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx]\n" +
                 "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.level]=info\n" +
                 "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.name]=DEFAULT\n" +
                 "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.address]=logback.miner\n" +

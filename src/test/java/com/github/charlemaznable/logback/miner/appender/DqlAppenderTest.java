@@ -88,6 +88,7 @@ public class DqlAppenderTest {
                 "context.property[miner]=test\n" +
                 "root[dql.level]=info\n" +
                 "root[dql.connection]=\n" +
+                "com.github.charlemaznable.logback.miner.appender.DqlAppenderTest[dql]\n" +
                 "com.github.charlemaznable.logback.miner.appender.DqlAppenderTest[dql.level]=info\n" +
                 "com.github.charlemaznable.logback.miner.appender.DqlAppenderTest[dql.connection]=" + DB0 + "\n" +
                 "com.github.charlemaznable.logback.miner.appender.DqlAppenderTest[dql.sql]=" + sql + "\n" +

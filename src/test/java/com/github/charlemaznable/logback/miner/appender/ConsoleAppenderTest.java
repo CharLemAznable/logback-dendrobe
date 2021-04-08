@@ -32,6 +32,7 @@ public class ConsoleAppenderTest {
         val future = MockDiamondServer.updateDiamond("Logback", "test", "" +
                 "context.maxCallerDataDepth=abc\ncontext.property[miner]=test\n" +
                 "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[LEVEL]=INFO\n" +
+                "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[CONSOLE]\n" +
                 "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[CONSOLE.CHARSET]=utf\n" +
                 "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[CONSOLE.PATTERN]=%property{miner} %5level %message%n\n" +
                 "com.github.charlemaznable.logback.miner.appender.ConsoleAppenderTest[CONSOLE.TARGET]=miner-config\n" +
