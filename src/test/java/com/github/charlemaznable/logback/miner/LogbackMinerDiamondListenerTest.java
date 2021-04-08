@@ -115,12 +115,14 @@ public class LogbackMinerDiamondListenerTest {
                 "context.maxCallerDataDepth=4\n" +
                 "context.frameworkPackages=com.github.charlemaznable.logback.miner\n" +
                 "context.property[miner]=test\n" +
+                "context.property[miner2=test\n" +
                 "root[console.target]=System.warn");
         await().forever().until(future1::isDone);
         assertTrue(loggerContext.isPackagingDataEnabled());
         assertEquals(4, loggerContext.getMaxCallerDataDepth());
         assertEquals("com.github.charlemaznable.logback.miner", loggerContext.getFrameworkPackages().get(0));
         assertEquals("test", loggerContext.getProperty("miner"));
+        assertNull(loggerContext.getProperty("miner2"));
 
         val future2 = MockDiamondServer.updateDiamond("Logback", "test", "");
         await().forever().until(future2::isDone);

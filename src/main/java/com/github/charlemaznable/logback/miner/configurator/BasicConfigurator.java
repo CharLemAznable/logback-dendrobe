@@ -35,6 +35,8 @@ public class BasicConfigurator extends AppenderConfigurator {
 
         } else if (endsWithIgnoreCase(key, ADDITIVITY_SUFFIX)) {
             val name = fetchLoggerName(key, ADDITIVITY_SUFFIX);
+            // default additive set with false
+            // post configurate set by config value
             loggerAdditiveMap.put(name, toBool(value));
 
         } else if (endsWithIgnoreCase(key, LEVEL_SUFFIX)) {
@@ -45,12 +47,11 @@ public class BasicConfigurator extends AppenderConfigurator {
 
     @Override
     public void postConfigurate(LoggerContext loggerContext) {
-        super.postConfigurate(loggerContext);
-
         for (val entry : loggerAdditiveMap.entrySet()) {
             getLogger(loggerContext, entry.getKey())
                     .setAdditive(entry.getValue());
         }
         loggerAdditiveMap.clear();
+        super.postConfigurate(loggerContext);
     }
 }
