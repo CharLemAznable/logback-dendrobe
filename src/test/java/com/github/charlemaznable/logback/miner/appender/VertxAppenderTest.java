@@ -75,10 +75,13 @@ public class VertxAppenderTest {
                 "workerPoolSize=42\n" +
                 "eventBusOptions.clustered=on\n");
         val future1 = MockDiamondServer.updateDiamond("Logback", "test", "" +
-                "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[appenders]=console,dql,vertx\n" +
+                "root[console.level]=info\n" +
+                "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[appenders]=vertx\n" +
                 "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.level]=info\n" +
                 "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.name]=DEFAULT\n" +
-                "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.address]=logback.miner\n");
+                "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.address]=logback.miner\n" +
+                "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[console.level]=off\n" +
+                "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[dql.level]=off\n");
         await().forever().until(future1::isDone);
 
         if (isNull(VertxManager.getVertx("DEFAULT"))) {
@@ -94,10 +97,13 @@ public class VertxAppenderTest {
 
         // 2. 内部配置, VertxConfig未更改
         val future2 = MockDiamondServer.updateDiamond("Logback", "test", "" +
-                "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[appenders]=console,dql,vertx\n" +
+                "root[console.level]=info\n" +
+                "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[appenders]=dql,vertx\n" +
                 "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.level]=info\n" +
                 "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.address]=logback.miner\n" +
-                "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.name]=DEFAULT\n");
+                "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.name]=DEFAULT\n" +
+                "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[console.level]=off\n" +
+                "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[dql.level]=off\n");
         await().forever().until(future2::isDone);
 
         assertNotNull(VertxManager.getVertx("DEFAULT"));
@@ -107,10 +113,13 @@ public class VertxAppenderTest {
                 "workerPoolSize=24\n" +
                 "eventBusOptions.clustered=on\n");
         val future3 = MockDiamondServer.updateDiamond("Logback", "test", "" +
+                "root[console.level]=info\n" +
                 "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[appenders]=console,dql,vertx\n" +
                 "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.level]=info\n" +
                 "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.name]=DEFAULT\n" +
-                "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.address]=logback.miner\n");
+                "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.address]=logback.miner\n" +
+                "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[console.level]=off\n" +
+                "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[dql.level]=off\n");
         await().forever().until(future3::isDone);
 
         await().timeout(Duration.ofSeconds(20)).until(() -> {
@@ -129,10 +138,13 @@ public class VertxAppenderTest {
         ConcurrentHashMap<DiamondAxis, String> mocks = onClass(MockDiamondServer.class).field("mocks").get();
         mocks.remove(DiamondAxis.makeAxis(VERTX_OPTIONS_GROUP_NAME, "DEFAULT"));
         val future4 = MockDiamondServer.updateDiamond("Logback", "test", "" +
+                "root[console.level]=info\n" +
                 "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[appenders]=console,dql,vertx\n" +
                 "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.level]=info\n" +
                 "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.address]=logback.miner\n" +
-                "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.name]=DEFAULT\n");
+                "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.name]=DEFAULT\n" +
+                "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[console.level]=off\n" +
+                "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[dql.level]=off\n");
         await().forever().until(future4::isDone);
 
         await().until(() -> isNull(VertxManager.getVertx("DEFAULT")));
@@ -145,10 +157,13 @@ public class VertxAppenderTest {
         MockDiamondServer.setUpMockServer();
 
         val future1 = MockDiamondServer.updateDiamond("Logback", "test", "" +
+                "root[console.level]=info\n" +
                 "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[appenders]=console,dql,vertx\n" +
                 "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.level]=info\n" +
                 "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.name]=CUSTOM\n" +
-                "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.address]=logback.miner\n");
+                "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.address]=logback.miner\n" +
+                "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[console.level]=off\n" +
+                "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[dql.level]=off\n");
         await().forever().until(future1::isDone);
 
         // 1. 外部导入, 从无到有
@@ -171,10 +186,13 @@ public class VertxAppenderTest {
 
         // 2. 重新加载, 不影响外部导入
         val future2 = MockDiamondServer.updateDiamond("Logback", "test", "" +
+                "root[console.level]=info\n" +
                 "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[appenders]=console,dql,vertx\n" +
                 "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.level]=info\n" +
                 "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.address]=logback.miner\n" +
-                "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.name]=CUSTOM\n");
+                "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.name]=CUSTOM\n" +
+                "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[console.level]=off\n" +
+                "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[dql.level]=off\n");
         await().forever().until(future2::isDone);
 
         await().pollDelay(Duration.ofSeconds(5)).until(() -> true);
@@ -209,10 +227,13 @@ public class VertxAppenderTest {
                 "workerPoolSize=42\n" +
                 "eventBusOptions.clustered=on\n");
         val future1 = MockDiamondServer.updateDiamond("Logback", "test", "" +
+                "root[console.level]=info\n" +
                 "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[appenders]=console,dql,vertx\n" +
                 "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.level]=info\n" +
                 "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.name]=CROSS\n" +
-                "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.address]=logback.miner\n");
+                "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.address]=logback.miner\n" +
+                "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[console.level]=off\n" +
+                "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[dql.level]=off\n");
         await().forever().until(future1::isDone);
 
         await().until(() -> nonNull(VertxManager.getVertx("CROSS")));
@@ -241,10 +262,13 @@ public class VertxAppenderTest {
 
         // 2. 重新加载, 外部导入被内部配置覆盖
         val future2 = MockDiamondServer.updateDiamond("Logback", "test", "" +
+                "root[console.level]=info\n" +
                 "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[appenders]=console,dql,vertx\n" +
                 "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.level]=info\n" +
                 "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.address]=logback.miner\n" +
-                "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.name]=CROSS\n");
+                "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.name]=CROSS\n" +
+                "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[console.level]=off\n" +
+                "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[dql.level]=off\n");
         await().forever().until(future2::isDone);
 
         await().timeout(Duration.ofSeconds(20)).until(() -> {
