@@ -170,4 +170,5 @@ logback.miner.dataId=default
 ```
 
 启动时, 将自动读取```diamond group:Logback dataId:default```配置内容为Properties格式, 覆盖本地配置文件```logback-miner.properties```中的同名配置
+
 在```diamond group:Logback dataId:default```内容更新后, 将自动更新日志配置, 但仍以本地配置文件```logback-miner.properties```中的配置作为默认配置
