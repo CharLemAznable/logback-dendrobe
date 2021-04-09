@@ -15,10 +15,13 @@ import static java.util.Objects.isNull;
 
 public class VertxAppender extends AsyncAppender {
 
+    public static final String DEFAULT_VERTX_NAME = "DEFAULT";
+
     private InternalAppender appender;
 
     public VertxAppender() {
         this.appender = new InternalAppender();
+        this.appender.setVertxName(DEFAULT_VERTX_NAME);
     }
 
     @Override

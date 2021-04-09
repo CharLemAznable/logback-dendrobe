@@ -6,6 +6,7 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
 import com.github.charlemaznable.logback.miner.appender.ConsoleAppender;
 import com.github.charlemaznable.logback.miner.appender.DqlAppender;
+import com.github.charlemaznable.logback.miner.appender.FileAppender;
 import com.github.charlemaznable.logback.miner.appender.VertxAppender;
 import com.github.charlemaznable.logback.miner.level.Effector;
 import lombok.val;
@@ -79,5 +80,18 @@ public class ConfiguratorUtil {
             logger.addAppender(vertxAppender);
         }
         return (VertxAppender) vertxAppender;
+    }
+
+    static FileAppender fetchFileAppender(Logger logger) {
+        val fileAppenderName = "FileAppender-" + logger.getName();
+        Appender<ILoggingEvent> fileAppender = logger.getAppender(fileAppenderName);
+        if (!(fileAppender instanceof FileAppender)) {
+            logger.detachAppender(fileAppender);
+            fileAppender = new FileAppender();
+            fileAppender.setName(fileAppenderName);
+            fileAppender.setContext(logger.getLoggerContext());
+            logger.addAppender(fileAppender);
+        }
+        return (FileAppender) fileAppender;
     }
 }

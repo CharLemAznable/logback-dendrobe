@@ -44,6 +44,8 @@ public class EffectorTest {
         assertEquals(Level.DEBUG_INT, root.getDqlEffectiveLevelInt());
         assertNull(root.getVertxLevel());
         assertEquals(Level.DEBUG_INT, root.getVertxEffectiveLevelInt());
+        assertNull(root.getFileLevel());
+        assertEquals(Level.DEBUG_INT, root.getFileEffectiveLevelInt());
         assertNull(self.getLoggerLevel());
         assertNull(self.getConsoleLevel());
         assertEquals(Level.DEBUG_INT, self.getConsoleEffectiveLevelInt());
@@ -51,10 +53,13 @@ public class EffectorTest {
         assertEquals(Level.DEBUG_INT, self.getDqlEffectiveLevelInt());
         assertNull(self.getVertxLevel());
         assertEquals(Level.DEBUG_INT, self.getVertxEffectiveLevelInt());
+        assertNull(self.getFileLevel());
+        assertEquals(Level.DEBUG_INT, self.getFileEffectiveLevelInt());
 
         root.setConsoleLevel(Level.INFO);
         root.setDqlLevel(Level.WARN);
         root.setVertxLevel(Level.ERROR);
+        root.setFileLevel(Level.INFO);
         assertEquals(Level.DEBUG, root.getLoggerLevel());
         assertEquals(Level.INFO, root.getConsoleLevel());
         assertEquals(Level.INFO_INT, root.getConsoleEffectiveLevelInt());
@@ -62,6 +67,8 @@ public class EffectorTest {
         assertEquals(Level.WARN_INT, root.getDqlEffectiveLevelInt());
         assertEquals(Level.ERROR, root.getVertxLevel());
         assertEquals(Level.ERROR_INT, root.getVertxEffectiveLevelInt());
+        assertEquals(Level.INFO, root.getFileLevel());
+        assertEquals(Level.INFO_INT, root.getFileEffectiveLevelInt());
         assertNull(self.getLoggerLevel());
         assertNull(self.getConsoleLevel());
         assertEquals(Level.INFO_INT, self.getConsoleEffectiveLevelInt());
@@ -69,10 +76,13 @@ public class EffectorTest {
         assertEquals(Level.WARN_INT, self.getDqlEffectiveLevelInt());
         assertNull(self.getVertxLevel());
         assertEquals(Level.ERROR_INT, self.getVertxEffectiveLevelInt());
+        assertNull(self.getFileLevel());
+        assertEquals(Level.INFO_INT, self.getFileEffectiveLevelInt());
 
         self.setConsoleLevel(Level.WARN);
         self.setDqlLevel(Level.INFO);
         self.setVertxLevel(Level.TRACE);
+        self.setFileLevel(Level.WARN);
         assertEquals(Level.DEBUG, root.getLoggerLevel());
         assertEquals(Level.INFO, root.getConsoleLevel());
         assertEquals(Level.INFO_INT, root.getConsoleEffectiveLevelInt());
@@ -80,6 +90,8 @@ public class EffectorTest {
         assertEquals(Level.WARN_INT, root.getDqlEffectiveLevelInt());
         assertEquals(Level.ERROR, root.getVertxLevel());
         assertEquals(Level.ERROR_INT, root.getVertxEffectiveLevelInt());
+        assertEquals(Level.INFO, root.getFileLevel());
+        assertEquals(Level.INFO_INT, root.getFileEffectiveLevelInt());
         assertNull(self.getLoggerLevel());
         assertEquals(Level.WARN, self.getConsoleLevel());
         assertEquals(Level.WARN_INT, self.getConsoleEffectiveLevelInt());
@@ -87,10 +99,13 @@ public class EffectorTest {
         assertEquals(Level.INFO_INT, self.getDqlEffectiveLevelInt());
         assertEquals(Level.TRACE, self.getVertxLevel());
         assertEquals(Level.TRACE_INT, self.getVertxEffectiveLevelInt());
+        assertEquals(Level.WARN, self.getFileLevel());
+        assertEquals(Level.WARN_INT, self.getFileEffectiveLevelInt());
 
         root.setConsoleLevel(null);
         root.setDqlLevel(null);
         root.setVertxLevel(null);
+        root.setFileLevel(null);
         assertEquals(Level.DEBUG, root.getLoggerLevel());
         assertNull(root.getConsoleLevel());
         assertEquals(Level.DEBUG_INT, root.getConsoleEffectiveLevelInt());
@@ -98,6 +113,8 @@ public class EffectorTest {
         assertEquals(Level.DEBUG_INT, root.getDqlEffectiveLevelInt());
         assertNull(root.getVertxLevel());
         assertEquals(Level.DEBUG_INT, root.getVertxEffectiveLevelInt());
+        assertNull(root.getFileLevel());
+        assertEquals(Level.DEBUG_INT, root.getFileEffectiveLevelInt());
         assertNull(self.getLoggerLevel());
         assertEquals(Level.WARN, self.getConsoleLevel());
         assertEquals(Level.WARN_INT, self.getConsoleEffectiveLevelInt());
@@ -105,10 +122,13 @@ public class EffectorTest {
         assertEquals(Level.INFO_INT, self.getDqlEffectiveLevelInt());
         assertEquals(Level.TRACE, self.getVertxLevel());
         assertEquals(Level.TRACE_INT, self.getVertxEffectiveLevelInt());
+        assertEquals(Level.WARN, self.getFileLevel());
+        assertEquals(Level.WARN_INT, self.getFileEffectiveLevelInt());
 
         self.setConsoleLevel(null);
         self.setDqlLevel(null);
         self.setVertxLevel(null);
+        self.setFileLevel(null);
         assertEquals(Level.DEBUG, root.getLoggerLevel());
         assertNull(root.getConsoleLevel());
         assertEquals(Level.DEBUG_INT, root.getConsoleEffectiveLevelInt());
@@ -116,6 +136,8 @@ public class EffectorTest {
         assertEquals(Level.DEBUG_INT, root.getDqlEffectiveLevelInt());
         assertNull(root.getVertxLevel());
         assertEquals(Level.DEBUG_INT, root.getVertxEffectiveLevelInt());
+        assertNull(root.getFileLevel());
+        assertEquals(Level.DEBUG_INT, root.getFileEffectiveLevelInt());
         assertNull(self.getLoggerLevel());
         assertNull(self.getConsoleLevel());
         assertEquals(Level.DEBUG_INT, self.getConsoleEffectiveLevelInt());
@@ -123,6 +145,8 @@ public class EffectorTest {
         assertEquals(Level.DEBUG_INT, self.getDqlEffectiveLevelInt());
         assertNull(self.getVertxLevel());
         assertEquals(Level.DEBUG_INT, self.getVertxEffectiveLevelInt());
+        assertNull(self.getFileLevel());
+        assertEquals(Level.DEBUG_INT, self.getFileEffectiveLevelInt());
 
         val finish = MockDiamondServer.updateDiamond("Logback", "test", "root[level]=info\n");
         await().forever().until(finish::isDone);

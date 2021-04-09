@@ -111,7 +111,7 @@ root[level]=info    # 配置根级别logger日志级别为info, 默认为debug, 
 
 配置以上任一项, 即启动对应级别logger数据库日志
 
-仅需启动数据库日志, 且仅使用默认配置, 则需添加配置: 
+仅需启动数据库日志, 且仅使用默认配置/仅适用注解配置, 则需添加配置: 
 
 ```
 {logger-name}[dql]  # 启动对应级别logger数据库日志, 使用默认配置, "dql"关键字不区分大小写
@@ -119,8 +119,8 @@ root[level]=info    # 配置根级别logger日志级别为info, 默认为debug, 
 
 数据库插入参数规则:
 
-  * 如参数中不包含标注```@LogbackBean```类型的对象, 则使用默认连接默认插入SQL, 可选参数为```event.message```, ```mdc.XXX```, ```property.XXX```, 等
-  * 如参数中包含标注```@LogbackBean```类型的对象, 则遍历所有此类参数进行数据库插入, 除上述可选参数外, 另可使用```arg.字段名```作为参数
+  * 如参数中不包含```@LogbackBean```注解的类型的对象, 则使用默认连接默认插入SQL, 可选参数为```event.message```, ```mdc.XXX```, ```property.XXX```, 等
+  * 如参数中包含```@LogbackBean```注解的类型的对象, 则遍历所有此类参数进行数据库插入, 除上述可选参数外, 另可使用```arg.字段名```作为参数
   * 可填写```@LogbackBean```注解的```value```, 覆盖日志配置的默认的dql连接配置
   * 日志参数Bean默认插入的日志表名为类名的下划线格式, e.g. ```class TestLog```插入表```table TEST_LOG```, 可使用```@LogbackTable```注解另行指定
   * 日志参数Bean默认插入的日志字段为类型声明的非静态字段, 列名为字段名的下划线格式, 可使用```@LogbackColumn```注解另行指定, 或使用```@LogbackSkip```注解指定排除
@@ -130,7 +130,7 @@ root[level]=info    # 配置根级别logger日志级别为info, 默认为debug, 
 
 ```
 {logger-name}[vertx.level]=debug
-{logger-name}[vertx.name]=
+{logger-name}[vertx.name]=DEFAULT
 {logger-name}[vertx.address]={logger-name}
 ```
 

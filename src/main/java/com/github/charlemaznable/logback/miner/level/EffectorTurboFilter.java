@@ -19,7 +19,8 @@ public class EffectorTurboFilter extends TurboFilter {
         val effector = effectorContext.getEffector(logger.getName());
         if (effector.getConsoleEffectiveLevelInt() > level.levelInt &&
                 effector.getDqlEffectiveLevelInt() > level.levelInt &&
-                effector.getVertxEffectiveLevelInt() > level.levelInt) {
+                effector.getVertxEffectiveLevelInt() > level.levelInt &&
+                effector.getFileEffectiveLevelInt() > level.levelInt) {
             return FilterReply.DENY;
         }
         return FilterReply.ACCEPT;

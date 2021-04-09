@@ -4,35 +4,39 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Context;
-import ch.qos.logback.core.OutputStreamAppender;
 import ch.qos.logback.core.UnsynchronizedAppenderBase;
 import ch.qos.logback.core.spi.FilterReply;
 import ch.qos.logback.core.status.WarnStatus;
+import ch.qos.logback.core.util.FileSize;
 import com.github.charlemaznable.logback.miner.level.Effector;
-import lombok.val;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 
-public class ConsoleAppender extends AsyncAppender {
+import static java.util.Objects.isNull;
+
+public class FileAppender extends AsyncAppender {
 
     public static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
     public static final String DEFAULT_CONSOLE_PATTERN
             = "%date [%20.20thread] %5level %50.50logger{50}\\(%4.4line\\): %message%n";
-    public static final String DEFAULT_TARGET = ConsoleTarget.SYSTEM_OUT.getName();
+    public static final boolean DEFAULT_PRUDENT = false;
+    public static final boolean DEFAULT_APPEND = true;
+    public static final long DEFAULT_BUFFER_SIZE = 8192;
     public static final boolean DEFAULT_IMMEDIATE_FLUSH = true;
 
     private PatternLayoutEncoder encoder;
-    private InternalAppender appender;
+    private ch.qos.logback.core.FileAppender<ILoggingEvent> appender;
 
-    public ConsoleAppender() {
+    public FileAppender() {
         this.encoder = new PatternLayoutEncoder();
         this.encoder.setCharset(DEFAULT_CHARSET);
         this.encoder.setPattern(DEFAULT_CONSOLE_PATTERN);
 
-        this.appender = new InternalAppender();
-        this.appender.setTarget(DEFAULT_TARGET);
+        this.appender = new ch.qos.logback.core.FileAppender<>();
+        this.appender.setPrudent(DEFAULT_PRUDENT);
+        this.appender.setAppend(DEFAULT_APPEND);
+        this.appender.setBufferSize(new FileSize(DEFAULT_BUFFER_SIZE));
         this.appender.setImmediateFlush(DEFAULT_IMMEDIATE_FLUSH);
         this.appender.setEncoder(this.encoder);
     }
@@ -44,7 +48,7 @@ public class ConsoleAppender extends AsyncAppender {
         this.encoder.setContext(context);
     }
 
-    public ConsoleAppender setCharset(String charsetName) {
+    public FileAppender setCharset(String charsetName) {
         try {
             this.encoder.setCharset(Charset.forName(charsetName));
         } catch (Exception e) {
@@ -54,23 +58,40 @@ public class ConsoleAppender extends AsyncAppender {
         return this;
     }
 
-    public ConsoleAppender setPattern(String patternString) {
+    public FileAppender setPattern(String patternString) {
         this.encoder.setPattern(patternString);
         return this;
     }
 
-    public ConsoleAppender setTarget(String targetName) {
-        this.appender.setTarget(targetName);
+    public FileAppender setFile(String file) {
+        this.appender.setFile(file);
         return this;
     }
 
-    public ConsoleAppender setImmediateFlush(boolean immediateFlush) {
+    public FileAppender setPrudent(boolean prudent) {
+        this.appender.setPrudent(prudent);
+        return this;
+    }
+
+    public FileAppender setAppend(boolean append) {
+        this.appender.setAppend(append);
+        return this;
+    }
+
+    public FileAppender setBufferSize(long bufferSize) {
+        this.appender.setBufferSize(new FileSize(bufferSize));
+        return this;
+    }
+
+    public FileAppender setImmediateFlush(boolean immediateFlush) {
         this.appender.setImmediateFlush(immediateFlush);
         return this;
     }
 
     @Override
     public void start() {
+        if (isNull(this.appender.getFile())) return;
+
         this.encoder.start();
         super.start();
     }
@@ -88,37 +109,11 @@ public class ConsoleAppender extends AsyncAppender {
 
     @Override
     protected FilterReply decide(Effector effector, Level eventLevel) {
-        // configured ConsoleAppender and event passed EffectorTurboFilter,
+        // configured FileAppender and event passed EffectorTurboFilter,
         // but appender level is greater then event level -> DENY
-        if (effector.getConsoleEffectiveLevelInt() > eventLevel.levelInt) {
+        if (effector.getFileEffectiveLevelInt() > eventLevel.levelInt) {
             return FilterReply.DENY;
         }
         return FilterReply.ACCEPT;
-    }
-
-    static class InternalAppender extends OutputStreamAppender<ILoggingEvent> {
-
-        private ConsoleTarget target = ConsoleTarget.SYSTEM_OUT;
-
-        @Override
-        public void start() {
-            setOutputStream(target.getStream());
-            super.start();
-        }
-
-        public void setTarget(String value) {
-            val t = ConsoleTarget.findByName(value.trim());
-            if (t == null) {
-                targetWarn(value);
-            } else {
-                target = t;
-            }
-        }
-
-        private void targetWarn(String val) {
-            val status = new WarnStatus("[" + val + "] should be one of " + Arrays.toString(ConsoleTarget.values()), this);
-            status.add(new WarnStatus("Using previously set target, System.out by default.", this));
-            addStatus(status);
-        }
     }
 }

@@ -34,6 +34,11 @@ public class Effector {
     private Level vertxLevel;
     @Getter
     private int vertxEffectiveLevelInt;
+    // file
+    @Getter
+    private Level fileLevel;
+    @Getter
+    private int fileEffectiveLevelInt;
 
     public Effector(Logger logger, Effector parent, LoggerContext loggerContext) {
         this.logger = logger;
@@ -43,6 +48,7 @@ public class Effector {
         this.consoleEffectiveLevelInt = calcConsoleEffectiveLevelInt(logger.getLevel());
         this.dqlEffectiveLevelInt = calcDqlEffectiveLevelInt(logger.getLevel());
         this.vertxEffectiveLevelInt = calcVertxEffectiveLevelInt(logger.getLevel());
+        this.fileEffectiveLevelInt = calcFileEffectiveLevelInt(logger.getLevel());
     }
 
     public Level getLoggerLevel() {
@@ -60,6 +66,9 @@ public class Effector {
         }
         if (isNull(vertxLevel)) {
             setVertxEffectiveLevel(null);
+        }
+        if (isNull(fileLevel)) {
+            setFileEffectiveLevel(null);
         }
     }
 
@@ -82,6 +91,13 @@ public class Effector {
 
         this.vertxLevel = vertxLevel;
         setVertxEffectiveLevel(vertxLevel);
+    }
+
+    public synchronized void setFileLevel(Level fileLevel) {
+        if (this.fileLevel == fileLevel) return;
+
+        this.fileLevel = fileLevel;
+        setFileEffectiveLevel(fileLevel);
     }
 
     Effector getChildByName(final String childName) {
@@ -109,6 +125,8 @@ public class Effector {
         dqlLevel = null;
         vertxEffectiveLevelInt = Level.DEBUG_INT;
         vertxLevel = null;
+        fileEffectiveLevelInt = Level.DEBUG_INT;
+        fileLevel = null;
 
         if (childrenList == null) return;
         for (val child : childrenList) {
@@ -126,6 +144,10 @@ public class Effector {
 
     private int calcVertxEffectiveLevelInt(Level loggerLevel) {
         return isNull(loggerLevel) ? parent.vertxEffectiveLevelInt : loggerLevel.levelInt;
+    }
+
+    private int calcFileEffectiveLevelInt(Level loggerLevel) {
+        return isNull(loggerLevel) ? parent.fileEffectiveLevelInt : loggerLevel.levelInt;
     }
 
     private void setConsoleEffectiveLevel(Level consoleLevel) {
@@ -170,6 +192,20 @@ public class Effector {
         }
     }
 
+    private void setFileEffectiveLevel(Level fileLevel) {
+        if (isNull(fileLevel)) {
+            fileEffectiveLevelInt = calcFileEffectiveLevelInt(getLoggerLevel());
+        } else {
+            fileEffectiveLevelInt = fileLevel.levelInt;
+        }
+
+        if (nonNull(childrenList)) {
+            for (val child : childrenList) {
+                child.handleParentFileLevelChange(fileEffectiveLevelInt);
+            }
+        }
+    }
+
     private synchronized void handleParentConsoleLevelChange(int newParentConsoleLevelInt) {
         if (isNull(consoleLevel) && isNull(getLoggerLevel())) {
             consoleEffectiveLevelInt = newParentConsoleLevelInt;
@@ -201,6 +237,18 @@ public class Effector {
             if (nonNull(childrenList)) {
                 for (val child : childrenList) {
                     child.handleParentVertxLevelChange(newParentVertxLevelInt);
+                }
+            }
+        }
+    }
+
+    private synchronized void handleParentFileLevelChange(int newParentFileLevelInt) {
+        if (isNull(fileLevel) && isNull(getLoggerLevel())) {
+            fileEffectiveLevelInt = newParentFileLevelInt;
+
+            if (nonNull(childrenList)) {
+                for (val child : childrenList) {
+                    child.handleParentFileLevelChange(newParentFileLevelInt);
                 }
             }
         }
