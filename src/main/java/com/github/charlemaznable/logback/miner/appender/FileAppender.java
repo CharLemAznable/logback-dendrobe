@@ -8,7 +8,7 @@ import ch.qos.logback.core.spi.FilterReply;
 import ch.qos.logback.core.util.FileSize;
 import com.github.charlemaznable.logback.miner.level.Effector;
 
-import static java.util.Objects.isNull;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 public class FileAppender extends AsyncOutputStreamAppender {
 
@@ -52,7 +52,7 @@ public class FileAppender extends AsyncOutputStreamAppender {
 
     @Override
     public void start() {
-        if (isNull(this.appender.getFile())) return;
+        if (isBlank(this.appender.getFile())) return;
         super.start();
     }
 

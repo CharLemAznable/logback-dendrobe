@@ -172,3 +172,28 @@ logback.miner.dataId=default
 启动时, 将自动读取```diamond group:Logback dataId:default```配置内容为Properties格式, 覆盖本地配置文件```logback-miner.properties```中的同名配置
 
 在```diamond group:Logback dataId:default```内容更新后, 将自动更新日志配置, 但仍以本地配置文件```logback-miner.properties```中的配置作为默认配置
+
+8. 配置文件输出
+
+```
+{logger-name}[file]={filepath/filename}
+{logger-name}[file.level]=debug
+{logger-name}[file.charset]=utf-8
+{logger-name}[file.pattern]=%date [%20.20thread] %5level %50.50logger{50}\\(%4.4line\\): %message%n
+{logger-name}[file.prudent]={true/yes/on/y为真值, 其他为假值}
+{logger-name}[file.append]={true/yes/on/y为真值, 其他为假值}
+{logger-name}[file.bufferSize]=8192
+{logger-name}[file.immediateFlush]={true/yes/on/y为真值, 其他为假值}
+```
+
+以上配置中:
+
+  * "file.XXX"关键字不区分大小写
+  * 日志级别不区分大小写, 覆盖当前级别日志的```[level]```
+  * 文件日志级别未设置时, 优先使用当前级别日志的```[level]```, 若未设置```[level]```, 则使用父级日志的文件日志级别
+  * 字符编码可选值参见```java.nio.charset.Charset```
+  * 日志输出格式参见```ch.qos.logback.core.pattern.PatternLayoutEncoderBase```
+
+配置以上任一项, 即启动对应级别logger日志文件输出
+
+若未配置```[file]```项或配置为空, 则文件输出不会开启
