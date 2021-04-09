@@ -1,7 +1,6 @@
 package com.github.charlemaznable.logback.miner.appender;
 
 import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Context;
 import ch.qos.logback.core.OutputStreamAppender;
@@ -11,52 +10,21 @@ import ch.qos.logback.core.status.WarnStatus;
 import com.github.charlemaznable.logback.miner.level.Effector;
 import lombok.val;
 
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
-public class ConsoleAppender extends AsyncAppender {
+public class ConsoleAppender extends AsyncOutputStreamAppender {
 
-    public static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
-    public static final String DEFAULT_CONSOLE_PATTERN
-            = "%date [%20.20thread] %5level %50.50logger{50}\\(%4.4line\\): %message%n";
-    public static final String DEFAULT_TARGET = ConsoleTarget.SYSTEM_OUT.getName();
-    public static final boolean DEFAULT_IMMEDIATE_FLUSH = true;
-
-    private PatternLayoutEncoder encoder;
     private InternalAppender appender;
 
     public ConsoleAppender() {
-        this.encoder = new PatternLayoutEncoder();
-        this.encoder.setCharset(DEFAULT_CHARSET);
-        this.encoder.setPattern(DEFAULT_CONSOLE_PATTERN);
-
         this.appender = new InternalAppender();
-        this.appender.setTarget(DEFAULT_TARGET);
-        this.appender.setImmediateFlush(DEFAULT_IMMEDIATE_FLUSH);
-        this.appender.setEncoder(this.encoder);
+        this.appender.setEncoder(getEncoder());
     }
 
     @Override
     public void setContext(Context context) {
         super.setContext(context);
         this.appender.setContext(context);
-        this.encoder.setContext(context);
-    }
-
-    public ConsoleAppender setCharset(String charsetName) {
-        try {
-            this.encoder.setCharset(Charset.forName(charsetName));
-        } catch (Exception e) {
-            addStatus(new WarnStatus("Set Charset Error: " + charsetName, this));
-            this.encoder.setCharset(DEFAULT_CHARSET);
-        }
-        return this;
-    }
-
-    public ConsoleAppender setPattern(String patternString) {
-        this.encoder.setPattern(patternString);
-        return this;
     }
 
     public ConsoleAppender setTarget(String targetName) {
@@ -67,18 +35,6 @@ public class ConsoleAppender extends AsyncAppender {
     public ConsoleAppender setImmediateFlush(boolean immediateFlush) {
         this.appender.setImmediateFlush(immediateFlush);
         return this;
-    }
-
-    @Override
-    public void start() {
-        this.encoder.start();
-        super.start();
-    }
-
-    @Override
-    public void stop() {
-        super.stop();
-        this.encoder.stop();
     }
 
     @Override
