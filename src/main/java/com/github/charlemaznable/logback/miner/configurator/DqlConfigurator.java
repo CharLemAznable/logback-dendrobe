@@ -4,9 +4,9 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
 import com.google.auto.service.AutoService;
 
-import static com.github.charlemaznable.logback.miner.configurator.ConfiguratorUtil.fetchDqlAppender;
-import static com.github.charlemaznable.logback.miner.configurator.ConfiguratorUtil.fetchEffector;
-import static com.github.charlemaznable.logback.miner.configurator.ConfiguratorUtil.fetchLogger;
+import static com.github.charlemaznable.logback.miner.configurator.ConfiguratorUtil.dqlAppender;
+import static com.github.charlemaznable.logback.miner.configurator.ConfiguratorUtil.effector;
+import static com.github.charlemaznable.logback.miner.configurator.ConfiguratorUtil.logger;
 import static org.apache.commons.lang3.StringUtils.endsWithIgnoreCase;
 
 @AutoService(Configurator.class)
@@ -20,22 +20,22 @@ public class DqlConfigurator extends AppenderConfigurator {
     @Override
     public void configurate(LoggerContext loggerContext, String key, String value) {
         if (endsWithIgnoreCase(key, DQL_SUFFIX)) {
-            addAppenderIfAbsent(fetchDqlAppender(fetchLogger(
+            addAppenderIfAbsent(dqlAppender(logger(
                     loggerContext, key, DQL_SUFFIX)));
 
         } else if (endsWithIgnoreCase(key, DQL_LEVEL_SUFFIX)) {
-            fetchEffector(loggerContext, key, DQL_LEVEL_SUFFIX)
+            effector(loggerContext, key, DQL_LEVEL_SUFFIX)
                     .setDqlLevel(Level.toLevel(value));
-            addAppenderIfAbsent(fetchDqlAppender(fetchLogger(
+            addAppenderIfAbsent(dqlAppender(logger(
                     loggerContext, key, DQL_LEVEL_SUFFIX)));
 
         } else if (endsWithIgnoreCase(key, DQL_CONNECTION_SUFFIX)) {
-            addAppenderIfAbsent(fetchDqlAppender(fetchLogger(
-                    loggerContext, key, DQL_CONNECTION_SUFFIX)).setDqlConnection(value));
+            addAppenderIfAbsent(dqlAppender(logger(loggerContext,
+                    key, DQL_CONNECTION_SUFFIX)).setDqlConnection(value));
 
         } else if (endsWithIgnoreCase(key, DQL_SQL_SUFFIX)) {
-            addAppenderIfAbsent(fetchDqlAppender(fetchLogger(
-                    loggerContext, key, DQL_SQL_SUFFIX)).setDqlSql(value));
+            addAppenderIfAbsent(dqlAppender(logger(loggerContext,
+                    key, DQL_SQL_SUFFIX)).setDqlSql(value));
         }
     }
 }

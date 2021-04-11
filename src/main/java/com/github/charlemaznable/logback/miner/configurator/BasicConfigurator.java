@@ -8,9 +8,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import static ch.qos.logback.classic.Level.toLevel;
-import static com.github.charlemaznable.logback.miner.configurator.ConfiguratorUtil.fetchLogger;
-import static com.github.charlemaznable.logback.miner.configurator.ConfiguratorUtil.fetchLoggerName;
-import static com.github.charlemaznable.logback.miner.configurator.ConfiguratorUtil.fetchPropertyKey;
+import static com.github.charlemaznable.logback.miner.configurator.ConfiguratorUtil.logger;
+import static com.github.charlemaznable.logback.miner.configurator.ConfiguratorUtil.loggerName;
+import static com.github.charlemaznable.logback.miner.configurator.ConfiguratorUtil.propertyKey;
 import static org.apache.commons.lang3.StringUtils.endsWithIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.startsWithIgnoreCase;
 import static org.n3r.diamond.client.impl.DiamondUtils.toBool;
@@ -29,23 +29,23 @@ public class BasicConfigurator extends AppenderConfigurator {
     public void configurate(LoggerContext loggerContext, String key, String value) {
         if (startsWithIgnoreCase(key, CONTEXT_PROPERTY_PREFIX) &&
                 endsWithIgnoreCase(key, CONTEXT_PROPERTY_SUFFIX)) {
-            loggerContext.putProperty(fetchPropertyKey(key,
+            loggerContext.putProperty(propertyKey(key,
                     CONTEXT_PROPERTY_PREFIX, CONTEXT_PROPERTY_SUFFIX), value);
 
         } else if (endsWithIgnoreCase(key, ADDITIVITY_SUFFIX)) {
             // default additive set with false
             // post configurate set by config value
-            loggerAdditiveMap.put(fetchLoggerName(key, ADDITIVITY_SUFFIX), toBool(value));
+            loggerAdditiveMap.put(loggerName(key, ADDITIVITY_SUFFIX), toBool(value));
 
         } else if (endsWithIgnoreCase(key, LEVEL_SUFFIX)) {
-            fetchLogger(loggerContext, key, LEVEL_SUFFIX).setLevel(toLevel(value));
+            logger(loggerContext, key, LEVEL_SUFFIX).setLevel(toLevel(value));
         }
     }
 
     @Override
     public void postConfigurate(LoggerContext loggerContext) {
         for (val entry : loggerAdditiveMap.entrySet()) {
-            fetchLogger(loggerContext, entry.getKey())
+            logger(loggerContext, entry.getKey())
                     .setAdditive(entry.getValue());
         }
         loggerAdditiveMap.clear();

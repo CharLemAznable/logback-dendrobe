@@ -20,7 +20,8 @@ public class EffectorTurboFilter extends TurboFilter {
         if (effector.getConsoleEffectiveLevelInt() > level.levelInt &&
                 effector.getDqlEffectiveLevelInt() > level.levelInt &&
                 effector.getVertxEffectiveLevelInt() > level.levelInt &&
-                effector.getFileEffectiveLevelInt() > level.levelInt) {
+                effector.getFileEffectiveLevelInt() > level.levelInt &&
+                effector.getRollingFileEffectiveLevelInt() > level.levelInt) {
             return FilterReply.DENY;
         }
         return FilterReply.ACCEPT;

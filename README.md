@@ -97,7 +97,7 @@ root[level]=info    # 配置根级别logger日志级别为info, 默认为debug, 
 
 ```
 {logger-name}[dql.level]=debug
-{logger-name}[dql.connection]=
+{logger-name}[dql.connection]=DEFAULT
 {logger-name}[dql.sql]=
 ```
 
@@ -111,7 +111,7 @@ root[level]=info    # 配置根级别logger日志级别为info, 默认为debug, 
 
 配置以上任一项, 即启动对应级别logger数据库日志
 
-仅需启动数据库日志, 且仅使用默认配置/仅适用注解配置, 则需添加配置: 
+仅需启动数据库日志, 且仅使用默认配置/仅使用注解配置, 则需添加配置: 
 
 ```
 {logger-name}[dql]  # 启动对应级别logger数据库日志, 使用默认配置, "dql"关键字不区分大小写

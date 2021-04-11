@@ -25,10 +25,13 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 
 public class DqlAppender extends AsyncAppender {
 
+    public static final String DEFAULT_DQL_CONNECTION = "DEFAULT";
+
     private InternalAppender appender;
 
     public DqlAppender() {
         this.appender = new InternalAppender();
+        this.appender.setDqlConnection(DEFAULT_DQL_CONNECTION);
     }
 
     @Override

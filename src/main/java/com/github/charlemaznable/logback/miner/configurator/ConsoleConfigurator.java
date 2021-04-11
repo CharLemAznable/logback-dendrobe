@@ -4,9 +4,9 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
 import com.google.auto.service.AutoService;
 
-import static com.github.charlemaznable.logback.miner.configurator.ConfiguratorUtil.fetchConsoleAppender;
-import static com.github.charlemaznable.logback.miner.configurator.ConfiguratorUtil.fetchEffector;
-import static com.github.charlemaznable.logback.miner.configurator.ConfiguratorUtil.fetchLogger;
+import static com.github.charlemaznable.logback.miner.configurator.ConfiguratorUtil.consoleAppender;
+import static com.github.charlemaznable.logback.miner.configurator.ConfiguratorUtil.effector;
+import static com.github.charlemaznable.logback.miner.configurator.ConfiguratorUtil.logger;
 import static org.apache.commons.lang3.StringUtils.endsWithIgnoreCase;
 import static org.n3r.diamond.client.impl.DiamondUtils.toBool;
 
@@ -23,30 +23,30 @@ public class ConsoleConfigurator extends AppenderConfigurator {
     @Override
     public void configurate(LoggerContext loggerContext, String key, String value) {
         if (endsWithIgnoreCase(key, CONSOLE_SUFFIX)) {
-            addAppenderIfAbsent(fetchConsoleAppender(fetchLogger(
+            addAppenderIfAbsent(consoleAppender(logger(
                     loggerContext, key, CONSOLE_SUFFIX)));
 
         } else if (endsWithIgnoreCase(key, CONSOLE_LEVEL_SUFFIX)) {
-            fetchEffector(loggerContext, key, CONSOLE_LEVEL_SUFFIX)
+            effector(loggerContext, key, CONSOLE_LEVEL_SUFFIX)
                     .setConsoleLevel(Level.toLevel(value));
-            addAppenderIfAbsent(fetchConsoleAppender(fetchLogger(
+            addAppenderIfAbsent(consoleAppender(logger(
                     loggerContext, key, CONSOLE_LEVEL_SUFFIX)));
 
         } else if (endsWithIgnoreCase(key, CONSOLE_CHARSET_SUFFIX)) {
-            addAppenderIfAbsent(fetchConsoleAppender(fetchLogger(
-                    loggerContext, key, CONSOLE_CHARSET_SUFFIX)).setCharset(value));
+            addAppenderIfAbsent(consoleAppender(logger(loggerContext,
+                    key, CONSOLE_CHARSET_SUFFIX)).setCharset(value));
 
         } else if (endsWithIgnoreCase(key, CONSOLE_PATTERN_SUFFIX)) {
-            addAppenderIfAbsent(fetchConsoleAppender(fetchLogger(
-                    loggerContext, key, CONSOLE_PATTERN_SUFFIX)).setPattern(value));
+            addAppenderIfAbsent(consoleAppender(logger(loggerContext,
+                    key, CONSOLE_PATTERN_SUFFIX)).setPattern(value));
 
         } else if (endsWithIgnoreCase(key, CONSOLE_TARGET_SUFFIX)) {
-            addAppenderIfAbsent(fetchConsoleAppender(fetchLogger(
-                    loggerContext, key, CONSOLE_TARGET_SUFFIX)).setTarget(value));
+            addAppenderIfAbsent(consoleAppender(logger(loggerContext,
+                    key, CONSOLE_TARGET_SUFFIX)).setTarget(value));
 
         } else if (endsWithIgnoreCase(key, CONSOLE_IMMEDIATE_FLUSH_SUFFIX)) {
-            addAppenderIfAbsent(fetchConsoleAppender(fetchLogger(
-                    loggerContext, key, CONSOLE_IMMEDIATE_FLUSH_SUFFIX)).setImmediateFlush(toBool(value)));
+            addAppenderIfAbsent(consoleAppender(logger(loggerContext,
+                    key, CONSOLE_IMMEDIATE_FLUSH_SUFFIX)).setImmediateFlush(toBool(value)));
         }
     }
 }

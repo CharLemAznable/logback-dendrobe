@@ -5,9 +5,9 @@ import ch.qos.logback.classic.LoggerContext;
 import com.github.charlemaznable.logback.miner.appender.VertxManager;
 import com.google.auto.service.AutoService;
 
-import static com.github.charlemaznable.logback.miner.configurator.ConfiguratorUtil.fetchEffector;
-import static com.github.charlemaznable.logback.miner.configurator.ConfiguratorUtil.fetchLogger;
-import static com.github.charlemaznable.logback.miner.configurator.ConfiguratorUtil.fetchVertxAppender;
+import static com.github.charlemaznable.logback.miner.configurator.ConfiguratorUtil.effector;
+import static com.github.charlemaznable.logback.miner.configurator.ConfiguratorUtil.logger;
+import static com.github.charlemaznable.logback.miner.configurator.ConfiguratorUtil.vertxAppender;
 import static org.apache.commons.lang3.StringUtils.endsWithIgnoreCase;
 
 @AutoService(Configurator.class)
@@ -21,23 +21,23 @@ public class VertxConfigurator extends AppenderConfigurator {
     @Override
     public void configurate(LoggerContext loggerContext, String key, String value) {
         if (endsWithIgnoreCase(key, VERTX_SUFFIX)) {
-            addAppenderIfAbsent(fetchVertxAppender(fetchLogger(
+            addAppenderIfAbsent(vertxAppender(logger(
                     loggerContext, key, VERTX_SUFFIX)));
 
         } else if (endsWithIgnoreCase(key, VERTX_LEVEL_SUFFIX)) {
-            fetchEffector(loggerContext, key, VERTX_LEVEL_SUFFIX)
+            effector(loggerContext, key, VERTX_LEVEL_SUFFIX)
                     .setVertxLevel(Level.toLevel(value));
-            addAppenderIfAbsent(fetchVertxAppender(fetchLogger(
+            addAppenderIfAbsent(vertxAppender(logger(
                     loggerContext, key, VERTX_LEVEL_SUFFIX)));
 
         } else if (endsWithIgnoreCase(key, VERTX_NAME_SUFFIX)) {
-            addAppenderIfAbsent(fetchVertxAppender(fetchLogger(
-                    loggerContext, key, VERTX_NAME_SUFFIX)).setVertxName(value));
+            addAppenderIfAbsent(vertxAppender(logger(loggerContext,
+                    key, VERTX_NAME_SUFFIX)).setVertxName(value));
             VertxManager.configVertx(value);
 
         } else if (endsWithIgnoreCase(key, VERTX_ADDRESS_SUFFIX)) {
-            addAppenderIfAbsent(fetchVertxAppender(fetchLogger(
-                    loggerContext, key, VERTX_ADDRESS_SUFFIX)).setVertxAddress(value));
+            addAppenderIfAbsent(vertxAppender(logger(loggerContext,
+                    key, VERTX_ADDRESS_SUFFIX)).setVertxAddress(value));
         }
     }
 }

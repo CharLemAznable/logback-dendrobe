@@ -7,6 +7,7 @@ import ch.qos.logback.core.Appender;
 import com.github.charlemaznable.logback.miner.appender.ConsoleAppender;
 import com.github.charlemaznable.logback.miner.appender.DqlAppender;
 import com.github.charlemaznable.logback.miner.appender.FileAppender;
+import com.github.charlemaznable.logback.miner.appender.RollingFileAppender;
 import com.github.charlemaznable.logback.miner.appender.VertxAppender;
 import com.github.charlemaznable.logback.miner.level.Effector;
 import lombok.val;
@@ -18,30 +19,30 @@ public class ConfiguratorUtil {
 
     private ConfiguratorUtil() {}
 
-    static String fetchPropertyKey(String key, String prefix, String suffix) {
+    static String propertyKey(String key, String prefix, String suffix) {
         return key.substring(prefix.length(), key.length() - suffix.length());
     }
 
-    static String fetchLoggerName(String key, String suffix) {
+    static String loggerName(String key, String suffix) {
         return key.substring(0, key.length() - suffix.length());
     }
 
-    static Logger fetchLogger(LoggerContext loggerContext, String name) {
+    static Logger logger(LoggerContext loggerContext, String name) {
         val logger = loggerContext.getLogger(name);
         logger.setAdditive(false);
         return logger;
     }
 
-    static Logger fetchLogger(LoggerContext loggerContext, String key, String suffix) {
-        return fetchLogger(loggerContext, fetchLoggerName(key, suffix));
+    static Logger logger(LoggerContext loggerContext, String key, String suffix) {
+        return logger(loggerContext, loggerName(key, suffix));
     }
 
-    static Effector fetchEffector(LoggerContext loggerContext, String key, String suffix) {
+    static Effector effector(LoggerContext loggerContext, String key, String suffix) {
         val effectorContext = checkNotNull(getEffectorContext(loggerContext));
-        return effectorContext.getEffector(fetchLoggerName(key, suffix));
+        return effectorContext.getEffector(loggerName(key, suffix));
     }
 
-    static ConsoleAppender fetchConsoleAppender(Logger logger) {
+    static ConsoleAppender consoleAppender(Logger logger) {
         val consoleAppenderName = "ConsoleAppender-" + logger.getName();
         Appender<ILoggingEvent> consoleAppender = logger.getAppender(consoleAppenderName);
         if (!(consoleAppender instanceof ConsoleAppender)) {
@@ -54,7 +55,7 @@ public class ConfiguratorUtil {
         return (ConsoleAppender) consoleAppender;
     }
 
-    static DqlAppender fetchDqlAppender(Logger logger) {
+    static DqlAppender dqlAppender(Logger logger) {
         val dqlAppenderName = "DqlAppender-" + logger.getName();
         Appender<ILoggingEvent> dqlAppender = logger.getAppender(dqlAppenderName);
         if (!(dqlAppender instanceof DqlAppender)) {
@@ -67,7 +68,7 @@ public class ConfiguratorUtil {
         return (DqlAppender) dqlAppender;
     }
 
-    static VertxAppender fetchVertxAppender(Logger logger) {
+    static VertxAppender vertxAppender(Logger logger) {
         val vertxAppenderName = "VertxAppender-" + logger.getName();
         Appender<ILoggingEvent> vertxAppender = logger.getAppender(vertxAppenderName);
         if (!(vertxAppender instanceof VertxAppender)) {
@@ -82,7 +83,7 @@ public class ConfiguratorUtil {
         return (VertxAppender) vertxAppender;
     }
 
-    static FileAppender fetchFileAppender(Logger logger) {
+    static FileAppender fileAppender(Logger logger) {
         val fileAppenderName = "FileAppender-" + logger.getName();
         Appender<ILoggingEvent> fileAppender = logger.getAppender(fileAppenderName);
         if (!(fileAppender instanceof FileAppender)) {
@@ -93,5 +94,18 @@ public class ConfiguratorUtil {
             logger.addAppender(fileAppender);
         }
         return (FileAppender) fileAppender;
+    }
+
+    static RollingFileAppender rollingFileAppender(Logger logger) {
+        val fileAppenderName = "RollingFileAppender-" + logger.getName();
+        Appender<ILoggingEvent> rollingFileAppender = logger.getAppender(fileAppenderName);
+        if (!(rollingFileAppender instanceof RollingFileAppender)) {
+            logger.detachAppender(rollingFileAppender);
+            rollingFileAppender = new RollingFileAppender();
+            rollingFileAppender.setName(fileAppenderName);
+            rollingFileAppender.setContext(logger.getLoggerContext());
+            logger.addAppender(rollingFileAppender);
+        }
+        return (RollingFileAppender) rollingFileAppender;
     }
 }

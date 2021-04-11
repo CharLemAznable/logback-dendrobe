@@ -40,8 +40,8 @@ public class FileAppender extends AsyncOutputStreamAppender {
         return this;
     }
 
-    public FileAppender setBufferSize(long bufferSize) {
-        this.appender.setBufferSize(new FileSize(bufferSize));
+    public FileAppender setBufferSize(String bufferSizeStr) {
+        this.appender.setBufferSize(FileSize.valueOf(bufferSizeStr));
         return this;
     }
 

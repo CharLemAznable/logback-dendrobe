@@ -47,7 +47,6 @@ public class FileAppenderTest {
         log.info("info logging");
         log.warn("warn logging");
         log.error("error logging");
-
         await().pollDelay(Duration.ofSeconds(3)).until(() -> true);
 
         val future2 = MockDiamondServer.updateDiamond("Logback", "test", "" +
@@ -60,14 +59,13 @@ public class FileAppenderTest {
                 "com.github.charlemaznable.logback.miner.appender.FileAppenderTest[file.append]=true\n" +
                 "com.github.charlemaznable.logback.miner.appender.FileAppenderTest[file.bufferSize]=1024\n" +
                 "com.github.charlemaznable.logback.miner.appender.FileAppenderTest[file.immediateflush]=true\n");
-        await().forever().until(future::isDone);
+        await().forever().until(future2::isDone);
 
         log.trace("trace logging append");
         log.debug("debug logging append");
         log.info("info logging append");
         log.warn("warn logging append");
         log.error("error logging append");
-
         await().pollDelay(Duration.ofSeconds(3)).until(() -> true);
 
         val output = FileUtils.readFileToString(
