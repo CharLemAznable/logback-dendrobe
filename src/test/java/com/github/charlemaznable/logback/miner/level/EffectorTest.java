@@ -172,6 +172,9 @@ public class EffectorTest {
         assertNull(self.getRollingFileLevel());
         assertEquals(Level.DEBUG_INT, self.getRollingFileEffectiveLevelInt());
 
+        log.info("AnswerToTheUltimateQuestionOfLifeTheUniverseAndEverything");
+        log.info("42");
+
         val finish = MockDiamondServer.updateDiamond("Logback", "test", "root[level]=info\n");
         await().forever().until(finish::isDone);
         MockDiamondServer.tearDownMockServer();

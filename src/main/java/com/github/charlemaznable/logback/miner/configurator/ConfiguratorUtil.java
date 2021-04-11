@@ -17,6 +17,12 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public class ConfiguratorUtil {
 
+    public static final String CONSOLE_APPENDER_PREFIX = "ConsoleAppender-";
+    public static final String DQL_APPENDER_PREFIX = "DqlAppender-";
+    public static final String VERTX_APPENDER_PREFIX = "VertxAppender-";
+    public static final String FILE_APPENDER_PREFIX = "FileAppender-";
+    public static final String ROLLING_FILE_APPENDER_PREFIX = "RollingFileAppender-";
+
     private ConfiguratorUtil() {}
 
     static String propertyKey(String key, String prefix, String suffix) {
@@ -43,7 +49,7 @@ public class ConfiguratorUtil {
     }
 
     static ConsoleAppender consoleAppender(Logger logger) {
-        val consoleAppenderName = "ConsoleAppender-" + logger.getName();
+        val consoleAppenderName = CONSOLE_APPENDER_PREFIX + logger.getName();
         Appender<ILoggingEvent> consoleAppender = logger.getAppender(consoleAppenderName);
         if (!(consoleAppender instanceof ConsoleAppender)) {
             logger.detachAppender(consoleAppender);
@@ -56,7 +62,7 @@ public class ConfiguratorUtil {
     }
 
     static DqlAppender dqlAppender(Logger logger) {
-        val dqlAppenderName = "DqlAppender-" + logger.getName();
+        val dqlAppenderName = DQL_APPENDER_PREFIX + logger.getName();
         Appender<ILoggingEvent> dqlAppender = logger.getAppender(dqlAppenderName);
         if (!(dqlAppender instanceof DqlAppender)) {
             logger.detachAppender(dqlAppender);
@@ -69,7 +75,7 @@ public class ConfiguratorUtil {
     }
 
     static VertxAppender vertxAppender(Logger logger) {
-        val vertxAppenderName = "VertxAppender-" + logger.getName();
+        val vertxAppenderName = VERTX_APPENDER_PREFIX + logger.getName();
         Appender<ILoggingEvent> vertxAppender = logger.getAppender(vertxAppenderName);
         if (!(vertxAppender instanceof VertxAppender)) {
             logger.detachAppender(vertxAppender);
@@ -84,7 +90,7 @@ public class ConfiguratorUtil {
     }
 
     static FileAppender fileAppender(Logger logger) {
-        val fileAppenderName = "FileAppender-" + logger.getName();
+        val fileAppenderName = FILE_APPENDER_PREFIX + logger.getName();
         Appender<ILoggingEvent> fileAppender = logger.getAppender(fileAppenderName);
         if (!(fileAppender instanceof FileAppender)) {
             logger.detachAppender(fileAppender);
@@ -97,7 +103,7 @@ public class ConfiguratorUtil {
     }
 
     static RollingFileAppender rollingFileAppender(Logger logger) {
-        val fileAppenderName = "RollingFileAppender-" + logger.getName();
+        val fileAppenderName = ROLLING_FILE_APPENDER_PREFIX + logger.getName();
         Appender<ILoggingEvent> rollingFileAppender = logger.getAppender(fileAppenderName);
         if (!(rollingFileAppender instanceof RollingFileAppender)) {
             logger.detachAppender(rollingFileAppender);

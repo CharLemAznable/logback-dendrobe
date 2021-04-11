@@ -4,6 +4,11 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.LoggerContextListener;
+import ch.qos.logback.core.Appender;
+import ch.qos.logback.core.spi.LifeCycle;
+import ch.qos.logback.core.util.COWArrayList;
+import com.github.charlemaznable.logback.miner.appender.ConsoleAppender;
+import com.github.charlemaznable.logback.miner.configurator.AppenderConfigurator;
 import com.github.charlemaznable.logback.miner.configurator.Configurator;
 import com.github.charlemaznable.logback.miner.level.EffectorContext;
 import com.github.charlemaznable.logback.miner.level.EffectorTurboFilter;
@@ -25,6 +30,7 @@ import java.util.ServiceLoader;
 
 import static ch.qos.logback.classic.ClassicConstants.DEFAULT_MAX_CALLEDER_DATA_DEPTH;
 import static ch.qos.logback.classic.LoggerContext.DEFAULT_PACKAGING_DATA;
+import static com.github.charlemaznable.logback.miner.configurator.ConfiguratorUtil.CONSOLE_APPENDER_PREFIX;
 import static com.github.charlemaznable.logback.miner.level.EffectorContextUtil.EFFECTOR_CONTEXT;
 import static com.google.common.io.Closeables.closeQuietly;
 import static java.lang.Thread.currentThread;
@@ -147,11 +153,11 @@ public class LogbackMinerDiamondListener implements DiamondListener, LoggerConte
     private Properties rebuildProperties(Properties properties) {
         val result = new Properties();
 
-        for (val key : properties.stringPropertyNames()) {
-            // ROOT logger's name is ignored case
-            result.setProperty(startsWithIgnoreCase(key, ROOT_LOGGER_NAME)
-                    ? key.toUpperCase() : key, properties.getProperty(key));
-        }
+        properties.stringPropertyNames().forEach(key ->
+                // ROOT logger's name is ignored case
+                result.setProperty(startsWithIgnoreCase(key, ROOT_LOGGER_NAME)
+                        ? key.toUpperCase() : key, properties.getProperty(key))
+        );
         return result;
     }
 
@@ -197,16 +203,32 @@ public class LogbackMinerDiamondListener implements DiamondListener, LoggerConte
                     getInt(MAX_CALLER_DATA_DEPTH_KEY, DEFAULT_MAX_CALLEDER_DATA_DEPTH));
             loggerContext.getFrameworkPackages().addAll(getList(FRAMEWORK_PACKAGES_KEY));
 
-            for (val key : minerConfig.stringPropertyNames()) {
-                val value = minerConfig.getProperty(key, "");
-                for (val configurator : configurators) {
-                    configurator.configurate(loggerContext, key, value);
-                }
-            }
+            minerConfig.stringPropertyNames().forEach(key ->
+                    configurators.forEach(configurator ->
+                            configurator.configurate(loggerContext,
+                                    key, minerConfig.getProperty(key, "")))
+            );
 
-            for (val configurator : configurators) {
+            val appenders = new COWArrayList<Appender>(new Appender[0]);
+            configurators.forEach(configurator -> {
                 configurator.postConfigurate(loggerContext);
+
+                if (configurator instanceof AppenderConfigurator) {
+                    val ac = (AppenderConfigurator) configurator;
+                    val appenderList = ac.getAppenderList();
+                    appenders.addAll(appenderList);
+                    ac.clearAppenderList();
+                }
+            });
+
+            if (appenders.isEmpty()) {
+                val consoleAppender = new ConsoleAppender();
+                consoleAppender.setName(CONSOLE_APPENDER_PREFIX + ROOT_LOGGER_NAME);
+                consoleAppender.setContext(loggerContext);
+                loggerContext.getLogger(ROOT_LOGGER_NAME).addAppender(consoleAppender);
+                appenders.add(consoleAppender);
             }
+            appenders.forEach(LifeCycle::start);
         }
     }
 

@@ -49,6 +49,5 @@ public class BasicConfigurator extends AppenderConfigurator {
                     .setAdditive(entry.getValue());
         }
         loggerAdditiveMap.clear();
-        super.postConfigurate(loggerContext);
     }
 }
