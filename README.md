@@ -197,3 +197,41 @@ logback.miner.dataId=default
 配置以上任一项, 即启动对应级别logger日志文件输出
 
 若未配置```[file]```项或配置为空, 则文件输出不会开启
+
+9. 配置滚动文件输出
+
+```
+{logger-name}[rollingfile]={filepath/filename}
+{logger-name}[rollingfile.level]=debug
+{logger-name}[rollingfile.charset]=utf-8
+{logger-name}[rollingfile.pattern]=%date [%20.20thread] %5level %50.50logger{50}\\(%4.4line\\): %message%n
+{logger-name}[rollingfile.prudent]={true/yes/on/y为真值, 其他为假值}
+{logger-name}[rollingfile.append]={true/yes/on/y为真值, 其他为假值}
+{logger-name}[rollingfile.bufferSize]=8192
+{logger-name}[rollingfile.immediateFlush]={true/yes/on/y为真值, 其他为假值}
+{logger-name}[rollingfile.fileNamePattern]={true/yes/on/y为真值, 其他为假值}
+{logger-name}[rollingfile.maxFileSize]=10MB
+{logger-name}[rollingfile.minIndex]=1
+{logger-name}[rollingfile.maxIndex]=7
+{logger-name}[rollingfile.maxHistory]=0
+{logger-name}[rollingfile.cleanHistoryOnStart]={true/yes/on/y为真值, 其他为假值, 默认false}
+```
+
+以上配置中:
+
+  * "rollingfile.XXX"关键字不区分大小写
+  * 日志级别不区分大小写, 覆盖当前级别日志的```[level]```
+  * 滚动文件日志级别未设置时, 优先使用当前级别日志的```[level]```, 若未设置```[level]```, 则使用父级日志的滚动文件日志级别
+  * 字符编码可选值参见```java.nio.charset.Charset```
+  * 日志输出格式参见```ch.qos.logback.core.pattern.PatternLayoutEncoderBase```
+
+配置以上任一项, 即启动对应级别logger日志文件输出
+
+若未配置```[rollingfile.fileNamePattern]```, 则滚动文件输出不会开启
+
+滚动文件输出的rollingPolicy和triggeringPolicy规则为:
+
+  * 同时含有时间和索引模式时, 使用SizeAndTimeBasedRollingPolicy做为rollingPolicy和triggeringPolicy, 按```[rollingfile.maxFileSize]```配置, 默认值为```10MB```
+  * 仅含有时间模式时, 使用TimeBasedRollingPolicy做为rollingPolicy和triggeringPolicy
+  * 仅含有索引模式时, 使用FixedWindowRollingPolicy做为rollingPolicy, SizeBasedTriggeringPolicy做为triggeringPolicy, 按```[rollingfile.minIndex]```, ```[rollingfile.maxIndex]```和```[rollingfile.maxFileSize]```配置, 默认值为```1```, ```7```和```10MB```
+  * 不含以上两种模式时, 滚动文件输出不会开启
