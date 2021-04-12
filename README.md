@@ -233,7 +233,7 @@ logback.miner.dataId=default
 
 滚动文件输出的rollingPolicy和triggeringPolicy规则为:
 
-  * 同时含有时间和索引模式时, 使用SizeAndTimeBasedRollingPolicy做为rollingPolicy和triggeringPolicy, 按```[rollingfile.maxFileSize]```配置, 默认值为```10MB```
-  * 仅含有时间模式时, 使用TimeBasedRollingPolicy做为rollingPolicy和triggeringPolicy
-  * 仅含有索引模式时, 使用FixedWindowRollingPolicy做为rollingPolicy, SizeBasedTriggeringPolicy做为triggeringPolicy, 按```[rollingfile.minIndex]```, ```[rollingfile.maxIndex]```和```[rollingfile.maxFileSize]```配置, 默认值为```1```, ```7```和```10MB```
+  * 同时含有时间和索引模式时, 使用```SizeAndTimeBasedRollingPolicy```做为rollingPolicy和triggeringPolicy, 按```[rollingfile.maxFileSize]```配置, 默认值为```10MB```
+  * 仅含有时间模式时, 使用```TimeBasedRollingPolicy```做为rollingPolicy和triggeringPolicy
+  * 仅含有索引模式时, 使用```FixedWindowRollingPolicy```做为rollingPolicy, ```SizeBasedTriggeringPolicy```做为triggeringPolicy, 按```[rollingfile.minIndex]```, ```[rollingfile.maxIndex]```和```[rollingfile.maxFileSize]```配置, 默认值为```1```, ```7```和```10MB```
   * 不含以上两种模式时, 滚动文件输出不会开启
