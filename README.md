@@ -66,6 +66,8 @@ root[level]=info    # 配置根级别logger日志级别为info, 默认为debug, 
 {logger-name}[additivity]={true/yes/on/y为真值, 其他为假值}  # "additivity"关键字和配置值不区分大小写
 ```
 
+添加了以上或以下配置的日志, 默认additivity即为false
+
 3. 配置控制台输出
 
 ```
