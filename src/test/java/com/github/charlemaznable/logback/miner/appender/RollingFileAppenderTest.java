@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 
 import static java.util.Objects.nonNull;
 import static org.awaitility.Awaitility.await;
+import static org.joor.Reflect.on;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -27,6 +28,9 @@ public class RollingFileAppenderTest {
     public static void beforeAll() {
         await().forever().until(() -> nonNull(
                 DiamondSubscriber.getInstance().getDiamondRemoteChecker()));
+        Object diamondRemoteChecker = DiamondSubscriber.getInstance().getDiamondRemoteChecker();
+        await().forever().until(() -> 1 <= on(diamondRemoteChecker)
+                .field("diamondAllListener").field("allListeners").call("size").<Integer>get());
     }
 
     @SneakyThrows
@@ -38,6 +42,7 @@ public class RollingFileAppenderTest {
         MockDiamondServer.setUpMockServer();
         val future = MockDiamondServer.updateDiamond("Logback", "test", "" +
                 "com.github.charlemaznable.logback.miner.appender.RollingFileAppenderTest[level]=debug\n" +
+                "com.github.charlemaznable.logback.miner.appender.RollingFileAppenderTest[appenders]=[rollingfile]\n" +
                 "com.github.charlemaznable.logback.miner.appender.RollingFileAppenderTest[rollingfile]=rolling/RollingFileAppenderTest.log\n" +
                 "com.github.charlemaznable.logback.miner.appender.RollingFileAppenderTest[rollingfile.level]=info\n" +
                 "com.github.charlemaznable.logback.miner.appender.RollingFileAppenderTest[rollingfile.charset]=utf-8\n" +

@@ -13,6 +13,7 @@ import static org.n3r.diamond.client.impl.DiamondUtils.toBool;
 @AutoService(Configurator.class)
 public class FileConfigurator extends AppenderConfigurator {
 
+    private static final String FILE_APPENDER = "[file]";
     private static final String FILE_SUFFIX = "[file]";
     private static final String FILE_LEVEL_SUFFIX = "[file.level]";
     private static final String FILE_CHARSET_SUFFIX = "[file.charset]";
@@ -24,7 +25,11 @@ public class FileConfigurator extends AppenderConfigurator {
 
     @Override
     public void configurate(LoggerContext loggerContext, String key, String value) {
-        if (endsWithIgnoreCase(key, FILE_SUFFIX)) {
+        if (endsWithIgnoreCase(key, APPENDERS_SUFFIX)) {
+            addAppenderIfAbsentAndContains(value, FILE_APPENDER,
+                    fileAppender(logger(loggerContext, key, APPENDERS_SUFFIX)));
+
+        } else if (endsWithIgnoreCase(key, FILE_SUFFIX)) {
             addAppenderIfAbsent(fileAppender(logger(
                     loggerContext, key, FILE_SUFFIX)).setFile(value));
 

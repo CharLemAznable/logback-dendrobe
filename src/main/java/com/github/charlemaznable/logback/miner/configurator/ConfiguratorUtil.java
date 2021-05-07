@@ -34,9 +34,7 @@ public class ConfiguratorUtil {
     }
 
     static Logger logger(LoggerContext loggerContext, String name) {
-        val logger = loggerContext.getLogger(name);
-        logger.setAdditive(false);
-        return logger;
+        return loggerContext.getLogger(name);
     }
 
     static Logger logger(LoggerContext loggerContext, String key, String suffix) {

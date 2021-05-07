@@ -13,6 +13,7 @@ import static java.lang.System.currentTimeMillis;
 import static java.time.Duration.ofMillis;
 import static java.util.Objects.nonNull;
 import static org.awaitility.Awaitility.await;
+import static org.joor.Reflect.on;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Slf4j
@@ -24,6 +25,9 @@ public class ConsoleAppenderBatchTest {
     public static void beforeAll() {
         await().forever().until(() -> nonNull(
                 DiamondSubscriber.getInstance().getDiamondRemoteChecker()));
+        Object diamondRemoteChecker = DiamondSubscriber.getInstance().getDiamondRemoteChecker();
+        await().forever().until(() -> 1 <= on(diamondRemoteChecker)
+                .field("diamondAllListener").field("allListeners").call("size").<Integer>get());
     }
 
     @SneakyThrows

@@ -5,7 +5,11 @@ import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.util.COWArrayList;
 import lombok.Getter;
 
+import static org.apache.commons.lang3.StringUtils.containsIgnoreCase;
+
 public abstract class AppenderConfigurator implements Configurator {
+
+    protected static final String APPENDERS_SUFFIX = "[appenders]";
 
     @Getter
     private COWArrayList<Appender> appenderList = new COWArrayList<>(new Appender[0]);
@@ -16,5 +20,10 @@ public abstract class AppenderConfigurator implements Configurator {
 
     protected void addAppenderIfAbsent(Appender<ILoggingEvent> appender) {
         appenderList.addIfAbsent(appender);
+    }
+
+    protected void addAppenderIfAbsentAndContains(String value, String name,
+                                                  Appender<ILoggingEvent> appender) {
+        if (containsIgnoreCase(value, name)) addAppenderIfAbsent(appender);
     }
 }

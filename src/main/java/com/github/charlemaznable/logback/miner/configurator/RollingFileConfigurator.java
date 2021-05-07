@@ -15,6 +15,7 @@ import static org.n3r.diamond.client.impl.DiamondUtils.toBool;
 @AutoService(Configurator.class)
 public class RollingFileConfigurator extends AppenderConfigurator {
 
+    private static final String ROLLING_FILE_APPENDER = "[rollingfile]";
     private static final String ROLLING_FILE_SUFFIX = "[rollingfile]";
     private static final String ROLLING_FILE_LEVEL_SUFFIX = "[rollingfile.level]";
     private static final String ROLLING_FILE_CHARSET_SUFFIX = "[rollingfile.charset]";
@@ -32,7 +33,11 @@ public class RollingFileConfigurator extends AppenderConfigurator {
 
     @Override
     public void configurate(LoggerContext loggerContext, String key, String value) {
-        if (endsWithIgnoreCase(key, ROLLING_FILE_SUFFIX)) {
+        if (endsWithIgnoreCase(key, APPENDERS_SUFFIX)) {
+            addAppenderIfAbsentAndContains(value, ROLLING_FILE_APPENDER,
+                    rollingFileAppender(logger(loggerContext, key, APPENDERS_SUFFIX)));
+
+        } else if (endsWithIgnoreCase(key, ROLLING_FILE_SUFFIX)) {
             addAppenderIfAbsent(rollingFileAppender(logger(loggerContext,
                     key, ROLLING_FILE_SUFFIX)).setFile(defaultIfBlank(value, null)));
 

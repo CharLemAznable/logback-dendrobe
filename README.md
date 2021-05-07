@@ -66,8 +66,6 @@ root[level]=info    # 配置根级别logger日志级别为info, 默认为debug, 
 {logger-name}[additivity]={true/yes/on/y为真值, 其他为假值}  # "additivity"关键字和配置值不区分大小写
 ```
 
-添加了以上或以下配置的日志, 默认additivity即为false
-
 3. 配置控制台输出
 
 ```
@@ -89,12 +87,6 @@ root[level]=info    # 配置根级别logger日志级别为info, 默认为debug, 
 
 配置以上任一项, 即启动对应级别logger日志控制台输出
 
-仅需启动日志控制台输出, 且仅使用默认配置, 则需添加配置: 
-
-```
-{logger-name}[console]  # 启动对应级别logger日志控制台输出, 使用默认配置, "console"关键字不区分大小写
-```
-
 4. 配置数据库日志
 
 ```
@@ -112,12 +104,6 @@ root[level]=info    # 配置根级别logger日志级别为info, 默认为debug, 
   * dql.sql配置默认使用的日志插入SQL语句, 可选参数参见```com.github.charlemaznable.logback.miner.appender.LoggingEventElf```, 如: ```event.message```, ```mdc.XXX```, ```property.XXX```, 等
 
 配置以上任一项, 即启动对应级别logger数据库日志
-
-仅需启动数据库日志, 且仅使用默认配置/仅使用注解配置, 则需添加配置: 
-
-```
-{logger-name}[dql]  # 启动对应级别logger数据库日志, 使用默认配置, "dql"关键字不区分大小写
-```
 
 数据库插入参数规则:
 
@@ -147,12 +133,6 @@ root[level]=info    # 配置根级别logger日志级别为info, 默认为debug, 
   * 日志事件消息的接收端处理器类型为```io.vertx.core.Handler<io.vertx.core.eventbus.Message<io.vertx.core.json.JsonObject>>```, 其中JsonObject包含```event```, ```mdc```和```property```三个子JsonObject
 
 配置以上任一项, 即启动对应级别logger Vert.x日志
-
-仅需启动Vert.x日志, 且仅使用默认配置, 则需添加配置: 
-
-```
-{logger-name}[vertx]  # 启动对应级别logger数据库日志, 使用默认配置, "vertx"关键字不区分大小写
-```
 
 6. 配置日志Context
 
@@ -237,3 +217,18 @@ logback.miner.dataId=default
   * 仅含有时间模式时, 使用```TimeBasedRollingPolicy```做为rollingPolicy和triggeringPolicy
   * 仅含有索引模式时, 使用```FixedWindowRollingPolicy```做为rollingPolicy, ```SizeBasedTriggeringPolicy```做为triggeringPolicy, 按```[rollingfile.minIndex]```, ```[rollingfile.maxIndex]```和```[rollingfile.maxFileSize]```配置, 默认值为```1```, ```7```和```10MB```
   * 不含以上两种模式时, 滚动文件输出不会开启
+
+10. 使用默认配置启动日志输出
+
+```
+{logger-name}[appenders]=[console][dql][vertx][file][rollingfile]
+```
+
+当仅需启动日志的某些输出端时, 可使用此配置:
+
+  * 配置值中包含```[console]```字符串时, 启动默认控制台输出
+  * 配置值中包含```[dql]```字符串时, 启动默认数据库输出
+  * 配置值中包含```[vertx]```字符串时, 启动默认Vert.x输出
+  * 配置值中包含```[file]```字符串时, 启动默认文件输出, 但需另外配置```{logger-name}[file]```指定日志文件名
+  * 配置值中包含```[rollingfile]```字符串时, 启动默认滚动文件输出, 但需另外配置```{logger-name}[rollingfile.fileNamePattern]```指定文件名滚动规则
+  * "appenders"关键字和配置值不区分大小写

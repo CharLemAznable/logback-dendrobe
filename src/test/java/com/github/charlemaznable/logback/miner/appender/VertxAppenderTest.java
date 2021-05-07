@@ -44,6 +44,9 @@ public class VertxAppenderTest {
     public static void beforeAll() {
         await().forever().until(() -> nonNull(
                 DiamondSubscriber.getInstance().getDiamondRemoteChecker()));
+        Object diamondRemoteChecker = DiamondSubscriber.getInstance().getDiamondRemoteChecker();
+        await().forever().until(() -> 1 <= on(diamondRemoteChecker)
+                .field("diamondAllListener").field("allListeners").call("size").<Integer>get());
         val vertxOptions = new VertxOptions();
         vertxOptions.setWorkerPoolSize(10);
         vertxOptions.getEventBusOptions().setClustered(true);
@@ -76,7 +79,7 @@ public class VertxAppenderTest {
                 "eventBusOptions.clustered=on\n");
         val future1 = MockDiamondServer.updateDiamond("Logback", "test", "" +
                 "root[console.level]=info\n" +
-                "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx]\n" +
+                "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[appenders]=[vertx]\n" +
                 "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.level]=info\n" +
                 "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.name]=DEFAULT\n" +
                 "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.address]=logback.miner\n" +

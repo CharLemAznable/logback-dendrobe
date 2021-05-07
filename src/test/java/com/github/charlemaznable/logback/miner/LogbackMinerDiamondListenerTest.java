@@ -7,12 +7,14 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.n3r.diamond.client.DiamondAxis;
 import org.n3r.diamond.client.impl.DiamondSubscriber;
 import org.n3r.diamond.client.impl.MockDiamondServer;
 import org.slf4j.LoggerFactory;
 
 import static java.util.Objects.nonNull;
 import static org.awaitility.Awaitility.await;
+import static org.joor.Reflect.on;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -25,6 +27,9 @@ public class LogbackMinerDiamondListenerTest {
     public static void beforeAll() {
         await().forever().until(() -> nonNull(
                 DiamondSubscriber.getInstance().getDiamondRemoteChecker()));
+        Object diamondRemoteChecker = DiamondSubscriber.getInstance().getDiamondRemoteChecker();
+        await().forever().until(() -> 1 <= on(diamondRemoteChecker)
+                .field("diamondAllListener").field("allListeners").call("size").<Integer>get());
     }
 
     @Test
@@ -45,6 +50,9 @@ public class LogbackMinerDiamondListenerTest {
         await().forever().until(future2::isDone);
         assertNull(diamondListener.getRaw("key1"));
         assertEquals("value2", diamondListener.getRaw("key2"));
+
+        DiamondSubscriber.getInstance().removeDiamondListener(
+                DiamondAxis.makeAxis("Logback", "test"), diamondListener);
 
         MockDiamondServer.tearDownMockServer();
     }

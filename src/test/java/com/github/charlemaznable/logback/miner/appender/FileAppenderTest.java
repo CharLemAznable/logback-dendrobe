@@ -15,6 +15,7 @@ import java.time.Duration;
 
 import static java.util.Objects.nonNull;
 import static org.awaitility.Awaitility.await;
+import static org.joor.Reflect.on;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Slf4j
@@ -24,6 +25,9 @@ public class FileAppenderTest {
     public static void beforeAll() {
         await().forever().until(() -> nonNull(
                 DiamondSubscriber.getInstance().getDiamondRemoteChecker()));
+        Object diamondRemoteChecker = DiamondSubscriber.getInstance().getDiamondRemoteChecker();
+        await().forever().until(() -> 1 <= on(diamondRemoteChecker)
+                .field("diamondAllListener").field("allListeners").call("size").<Integer>get());
     }
 
     @SneakyThrows
@@ -32,6 +36,7 @@ public class FileAppenderTest {
         MockDiamondServer.setUpMockServer();
         val future = MockDiamondServer.updateDiamond("Logback", "test", "" +
                 "context.property[miner]=test\n" +
+                "com.github.charlemaznable.logback.miner.appender.FileAppenderTest[appenders]=[file]\n" +
                 "com.github.charlemaznable.logback.miner.appender.FileAppenderTest[file]=FileAppenderTest.log\n" +
                 "com.github.charlemaznable.logback.miner.appender.FileAppenderTest[file.level]=info\n" +
                 "com.github.charlemaznable.logback.miner.appender.FileAppenderTest[file.charset]=utf-8\n" +

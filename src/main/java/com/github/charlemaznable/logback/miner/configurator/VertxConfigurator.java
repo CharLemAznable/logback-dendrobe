@@ -13,16 +13,16 @@ import static org.apache.commons.lang3.StringUtils.endsWithIgnoreCase;
 @AutoService(Configurator.class)
 public class VertxConfigurator extends AppenderConfigurator {
 
-    private static final String VERTX_SUFFIX = "[vertx]";
+    private static final String VERTX_APPENDER = "[vertx]";
     private static final String VERTX_LEVEL_SUFFIX = "[vertx.level]";
     private static final String VERTX_NAME_SUFFIX = "[vertx.name]";
     private static final String VERTX_ADDRESS_SUFFIX = "[vertx.address]";
 
     @Override
     public void configurate(LoggerContext loggerContext, String key, String value) {
-        if (endsWithIgnoreCase(key, VERTX_SUFFIX)) {
-            addAppenderIfAbsent(vertxAppender(logger(
-                    loggerContext, key, VERTX_SUFFIX)));
+        if (endsWithIgnoreCase(key, APPENDERS_SUFFIX)) {
+            addAppenderIfAbsentAndContains(value, VERTX_APPENDER,
+                    vertxAppender(logger(loggerContext, key, APPENDERS_SUFFIX)));
 
         } else if (endsWithIgnoreCase(key, VERTX_LEVEL_SUFFIX)) {
             effector(loggerContext, key, VERTX_LEVEL_SUFFIX)

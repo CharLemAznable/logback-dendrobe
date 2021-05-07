@@ -19,6 +19,7 @@ import java.util.List;
 
 import static java.util.Objects.nonNull;
 import static org.awaitility.Awaitility.await;
+import static org.joor.Reflect.on;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -48,6 +49,9 @@ public class DqlAppenderTest {
     public static void beforeAll() {
         await().forever().until(() -> nonNull(
                 DiamondSubscriber.getInstance().getDiamondRemoteChecker()));
+        Object diamondRemoteChecker = DiamondSubscriber.getInstance().getDiamondRemoteChecker();
+        await().forever().until(() -> 1 <= on(diamondRemoteChecker)
+                .field("diamondAllListener").field("allListeners").call("size").<Integer>get());
         MockDiamondServer.setUpMockServer();
         MockDiamondServer.setConfigInfo("EqlConfig", DB0, "" +
                 "driver=org.h2.Driver\n" +
@@ -88,7 +92,7 @@ public class DqlAppenderTest {
                 "context.property[miner]=test\n" +
                 "root[dql.level]=info\n" +
                 "root[dql.connection]=\n" +
-                "com.github.charlemaznable.logback.miner.appender.DqlAppenderTest[dql]\n" +
+                "com.github.charlemaznable.logback.miner.appender.DqlAppenderTest[appenders]=[dql]\n" +
                 "com.github.charlemaznable.logback.miner.appender.DqlAppenderTest[dql.level]=info\n" +
                 "com.github.charlemaznable.logback.miner.appender.DqlAppenderTest[dql.connection]=" + DB0 + "\n" +
                 "com.github.charlemaznable.logback.miner.appender.DqlAppenderTest[dql.sql]=" + sql + "\n" +
