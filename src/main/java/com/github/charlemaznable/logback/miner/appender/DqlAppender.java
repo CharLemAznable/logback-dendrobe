@@ -15,7 +15,10 @@ import java.util.stream.Collectors;
 import static com.github.charlemaznable.logback.miner.appender.DqlCaches.LogbackBeanDqlCache.getLogbackBeanDql;
 import static com.github.charlemaznable.logback.miner.appender.DqlCaches.LogbackBeanPresentCache.isLogbackBeanPresent;
 import static com.github.charlemaznable.logback.miner.appender.DqlCaches.LogbackPojoSqlCache.getLogbackPojoSql;
+import static com.github.charlemaznable.logback.miner.appender.DqlCaches.LogbackRollingCache.getTableNamePattern;
 import static com.github.charlemaznable.logback.miner.appender.DqlCaches.LogbackSqlCache.useLogbackSql;
+import static com.github.charlemaznable.logback.miner.appender.DqlCaches.LogbackTableNameRollingCache.getTableNameRolling;
+import static com.github.charlemaznable.logback.miner.appender.DqlCaches.TableNameRolling.ACTIVE_TABLE_NAME;
 import static com.github.charlemaznable.logback.miner.appender.LoggingEventElf.buildEventMap;
 import static com.google.common.collect.Maps.newHashMap;
 import static java.util.Objects.isNull;
@@ -50,6 +53,16 @@ public class DqlAppender extends AsyncAppender {
         return this;
     }
 
+    public DqlAppender setTableNamePattern(String tableNamePattern) {
+        this.appender.setTableNamePatternStr(tableNamePattern);
+        return this;
+    }
+
+    public DqlAppender setDqlPrepareSql(String dqlPrepareSql) {
+        this.appender.setDqlPrepareSql(dqlPrepareSql);
+        return this;
+    }
+
     @Override
     protected UnsynchronizedAppenderBase<ILoggingEvent> internalAppend() {
         return this.appender;
@@ -71,6 +84,10 @@ public class DqlAppender extends AsyncAppender {
         private String dqlConnection;
         @Setter
         private String dqlSql;
+        @Setter
+        private String tableNamePatternStr;
+        @Setter
+        private String dqlPrepareSql;
 
         @Override
         protected void append(ILoggingEvent eventObject) {
@@ -87,10 +104,17 @@ public class DqlAppender extends AsyncAppender {
                         .collect(Collectors.toList());
                 // 日志不包含@LogbackBean注解的参数, 执行默认连接的默认SQL
                 if (arguments.isEmpty()) {
-                    val dql = getLogbackBeanDql(null, dqlConnection);
+                    val dql = getLogbackBeanDql(dqlConnection);
                     // 未指定默认连接或默认SQL, 则跳过
                     if (isNull(dql) || isBlank(dqlSql)) return;
-                    dql.params(paramMap).dynamics(paramMap).execute(dqlSql);
+
+                    val rolling = getTableNameRolling(
+                            tableNamePatternStr, context);
+                    rolling.rolling(dql, dqlPrepareSql);
+
+                    val currentMap = newHashMap(paramMap);
+                    currentMap.put(ACTIVE_TABLE_NAME, rolling.getActiveTableName());
+                    dql.params(currentMap).dynamics(currentMap).execute(dqlSql);
                     return;
                 }
 
@@ -101,9 +125,14 @@ public class DqlAppender extends AsyncAppender {
                     // 参数类型注解未指定连接, 且Logger未指定默认连接, 则跳过
                     if (isNull(dql)) continue;
 
+                    val tnps = getTableNamePattern(clazz);
+                    val rolling = getTableNameRolling(tnps, context);
+                    rolling.rolling(dql, clazz);
+
                     // 设参数key为arg, 加入eql参数上下文
                     val currentMap = newHashMap(paramMap);
                     currentMap.put("arg", argument);
+                    currentMap.put(ACTIVE_TABLE_NAME, rolling.getActiveTableName());
                     // 同时设置一般参数与动态参数
                     dql.params(currentMap).dynamics(currentMap);
 

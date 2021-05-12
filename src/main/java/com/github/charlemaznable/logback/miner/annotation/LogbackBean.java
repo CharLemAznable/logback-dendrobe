@@ -13,5 +13,8 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface LogbackBean {
 
+    /**
+     * 指定Dql连接的Diamond配置key
+     */
     String value() default "";
 }

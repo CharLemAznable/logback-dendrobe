@@ -1,5 +1,6 @@
 package com.github.charlemaznable.logback.miner.appender;
 
+import com.github.bingoohuang.westid.WestId;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.joda.time.DateTime;
@@ -16,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import java.time.Duration;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import static java.util.Objects.nonNull;
 import static org.awaitility.Awaitility.await;
@@ -23,6 +25,7 @@ import static org.joor.Reflect.on;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@SuppressWarnings("Duplicates")
 @Slf4j
 public class DqlAppenderTest {
 
@@ -224,5 +227,139 @@ public class DqlAppenderTest {
                 "sql log: SqlLogMtcp(logId=1005, logContent=null)", querySqlLogMtcp.getLogContent());
 
         MtcpContext.clearTenant();
+    }
+
+    @Test
+    public void testDqlAppenderRolling() {
+        val sql = "INSERT INTO $activeTableName$ (LOG_ID,LOG_CONTENT,LOG_DATE) VALUES(#event.westId#,#event.message#,CURRENT_TIMESTAMP())";
+        val tableNamePattern = "D_ROLLING_LOG_%d{yyyyMMddHHmmss}";
+        val prepareSql = "" +
+                "CREATE TABLE $activeTableName$ (" +
+                "  `LOG_ID` BIGINT NOT NULL," +
+                "  `LOG_CONTENT` TEXT," +
+                "  `LOG_DATE` DATETIME," +
+                "  PRIMARY KEY (`LOG_ID`)" +
+                ");\n";
+        val future = MockDiamondServer.updateDiamond("Logback", "test", "" +
+                "com.github.charlemaznable.logback.miner.appender.DqlAppenderTest[appenders]=[dql]\n" +
+                "com.github.charlemaznable.logback.miner.appender.DqlAppenderTest[dql.level]=info\n" +
+                "com.github.charlemaznable.logback.miner.appender.DqlAppenderTest[dql.connection]=" + DB0 + "\n" +
+                "com.github.charlemaznable.logback.miner.appender.DqlAppenderTest[dql.sql]=" + sql + "\n" +
+                "com.github.charlemaznable.logback.miner.appender.DqlAppenderTest[dql.tableNamePattern]=" + tableNamePattern + "\n" +
+                "com.github.charlemaznable.logback.miner.appender.DqlAppenderTest[dql.prepareSql]=" + prepareSql);
+        await().forever().until(future::isDone);
+
+        val expectBuilder = new StringBuilder();
+        for (int i = 0; i < 3; i++) {
+            self.trace("trace logging");
+            self.debug("debug logging");
+            self.info("info logging");
+            self.warn("warn logging");
+            self.error("error logging");
+            expectBuilder.append("info logging\n" +
+                    "warn logging\n" +
+                    "error logging\n");
+            await().pollDelay(Duration.ofSeconds(1)).until(() -> true);
+        }
+
+        await().timeout(Duration.ofSeconds(30)).pollDelay(Duration.ofSeconds(3)).until(() -> {
+            List<String> dTableNames = new Dql(DB0).execute("" +
+                    "select table_name from information_schema.tables" +
+                    " where table_name like 'd_rolling_log_%'" +
+                    " order by table_name");
+            return 3 == dTableNames.size();
+        });
+
+        List<String> dTableNames = new Dql(DB0).execute("" +
+                "select table_name from information_schema.tables" +
+                " where table_name like 'd_rolling_log_%'" +
+                " order by table_name");
+        val defaultLogBuilder = new StringBuilder();
+        for (val dTableName : dTableNames) {
+            List<String> logContents = new Dql(DB0).execute("" +
+                    "select log_content from " + dTableName +
+                    " order by log_id");
+            for (val logContent : logContents) {
+                defaultLogBuilder.append(logContent).append("\n");
+            }
+        }
+        assertEquals(expectBuilder.toString(), defaultLogBuilder.toString());
+
+        expectBuilder.setLength(0);
+        for (int i = 0; i < 3; i++) {
+            self.trace("{}", new RollSqlLog("bean trace logging"));
+            self.debug("{}", new RollSqlLog("bean debug logging"));
+            self.info("{}", new RollSqlLog("bean info logging"));
+            self.warn("{}", new RollSqlLog("bean warn logging"));
+            self.error("{}", new RollSqlLog("bean error logging"));
+            expectBuilder.append("bean info logging\n" +
+                    "bean warn logging\n" +
+                    "bean error logging\n");
+            await().pollDelay(Duration.ofSeconds(1)).until(() -> true);
+        }
+
+        await().timeout(Duration.ofSeconds(30)).pollDelay(Duration.ofSeconds(3)).until(() -> {
+            List<String> bTableNames = new Dql(DB0).execute("" +
+                    "select table_name from information_schema.tables" +
+                    " where table_name like 'b_rolling_log_%'" +
+                    " order by table_name");
+            return 3 == bTableNames.size();
+        });
+
+        List<String> bTableNames = new Dql(DB0).execute("" +
+                "select table_name from information_schema.tables" +
+                " where table_name like 'b_rolling_log_%'" +
+                " order by table_name");
+        val beanLogBuilder = new StringBuilder();
+        for (val tableName : bTableNames) {
+            List<String> logContents = new Dql(DB0).execute("" +
+                    "select log_content from " + tableName +
+                    " order by log_id");
+            for (val logContent : logContents) {
+                beanLogBuilder.append(logContent).append("\n");
+            }
+        }
+        assertEquals(expectBuilder.toString(), beanLogBuilder.toString());
+
+        expectBuilder.setLength(0);
+        for (int i = 0; i < 3; i++) {
+            val id1 = Objects.toString(WestId.next());
+            self.trace("{}", new RollSimpleLog(id1, "simple trace logging"));
+            val id2 = Objects.toString(WestId.next());
+            self.debug("{}", new RollSimpleLog(id2, "simple debug logging"));
+            val id3 = Objects.toString(WestId.next());
+            self.info("{}", new RollSimpleLog(id3, "simple info logging"));
+            val id4 = Objects.toString(WestId.next());
+            self.warn("{}", new RollSimpleLog(id4, "simple warn logging"));
+            val id5 = Objects.toString(WestId.next());
+            self.error("{}", new RollSimpleLog(id5, "simple error logging"));
+            expectBuilder.append(id3).append(":").append("simple info logging\n");
+            expectBuilder.append(id4).append(":").append("simple warn logging\n");
+            expectBuilder.append(id5).append(":").append("simple error logging\n");
+            await().pollDelay(Duration.ofSeconds(1)).until(() -> true);
+        }
+
+        await().timeout(Duration.ofSeconds(30)).pollDelay(Duration.ofSeconds(3)).until(() -> {
+            List<String> sTableNames = new Dql(DB0).execute("" +
+                    "select table_name from information_schema.tables" +
+                    " where table_name like 's_rolling_log_%'" +
+                    " order by table_name");
+            return 3 == sTableNames.size();
+        });
+
+        List<String> sTableNames = new Dql(DB0).execute("" +
+                "select table_name from information_schema.tables" +
+                " where table_name like 's_rolling_log_%'" +
+                " order by table_name");
+        val simpleLogBuilder = new StringBuilder();
+        for (val tableName : sTableNames) {
+            List<String> logContents = new Dql(DB0).execute("" +
+                    "select concat(log_id, ':', log_content) from " + tableName +
+                    " order by log_id");
+            for (val logContent : logContents) {
+                simpleLogBuilder.append(logContent).append("\n");
+            }
+        }
+        assertEquals(expectBuilder.toString(), simpleLogBuilder.toString());
     }
 }

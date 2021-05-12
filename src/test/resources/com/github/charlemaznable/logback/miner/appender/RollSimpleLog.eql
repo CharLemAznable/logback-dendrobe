@@ -1,0 +1,8 @@
+-- noinspection SqlNoDataSourceInspectionForFile
+
+-- [prepare]
+CREATE TABLE $activeTableName$ (
+  `LOG_ID` BIGINT NOT NULL,
+  `LOG_CONTENT` TEXT,
+  PRIMARY KEY (`LOG_ID`)
+)

@@ -16,6 +16,8 @@ public class DqlConfigurator extends AppenderConfigurator {
     private static final String DQL_LEVEL_SUFFIX = "[dql.level]";
     private static final String DQL_CONNECTION_SUFFIX = "[dql.connection]";
     private static final String DQL_SQL_SUFFIX = "[dql.sql]";
+    private static final String DQL_TABLE_NAME_PATTERN_SUFFIX = "[dql.tableNamePattern]";
+    private static final String DQL_PREPARE_SQL_SUFFIX = "[dql.prepareSql]";
 
     @Override
     public void configurate(LoggerContext loggerContext, String key, String value) {
@@ -36,6 +38,14 @@ public class DqlConfigurator extends AppenderConfigurator {
         } else if (endsWithIgnoreCase(key, DQL_SQL_SUFFIX)) {
             addAppenderIfAbsent(dqlAppender(logger(loggerContext,
                     key, DQL_SQL_SUFFIX)).setDqlSql(value));
+
+        } else if (endsWithIgnoreCase(key, DQL_TABLE_NAME_PATTERN_SUFFIX)) {
+            addAppenderIfAbsent(dqlAppender(logger(loggerContext,
+                    key, DQL_TABLE_NAME_PATTERN_SUFFIX)).setTableNamePattern(value));
+
+        } else if (endsWithIgnoreCase(key, DQL_PREPARE_SQL_SUFFIX)) {
+            addAppenderIfAbsent(dqlAppender(logger(loggerContext,
+                    key, DQL_PREPARE_SQL_SUFFIX)).setDqlPrepareSql(value));
         }
     }
 }
