@@ -93,6 +93,8 @@ root[level]=info    # 配置根级别logger日志级别为info, 默认为debug, 
 {logger-name}[dql.level]=debug
 {logger-name}[dql.connection]=DEFAULT
 {logger-name}[dql.sql]=
+{logger-name}[dql.tableNamePattern]=
+{logger-name}[dql.prepareSql]=
 ```
 
 以上配置中:
@@ -102,6 +104,7 @@ root[level]=info    # 配置根级别logger日志级别为info, 默认为debug, 
   * 数据库日志级别未设置时, 优先使用当前级别日志的```[level]```, 若未设置```[level]```, 则使用父级日志的数据库日志级别
   * dql.connection配置默认使用的Dql连接配置名, 即```new Dql("XXX")```中的```"XXX"```
   * dql.sql配置默认使用的日志插入SQL语句, 可选参数参见```com.github.charlemaznable.logback.miner.appender.LoggingEventElf```, 如: ```event.message```, ```mdc.XXX```, ```property.XXX```, 等
+  * 配置dql.tableNamePattern可设置按日期时间滚动日志表, 配置dql.prepareSql可动态创建滚动日志表, 需在sql语句中使用```$activeTableName$```替代滚动日志表名
 
 配置以上任一项, 即启动对应级别logger数据库日志
 
@@ -113,6 +116,8 @@ root[level]=info    # 配置根级别logger日志级别为info, 默认为debug, 
   * 日志参数Bean默认插入的日志表名为类名的下划线格式, e.g. ```class TestLog```插入表```table TEST_LOG```, 可使用```@LogbackTable```注解另行指定
   * 日志参数Bean默认插入的日志字段为类型声明的非静态字段, 列名为字段名的下划线格式, 可使用```@LogbackColumn```注解另行指定, 或使用```@LogbackSkip```注解指定排除
   * 可使用```@LogbackSql```注解另行指定插入日志的```sqlFile```和```sqlId```, 默认为当前类型对应的```sqlFile```中的名为```[log{类名}]```的SQL语句
+  * 可使用```@LogbackRolling```注解指定滚动日志表名模式和滚动日志表准备sql语句, 需在sql语句中使用```$activeTableName$```替代滚动日志表名
+  * 使用```@LogbackRolling```时, 日志参数Bean默认插入的日志表名将改为```$activeTableName$```, 除非使用```@LogbackTable```或```@LogbackSql```进行自定义
 
 5. 配置Vert.x日志
 
