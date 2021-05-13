@@ -1,18 +1,15 @@
 package com.github.charlemaznable.logback.miner.appender;
 
 import ch.qos.logback.core.Context;
-import ch.qos.logback.core.rolling.helper.FileNamePattern;
-import ch.qos.logback.core.rolling.helper.RollingCalendar;
 import com.github.charlemaznable.logback.miner.annotation.LogbackBean;
 import com.github.charlemaznable.logback.miner.annotation.LogbackColumn;
-import com.github.charlemaznable.logback.miner.annotation.LogbackRolling;
+import com.github.charlemaznable.logback.miner.annotation.LogbackRollingSql;
 import com.github.charlemaznable.logback.miner.annotation.LogbackSkip;
 import com.github.charlemaznable.logback.miner.annotation.LogbackSql;
 import com.github.charlemaznable.logback.miner.annotation.LogbackTable;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.val;
@@ -22,17 +19,11 @@ import org.n3r.eql.diamond.Dql;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
-import java.util.function.Consumer;
 
-import static com.github.charlemaznable.logback.miner.appender.DqlCaches.LogbackRollingCache.useLogbackRolling;
-import static com.github.charlemaznable.logback.miner.appender.DqlCaches.TableNameRolling.ACTIVE_TABLE_NAME;
+import static com.github.charlemaznable.logback.miner.appender.DqlTableNameRolling.ACTIVE_TABLE_NAME;
 import static com.google.common.cache.CacheBuilder.newBuilder;
-import static com.google.common.collect.Maps.newHashMap;
-import static java.lang.System.currentTimeMillis;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static java.util.Objects.requireNonNull;
@@ -158,7 +149,7 @@ class DqlCaches {
         }
 
         private static String parseTableName(Class<?> clazz) {
-            val logbackRolling = clazz.getAnnotation(LogbackRolling.class);
+            val logbackRolling = clazz.getAnnotation(LogbackRollingSql.class);
             if (nonNull(logbackRolling)) return "$" + ACTIVE_TABLE_NAME + "$";
 
             val logbackTable = clazz.getAnnotation(LogbackTable.class);
@@ -191,101 +182,15 @@ class DqlCaches {
     @NoArgsConstructor(access = PRIVATE)
     static class LogbackTableNameRollingCache {
 
-        static TableNameRolling nullTableNameRolling = new TableNameRolling(null, null);
+        static DqlTableNameRolling nullTableNameRolling = new DqlTableNameRolling(null, null);
 
-        static Cache<String, TableNameRolling> cache = newBuilder().build();
+        static Cache<String, DqlTableNameRolling> cache = newBuilder().build();
 
         @SneakyThrows
-        static TableNameRolling getTableNameRolling(String tableNamePatternStr, Context context) {
+        static DqlTableNameRolling getTableNameRolling(String tableNamePatternStr, Context context) {
             if (isNull(tableNamePatternStr)) return nullTableNameRolling;
             return cache.get(tableNamePatternStr, () ->
-                    new TableNameRolling(tableNamePatternStr, context));
-        }
-    }
-
-    static class TableNameRolling {
-
-        public static final String ACTIVE_TABLE_NAME = "activeTableName";
-
-        private final Object rollingLock = new Object();
-        private FileNamePattern tableNamePattern;
-        private RollingCalendar rollingCalendar;
-        private Date dateInCurrentPeriod = new Date(0);
-        private long nextCheck = 0;
-        private boolean enabled = false;
-        @Getter
-        private String activeTableName;
-
-        public TableNameRolling(String tableNamePatternStr, Context context) {
-            if (isBlank(tableNamePatternStr)) return;
-
-            val pattern = new FileNamePattern(tableNamePatternStr, context);
-            val dateTokenConverter = pattern.getPrimaryDateTokenConverter();
-            val hasDateToken = nonNull(dateTokenConverter);
-            val hasIntegerToken = nonNull(pattern.getIntegerTokenConverter());
-            if (!hasDateToken || hasIntegerToken) return;
-
-            RollingCalendar rc;
-            if (dateTokenConverter.getTimeZone() != null) {
-                rc = new RollingCalendar(dateTokenConverter.getDatePattern(),
-                        dateTokenConverter.getTimeZone(), Locale.getDefault());
-            } else {
-                rc = new RollingCalendar(dateTokenConverter.getDatePattern());
-            }
-            if (!rc.isCollisionFree()) return;
-
-            enabled = true;
-            tableNamePattern = pattern;
-            rollingCalendar = rc;
-        }
-
-        public void rolling(Dql dql, String prepareSql) {
-            rolling(tableName -> {
-                if (isBlank(prepareSql)) return;
-                val currentMap = newHashMap();
-                currentMap.put(ACTIVE_TABLE_NAME, tableName);
-                dql.params(currentMap).dynamics(currentMap).execute(prepareSql);
-            });
-        }
-
-        public void rolling(Dql dql, Class<?> clazz) {
-            rolling(tableName -> {
-                if (!useLogbackRolling(clazz, dql)) return;
-                val currentMap = newHashMap();
-                currentMap.put(ACTIVE_TABLE_NAME, tableName);
-                dql.params(currentMap).dynamics(currentMap).execute();
-            });
-        }
-
-        public void rolling(Consumer<String> rollover) {
-            synchronized (rollingLock) {
-                if (isTrigging()) requireNonNull(rollover).accept(activeTableName);
-            }
-        }
-
-        private boolean isTrigging() {
-            if (!enabled) return false;
-            long time = currentTimeMillis();
-            if (time >= nextCheck) {
-                setDateInCurrentPeriod(time);
-                computeNextCheck();
-                computeActiveTableName();
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        private void setDateInCurrentPeriod(long now) {
-            dateInCurrentPeriod.setTime(now);
-        }
-
-        private void computeNextCheck() {
-            nextCheck = rollingCalendar.getNextTriggeringDate(dateInCurrentPeriod).getTime();
-        }
-
-        private void computeActiveTableName() {
-            activeTableName = tableNamePattern.convert(dateInCurrentPeriod);
+                    new DqlTableNameRolling(tableNamePatternStr, context));
         }
     }
 
@@ -293,10 +198,10 @@ class DqlCaches {
      * 缓存 - 表名滚动注解配置缓存
      */
     @NoArgsConstructor(access = PRIVATE)
-    static class LogbackRollingCache {
+    static class LogbackRollingSqlCache {
 
-        static LoadingCache<Class<?>, Optional<LogbackRolling>> cache
-                = newBuilder().build(CacheLoader.from(LogbackRollingCache::loadCache));
+        static LoadingCache<Class<?>, Optional<LogbackRollingSql>> cache
+                = newBuilder().build(CacheLoader.from(LogbackRollingSqlCache::loadCache));
 
         static String getTableNamePattern(Class<?> clazz) {
             val logbackRollingOptional = cache.getUnchecked(clazz);
@@ -306,7 +211,7 @@ class DqlCaches {
             return logbackRolling.tableNamePattern();
         }
 
-        static boolean useLogbackRolling(Class<?> clazz, Dql dql) {
+        static boolean useLogbackRollingSql(Class<?> clazz, Dql dql) {
             val logbackRollingOptional = cache.getUnchecked(clazz);
             if (!logbackRollingOptional.isPresent()) return false;
 
@@ -319,8 +224,8 @@ class DqlCaches {
             return true;
         }
 
-        static Optional<LogbackRolling> loadCache(Class<?> clazz) {
-            return Optional.ofNullable(clazz.getAnnotation(LogbackRolling.class));
+        static Optional<LogbackRollingSql> loadCache(Class<?> clazz) {
+            return Optional.ofNullable(clazz.getAnnotation(LogbackRollingSql.class));
         }
     }
 

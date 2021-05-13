@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
 @Inherited
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface LogbackRolling {
+public @interface LogbackRollingSql {
 
     /**
      * 表名滚动模式, 仅支持时间日期模式
