@@ -80,7 +80,7 @@
         <slf4j-api.version>1.7.30</slf4j-api.version>
         <logback.version>1.2.3</logback.version>
         <diamond-client.version>0.0.22</diamond-client.version>
-        <annotations.version>20.1.0</annotations.version>
+        <annotations.version>21.0.1</annotations.version>
         <auto-service.version>1.0</auto-service.version>
         <eql.version>0.1.14</eql.version>
         <druid.version>1.2.6</druid.version>
@@ -90,9 +90,9 @@
 
         <lombok.version>1.18.20</lombok.version>
 
-        <junit-jupiter.version>5.7.1</junit-jupiter.version>
+        <junit-jupiter.version>5.7.2</junit-jupiter.version>
         <jmockit.version>1.49</jmockit.version>
-        <awaitility.version>4.0.3</awaitility.version>
+        <awaitility.version>4.1.0</awaitility.version>
         <h2.version>1.4.200</h2.version>
         <joda-time.version>2.10.10</joda-time.version>
 
