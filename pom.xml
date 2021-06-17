@@ -86,7 +86,7 @@
         <druid.version>1.2.6</druid.version>
         <asm-all.version>5.2</asm-all.version>
         <westid.version>0.0.3</westid.version>
-        <vertx.version>3.9.7</vertx.version>
+        <vertx.version>3.9.8</vertx.version>
 
         <lombok.version>1.18.20</lombok.version>
 
@@ -99,11 +99,11 @@
         <maven-resources-plugin.version>3.2.0</maven-resources-plugin.version>
         <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
         <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
-        <jacoco-maven-plugin.version>0.8.5</jacoco-maven-plugin.version>
+        <jacoco-maven-plugin.version>0.8.7</jacoco-maven-plugin.version>
         <sonar-maven-plugin.version>3.9.0.2155</sonar-maven-plugin.version>
         <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
-        <maven-javadoc-plugin.version>3.2.0</maven-javadoc-plugin.version>
-        <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
+        <maven-javadoc-plugin.version>3.3.0</maven-javadoc-plugin.version>
+        <maven-gpg-plugin.version>3.0.1</maven-gpg-plugin.version>
         <nexus-staging-maven-plugin.version>1.6.8</nexus-staging-maven-plugin.version>
     </properties>
 
