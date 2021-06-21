@@ -5,6 +5,7 @@ import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.json.JsonObject;
+import io.vertx.spi.cluster.hazelcast.HazelcastClusterManager;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.jupiter.api.AfterAll;
@@ -49,7 +50,7 @@ public class VertxAppenderTest {
                 .field("diamondAllListener").field("allListeners").call("size").<Integer>get());
         val vertxOptions = new VertxOptions();
         vertxOptions.setWorkerPoolSize(10);
-        vertxOptions.getEventBusOptions().setClustered(true);
+        vertxOptions.setClusterManager(new HazelcastClusterManager());
         vertx = VertxElf.buildVertx(vertxOptions);
         vertx.eventBus().consumer("logback.miner",
                 (Handler<Message<JsonObject>>) event -> {
@@ -76,7 +77,7 @@ public class VertxAppenderTest {
         // 1. 内部配置, 从无到有
         MockDiamondServer.setConfigInfo(VERTX_OPTIONS_GROUP_NAME, "DEFAULT", "" +
                 "workerPoolSize=42\n" +
-                "eventBusOptions.clustered=on\n");
+                "clusterManager=@io.vertx.spi.cluster.hazelcast.HazelcastClusterManager\n");
         val future1 = MockDiamondServer.updateDiamond("Logback", "test", "" +
                 "root[console.level]=info\n" +
                 "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[appenders]=[vertx]\n" +
@@ -113,7 +114,7 @@ public class VertxAppenderTest {
         // 3. 内部配置, VertxConfig更改
         MockDiamondServer.setConfigInfo(VERTX_OPTIONS_GROUP_NAME, "DEFAULT", "" +
                 "workerPoolSize=24\n" +
-                "eventBusOptions.clustered=on\n");
+                "clusterManager=@io.vertx.spi.cluster.hazelcast.HazelcastClusterManager\n");
         val future3 = MockDiamondServer.updateDiamond("Logback", "test", "" +
                 "root[console.level]=info\n" +
                 "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.level]=info\n" +
@@ -168,7 +169,7 @@ public class VertxAppenderTest {
         // 1. 外部导入, 从无到有
         val vertxOptions = new VertxOptions();
         vertxOptions.setWorkerPoolSize(42);
-        vertxOptions.getEventBusOptions().setClustered(true);
+        vertxOptions.setClusterManager(new HazelcastClusterManager());
         val vertx = VertxElf.buildVertx(vertxOptions);
         VertxManager.putExternalVertx("CUSTOM", vertx);
 
@@ -223,7 +224,7 @@ public class VertxAppenderTest {
         // 1. 内部配置转外部导入
         MockDiamondServer.setConfigInfo(VERTX_OPTIONS_GROUP_NAME, "CROSS", "" +
                 "workerPoolSize=42\n" +
-                "eventBusOptions.clustered=on\n");
+                "clusterManager=@io.vertx.spi.cluster.hazelcast.HazelcastClusterManager\n");
         val future1 = MockDiamondServer.updateDiamond("Logback", "test", "" +
                 "root[console.level]=info\n" +
                 "com.github.charlemaznable.logback.miner.appender.VertxAppenderTest[vertx.level]=info\n" +
@@ -241,7 +242,7 @@ public class VertxAppenderTest {
 
         val vertxOptions = new VertxOptions();
         vertxOptions.setWorkerPoolSize(24);
-        vertxOptions.getEventBusOptions().setClustered(true);
+        vertxOptions.setClusterManager(new HazelcastClusterManager());
         val vertx = VertxElf.buildVertx(vertxOptions);
         VertxManager.putExternalVertx("CROSS", vertx);
 

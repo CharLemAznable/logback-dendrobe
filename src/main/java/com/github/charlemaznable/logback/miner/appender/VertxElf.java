@@ -9,12 +9,16 @@ import org.slf4j.helpers.Util;
 import java.util.concurrent.CompletableFuture;
 
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 class VertxElf {
 
+    private static final String CLUSTER_MANAGER_CLASS_PROPERTY = "vertx.cluster.managerClass";
+
     @SneakyThrows
     static Vertx buildVertx(VertxOptions vertxOptions) {
-        if (vertxOptions.getEventBusOptions().isClustered()) {
+        if (nonNull(vertxOptions.getClusterManager()) ||
+                nonNull(System.getProperty(CLUSTER_MANAGER_CLASS_PROPERTY))) {
             val completableFuture = new CompletableFuture<Vertx>();
             Vertx.clusteredVertx(vertxOptions, asyncResult -> {
                 if (asyncResult.failed()) {
