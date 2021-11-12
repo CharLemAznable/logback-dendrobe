@@ -6,7 +6,7 @@
 
     <groupId>com.github.charlemaznable</groupId>
     <artifactId>logback-miner</artifactId>
-    <version>0.1.3-SNAPSHOT</version>
+    <version>0.1.4-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>Logback Miner</name>
@@ -73,8 +73,8 @@
             src/main/java/com/github/charlemaznable/logback/miner/appender/ConsoleTarget.java
         </sonar.exclusions>
 
-        <logback-miner-annotations.version>0.1.3-SNAPSHOT</logback-miner-annotations.version>
-        <vertx-diamond-config.version>0.1.3-SNAPSHOT</vertx-diamond-config.version>
+        <logback-miner-annotations.version>0.1.4-SNAPSHOT</logback-miner-annotations.version>
+        <vertx-diamond-config.version>0.1.4-SNAPSHOT</vertx-diamond-config.version>
         <commons-lang3.version>3.12.0</commons-lang3.version>
         <guava.version>31.0.1-jre</guava.version>
         <slf4j-api.version>1.7.32</slf4j-api.version>
