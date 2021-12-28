@@ -78,7 +78,7 @@
         <commons-lang3.version>3.12.0</commons-lang3.version>
         <guava.version>31.0.1-jre</guava.version>
         <slf4j-api.version>1.7.32</slf4j-api.version>
-        <logback.version>1.2.6</logback.version>
+        <logback.version>1.2.10</logback.version>
         <diamond-client.version>0.0.22</diamond-client.version>
         <annotations.version>23.0.0</annotations.version>
         <auto-service.version>1.0.1</auto-service.version>
@@ -86,14 +86,14 @@
         <druid.version>1.2.8</druid.version>
         <asm-all.version>5.2</asm-all.version>
         <westid.version>0.0.3</westid.version>
-        <vertx.version>4.2.1</vertx.version>
+        <vertx.version>4.2.3</vertx.version>
 
         <lombok.version>1.18.22</lombok.version>
 
-        <junit-jupiter.version>5.8.1</junit-jupiter.version>
+        <junit-jupiter.version>5.8.2</junit-jupiter.version>
         <jmockit.version>1.49</jmockit.version>
         <awaitility.version>4.1.1</awaitility.version>
-        <h2.version>1.4.200</h2.version>
+        <h2.version>2.0.204</h2.version>
         <joda-time.version>2.10.13</joda-time.version>
 
         <maven-resources-plugin.version>3.2.0</maven-resources-plugin.version>
