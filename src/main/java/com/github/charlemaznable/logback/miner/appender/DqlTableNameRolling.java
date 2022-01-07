@@ -18,7 +18,7 @@ import static java.util.Objects.nonNull;
 import static java.util.Objects.requireNonNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
-public class DqlTableNameRolling {
+public final class DqlTableNameRolling {
 
     public static final String ACTIVE_TABLE_NAME = "activeTableName";
 

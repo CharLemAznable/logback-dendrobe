@@ -16,6 +16,7 @@ import lombok.val;
 import org.n3r.diamond.client.Miner;
 import org.n3r.eql.diamond.Dql;
 
+import javax.annotation.Nonnull;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -35,7 +36,7 @@ import static org.n3r.eql.config.EqlDiamondConfig.EQL_CONFIG_GROUP_NAME;
 import static org.n3r.eql.util.Names.convertCamelToUnderscore;
 
 @NoArgsConstructor(access = PRIVATE)
-class DqlCaches {
+final class DqlCaches {
 
     /**
      * 缓存 - 参数类型是否添加{@link LogbackBean}注解
@@ -82,6 +83,7 @@ class DqlCaches {
             return new Dql(connectionName);
         }
 
+        @Nonnull
         static String loadCache(Class<?> clazz) {
             return requireNonNull(clazz.getAnnotation(LogbackBean.class)).value();
         }
@@ -109,6 +111,7 @@ class DqlCaches {
             return true;
         }
 
+        @Nonnull
         static Optional<LogbackSql> loadCache(Class<?> clazz) {
             return Optional.ofNullable(clazz.getAnnotation(LogbackSql.class));
         }
@@ -224,6 +227,7 @@ class DqlCaches {
             return true;
         }
 
+        @Nonnull
         static Optional<LogbackRollingSql> loadCache(Class<?> clazz) {
             return Optional.ofNullable(clazz.getAnnotation(LogbackRollingSql.class));
         }

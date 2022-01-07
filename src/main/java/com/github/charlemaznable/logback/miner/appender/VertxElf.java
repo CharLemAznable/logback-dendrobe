@@ -11,7 +11,7 @@ import java.util.concurrent.CompletableFuture;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
-class VertxElf {
+final class VertxElf {
 
     private static final String CLUSTER_MANAGER_CLASS_PROPERTY = "vertx.cluster.managerClass";
 

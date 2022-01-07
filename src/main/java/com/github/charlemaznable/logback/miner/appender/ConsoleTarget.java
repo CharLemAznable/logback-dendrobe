@@ -10,7 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @AllArgsConstructor
 @Getter
-class ConsoleTarget {
+final class ConsoleTarget {
 
     static final ConsoleTarget SYSTEM_OUT
             = new ConsoleTarget("System.out", new OutputStream() {

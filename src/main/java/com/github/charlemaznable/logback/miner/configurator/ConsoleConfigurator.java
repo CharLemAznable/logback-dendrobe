@@ -11,7 +11,7 @@ import static org.apache.commons.lang3.StringUtils.endsWithIgnoreCase;
 import static org.n3r.diamond.client.impl.DiamondUtils.toBool;
 
 @AutoService(Configurator.class)
-public class ConsoleConfigurator extends AppenderConfigurator {
+public final class ConsoleConfigurator extends AppenderConfigurator {
 
     private static final String CONSOLE_APPENDER = "[console]";
     private static final String CONSOLE_LEVEL_SUFFIX = "[console.level]";

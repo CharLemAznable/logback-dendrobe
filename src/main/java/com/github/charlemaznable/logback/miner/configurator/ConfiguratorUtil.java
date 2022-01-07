@@ -15,7 +15,7 @@ import lombok.val;
 import static com.github.charlemaznable.logback.miner.level.EffectorContextUtil.getEffectorContext;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public class ConfiguratorUtil {
+public final class ConfiguratorUtil {
 
     public static final String CONSOLE_APPENDER_PREFIX = "ConsoleAppender-";
     public static final String DQL_APPENDER_PREFIX = "DqlAppender-";

@@ -26,7 +26,7 @@ import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
-public class DqlAppender extends AsyncAppender {
+public final class DqlAppender extends AsyncAppender {
 
     public static final String DEFAULT_DQL_CONNECTION = "DEFAULT";
 

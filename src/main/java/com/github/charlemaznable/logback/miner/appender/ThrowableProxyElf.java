@@ -8,7 +8,7 @@ import lombok.val;
 
 import static java.util.Objects.isNull;
 
-public class ThrowableProxyElf {
+public final class ThrowableProxyElf {
 
     private ThrowableProxyElf() {}
 

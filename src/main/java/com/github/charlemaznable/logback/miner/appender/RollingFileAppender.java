@@ -20,7 +20,7 @@ import static ch.qos.logback.core.CoreConstants.UNBOUND_HISTORY;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
-public class RollingFileAppender extends AsyncOutputStreamAppender {
+public final class RollingFileAppender extends AsyncOutputStreamAppender {
 
     public static final String DEFAULT_MAX_FILE_SIZE = "10MB";
     public static final int DEFAULT_MIN_INDEX = 1;

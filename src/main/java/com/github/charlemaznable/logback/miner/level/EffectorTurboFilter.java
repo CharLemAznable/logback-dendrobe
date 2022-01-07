@@ -9,7 +9,7 @@ import lombok.val;
 import org.slf4j.Marker;
 
 @AllArgsConstructor
-public class EffectorTurboFilter extends TurboFilter {
+public final class EffectorTurboFilter extends TurboFilter {
 
     private EffectorContext effectorContext;
 

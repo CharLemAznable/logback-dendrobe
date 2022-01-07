@@ -42,7 +42,7 @@ import static org.n3r.diamond.client.impl.DiamondUtils.parseStoneToProperties;
 import static org.n3r.diamond.client.impl.DiamondUtils.toBool;
 import static org.slf4j.Logger.ROOT_LOGGER_NAME;
 
-public class LogbackMinerDiamondListener implements DiamondListener, LoggerContextListener {
+public final class LogbackMinerDiamondListener implements DiamondListener, LoggerContextListener {
 
     private static final String DIAMOND_GROUP_KEY = "logback.miner.group";
     private static final String DIAMOND_DATA_ID_KEY = "logback.miner.dataId";

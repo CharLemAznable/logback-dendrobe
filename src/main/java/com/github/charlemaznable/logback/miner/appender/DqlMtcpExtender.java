@@ -12,7 +12,7 @@ import static org.n3r.eql.mtcp.MtcpContext.TENANT_ID;
  * Compatible with eql mtcp
  */
 @AutoService(DqlExecuteExtender.class)
-public class DqlMtcpExtender implements DqlExecuteExtender {
+public final class DqlMtcpExtender implements DqlExecuteExtender {
 
     @Override
     public void preExecute(ILoggingEvent eventObject) {

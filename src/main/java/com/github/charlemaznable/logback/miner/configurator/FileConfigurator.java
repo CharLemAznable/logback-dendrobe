@@ -11,7 +11,7 @@ import static org.apache.commons.lang3.StringUtils.endsWithIgnoreCase;
 import static org.n3r.diamond.client.impl.DiamondUtils.toBool;
 
 @AutoService(Configurator.class)
-public class FileConfigurator extends AppenderConfigurator {
+public final class FileConfigurator extends AppenderConfigurator {
 
     private static final String FILE_APPENDER = "[file]";
     private static final String FILE_SUFFIX = "[file]";

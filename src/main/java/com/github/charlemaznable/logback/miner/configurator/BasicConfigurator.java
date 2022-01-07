@@ -11,7 +11,7 @@ import static org.apache.commons.lang3.StringUtils.startsWithIgnoreCase;
 import static org.n3r.diamond.client.impl.DiamondUtils.toBool;
 
 @AutoService(Configurator.class)
-public class BasicConfigurator extends AppenderConfigurator {
+public final class BasicConfigurator extends AppenderConfigurator {
 
     private static final String CONTEXT_PROPERTY_PREFIX = "context.property[";
     private static final String CONTEXT_PROPERTY_SUFFIX = "]";

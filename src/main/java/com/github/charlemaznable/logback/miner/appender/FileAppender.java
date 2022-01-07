@@ -10,7 +10,7 @@ import com.github.charlemaznable.logback.miner.level.Effector;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
-public class FileAppender extends AsyncOutputStreamAppender {
+public final class FileAppender extends AsyncOutputStreamAppender {
 
     private ch.qos.logback.core.FileAppender<ILoggingEvent> appender;
 

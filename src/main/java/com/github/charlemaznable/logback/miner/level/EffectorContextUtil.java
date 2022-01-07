@@ -6,7 +6,7 @@ import lombok.val;
 
 import static java.util.Objects.isNull;
 
-public class EffectorContextUtil {
+public final class EffectorContextUtil {
 
     public static final String EFFECTOR_CONTEXT = "EFFECTOR_CONTEXT";
 

@@ -10,7 +10,7 @@ import static com.github.charlemaznable.logback.miner.configurator.ConfiguratorU
 import static org.apache.commons.lang3.StringUtils.endsWithIgnoreCase;
 
 @AutoService(Configurator.class)
-public class DqlConfigurator extends AppenderConfigurator {
+public final class DqlConfigurator extends AppenderConfigurator {
 
     private static final String DQL_APPENDER = "[dql]";
     private static final String DQL_LEVEL_SUFFIX = "[dql.level]";

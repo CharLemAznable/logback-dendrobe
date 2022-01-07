@@ -12,7 +12,7 @@ import lombok.val;
 
 import java.util.Arrays;
 
-public class ConsoleAppender extends AsyncOutputStreamAppender {
+public final class ConsoleAppender extends AsyncOutputStreamAppender {
 
     private InternalAppender appender;
 

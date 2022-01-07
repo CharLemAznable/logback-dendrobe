@@ -11,7 +11,7 @@ import static com.github.charlemaznable.logback.miner.configurator.ConfiguratorU
 import static org.apache.commons.lang3.StringUtils.endsWithIgnoreCase;
 
 @AutoService(Configurator.class)
-public class VertxConfigurator extends AppenderConfigurator {
+public final class VertxConfigurator extends AppenderConfigurator {
 
     private static final String VERTX_APPENDER = "[vertx]";
     private static final String VERTX_LEVEL_SUFFIX = "[vertx.level]";

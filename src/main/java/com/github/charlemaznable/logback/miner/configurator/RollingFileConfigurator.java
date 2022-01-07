@@ -13,7 +13,7 @@ import static org.apache.commons.lang3.StringUtils.endsWithIgnoreCase;
 import static org.n3r.diamond.client.impl.DiamondUtils.toBool;
 
 @AutoService(Configurator.class)
-public class RollingFileConfigurator extends AppenderConfigurator {
+public final class RollingFileConfigurator extends AppenderConfigurator {
 
     private static final String ROLLING_FILE_APPENDER = "[rollingfile]";
     private static final String ROLLING_FILE_SUFFIX = "[rollingfile]";

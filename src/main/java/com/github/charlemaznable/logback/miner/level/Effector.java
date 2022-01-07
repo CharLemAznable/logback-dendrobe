@@ -12,7 +12,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
-public class Effector {
+public final class Effector {
 
     private final Logger logger;
 

@@ -5,7 +5,7 @@ import lombok.val;
 
 import java.util.ServiceLoader;
 
-class DqlExecuteWrapper {
+final class DqlExecuteWrapper {
 
     private static ServiceLoader<DqlExecuteExtender> extenders;
 

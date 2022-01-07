@@ -9,7 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static org.slf4j.Logger.ROOT_LOGGER_NAME;
 
-public class EffectorContext {
+public final class EffectorContext {
 
     private Effector root;
     private Map<String, Effector> effectorCache = new ConcurrentHashMap<>();

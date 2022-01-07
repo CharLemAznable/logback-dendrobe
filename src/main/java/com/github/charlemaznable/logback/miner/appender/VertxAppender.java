@@ -13,7 +13,7 @@ import lombok.val;
 import static com.github.charlemaznable.logback.miner.appender.LoggingEventElf.buildEventMap;
 import static java.util.Objects.isNull;
 
-public class VertxAppender extends AsyncAppender {
+public final class VertxAppender extends AsyncAppender {
 
     public static final String DEFAULT_VERTX_NAME = "DEFAULT";
 

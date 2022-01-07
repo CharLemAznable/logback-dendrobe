@@ -6,7 +6,7 @@ import ch.qos.logback.core.spi.ContextAwareBase;
 import com.google.auto.service.AutoService;
 
 @AutoService(Configurator.class)
-public class LogbackMinerConfigurator extends ContextAwareBase implements Configurator {
+public final class LogbackMinerConfigurator extends ContextAwareBase implements Configurator {
 
     private LogbackMinerDiamondListener diamondListener = new LogbackMinerDiamondListener();
 
