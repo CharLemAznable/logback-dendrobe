@@ -93,7 +93,7 @@
         <junit-jupiter.version>5.8.2</junit-jupiter.version>
         <jmockit.version>1.49</jmockit.version>
         <awaitility.version>4.1.1</awaitility.version>
-        <h2.version>2.0.204</h2.version>
+        <h2.version>2.0.206</h2.version>
         <joda-time.version>2.10.13</joda-time.version>
 
         <maven-resources-plugin.version>3.2.0</maven-resources-plugin.version>
