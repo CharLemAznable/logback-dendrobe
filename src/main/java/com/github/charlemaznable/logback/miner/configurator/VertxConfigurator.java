@@ -5,9 +5,9 @@ import ch.qos.logback.classic.LoggerContext;
 import com.github.charlemaznable.logback.miner.appender.VertxManager;
 import com.google.auto.service.AutoService;
 
-import static com.github.charlemaznable.logback.miner.configurator.ConfiguratorUtil.effector;
-import static com.github.charlemaznable.logback.miner.configurator.ConfiguratorUtil.logger;
-import static com.github.charlemaznable.logback.miner.configurator.ConfiguratorUtil.vertxAppender;
+import static com.github.charlemaznable.logback.miner.configurator.ConfiguratorElf.effector;
+import static com.github.charlemaznable.logback.miner.configurator.ConfiguratorElf.logger;
+import static com.github.charlemaznable.logback.miner.configurator.ConfiguratorElf.vertxAppender;
 import static org.apache.commons.lang3.StringUtils.endsWithIgnoreCase;
 
 @AutoService(Configurator.class)

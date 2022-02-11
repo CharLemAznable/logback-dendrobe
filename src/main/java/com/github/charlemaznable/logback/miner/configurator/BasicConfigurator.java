@@ -4,8 +4,8 @@ import ch.qos.logback.classic.LoggerContext;
 import com.google.auto.service.AutoService;
 
 import static ch.qos.logback.classic.Level.toLevel;
-import static com.github.charlemaznable.logback.miner.configurator.ConfiguratorUtil.logger;
-import static com.github.charlemaznable.logback.miner.configurator.ConfiguratorUtil.propertyKey;
+import static com.github.charlemaznable.logback.miner.configurator.ConfiguratorElf.logger;
+import static com.github.charlemaznable.logback.miner.configurator.ConfiguratorElf.propertyKey;
 import static org.apache.commons.lang3.StringUtils.endsWithIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.startsWithIgnoreCase;
 import static org.n3r.diamond.client.impl.DiamondUtils.toBool;

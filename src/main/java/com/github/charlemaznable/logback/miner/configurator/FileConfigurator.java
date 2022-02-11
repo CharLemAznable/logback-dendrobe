@@ -4,9 +4,9 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
 import com.google.auto.service.AutoService;
 
-import static com.github.charlemaznable.logback.miner.configurator.ConfiguratorUtil.effector;
-import static com.github.charlemaznable.logback.miner.configurator.ConfiguratorUtil.fileAppender;
-import static com.github.charlemaznable.logback.miner.configurator.ConfiguratorUtil.logger;
+import static com.github.charlemaznable.logback.miner.configurator.ConfiguratorElf.effector;
+import static com.github.charlemaznable.logback.miner.configurator.ConfiguratorElf.fileAppender;
+import static com.github.charlemaznable.logback.miner.configurator.ConfiguratorElf.logger;
 import static org.apache.commons.lang3.StringUtils.endsWithIgnoreCase;
 import static org.n3r.diamond.client.impl.DiamondUtils.toBool;
 

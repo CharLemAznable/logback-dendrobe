@@ -6,11 +6,11 @@ import lombok.val;
 
 import static java.util.Objects.isNull;
 
-public final class EffectorContextUtil {
+public final class EffectorContextElf {
 
     public static final String EFFECTOR_CONTEXT = "EFFECTOR_CONTEXT";
 
-    private EffectorContextUtil() {}
+    private EffectorContextElf() {}
 
     public static EffectorContext getEffectorContext(Context context) {
         val effectorContext = context.getObject(EFFECTOR_CONTEXT);

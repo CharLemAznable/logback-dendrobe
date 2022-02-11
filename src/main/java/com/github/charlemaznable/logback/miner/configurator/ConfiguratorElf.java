@@ -12,10 +12,10 @@ import com.github.charlemaznable.logback.miner.appender.VertxAppender;
 import com.github.charlemaznable.logback.miner.level.Effector;
 import lombok.val;
 
-import static com.github.charlemaznable.logback.miner.level.EffectorContextUtil.getEffectorContext;
+import static com.github.charlemaznable.logback.miner.level.EffectorContextElf.getEffectorContext;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public final class ConfiguratorUtil {
+public final class ConfiguratorElf {
 
     public static final String CONSOLE_APPENDER_PREFIX = "ConsoleAppender-";
     public static final String DQL_APPENDER_PREFIX = "DqlAppender-";
@@ -23,7 +23,7 @@ public final class ConfiguratorUtil {
     public static final String FILE_APPENDER_PREFIX = "FileAppender-";
     public static final String ROLLING_FILE_APPENDER_PREFIX = "RollingFileAppender-";
 
-    private ConfiguratorUtil() {}
+    private ConfiguratorElf() {}
 
     static String propertyKey(String key, String prefix, String suffix) {
         return key.substring(prefix.length(), key.length() - suffix.length());

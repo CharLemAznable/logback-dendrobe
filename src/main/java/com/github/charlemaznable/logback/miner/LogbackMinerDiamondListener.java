@@ -30,8 +30,8 @@ import java.util.ServiceLoader;
 
 import static ch.qos.logback.classic.ClassicConstants.DEFAULT_MAX_CALLEDER_DATA_DEPTH;
 import static ch.qos.logback.classic.LoggerContext.DEFAULT_PACKAGING_DATA;
-import static com.github.charlemaznable.logback.miner.configurator.ConfiguratorUtil.CONSOLE_APPENDER_PREFIX;
-import static com.github.charlemaznable.logback.miner.level.EffectorContextUtil.EFFECTOR_CONTEXT;
+import static com.github.charlemaznable.logback.miner.configurator.ConfiguratorElf.CONSOLE_APPENDER_PREFIX;
+import static com.github.charlemaznable.logback.miner.level.EffectorContextElf.EFFECTOR_CONTEXT;
 import static com.google.common.io.Closeables.closeQuietly;
 import static java.lang.Thread.currentThread;
 import static java.util.Objects.isNull;

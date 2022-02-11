@@ -14,7 +14,7 @@ import lombok.val;
 
 import java.util.function.BiFunction;
 
-import static com.github.charlemaznable.logback.miner.level.EffectorContextUtil.getEffectorContext;
+import static com.github.charlemaznable.logback.miner.level.EffectorContextElf.getEffectorContext;
 import static java.util.Objects.isNull;
 
 public abstract class AsyncAppender extends AsyncAppenderBase<ILoggingEvent> {
