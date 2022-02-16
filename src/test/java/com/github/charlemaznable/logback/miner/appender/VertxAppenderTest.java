@@ -1,5 +1,6 @@
 package com.github.charlemaznable.logback.miner.appender;
 
+import com.github.charlemaznable.vertx.diamond.VertxElf;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;

@@ -6,16 +6,17 @@ import io.vertx.core.Vertx;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.val;
+import org.slf4j.helpers.Util;
 
 import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static com.github.charlemaznable.logback.miner.appender.VertxElf.buildVertx;
-import static com.github.charlemaznable.logback.miner.appender.VertxElf.closeVertx;
-import static com.github.charlemaznable.logback.miner.appender.VertxElf.closeVertxQuietly;
 import static com.github.charlemaznable.vertx.diamond.VertxDiamondElf.getVertxOptionsStone;
 import static com.github.charlemaznable.vertx.diamond.VertxDiamondElf.parseStoneToVertxOptions;
+import static com.github.charlemaznable.vertx.diamond.VertxElf.buildVertx;
+import static com.github.charlemaznable.vertx.diamond.VertxElf.closeVertx;
+import static com.github.charlemaznable.vertx.diamond.VertxElf.closeVertxImmediately;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static java.util.concurrent.Executors.newFixedThreadPool;
@@ -42,7 +43,7 @@ public final class VertxManager {
                     // 缓存存在, 表示之前的vertx为内部配置的vertx
                     // 则此处需要移除此内部配置的vertx
                     // 移除内部配置的vertx实例并关闭
-                    closeVertxQuietly(vertxs.remove(vertxName));
+                    closeVertxImmediately(vertxs.remove(vertxName));
                     return;
                 }
 
@@ -58,9 +59,15 @@ public final class VertxManager {
                 val previous = vertxs.remove(vertxName);
                 // 缓存存在, 表示之前的vertx为内部配置的vertx
                 // 则此处需要同步关闭, 对外部导入的vertx不做操作
-                if (nonNull(previousConfig)) closeVertx(previous);
+                if (nonNull(previousConfig)) closeVertx(previous, t -> {
+                    Util.report("Closing Vertx failed", t);
+                    return null;
+                });
                 // 同步新建vertx实例并加入
-                vertxs.put(vertxName, buildVertx(vertxOptions));
+                vertxs.put(vertxName, buildVertx(vertxOptions, t -> {
+                    Util.report("Building Vertx failed", t);
+                    return null;
+                }));
             }
 
             @Subscribe
@@ -74,7 +81,10 @@ public final class VertxManager {
                 val previous = vertxs.remove(vertxName);
                 // 缓存存在, 表示之前的vertx为内部配置的vertx
                 // 则此处需要同步关闭, 对外部导入的vertx不做操作
-                if (nonNull(previousConfig)) closeVertx(previous);
+                if (nonNull(previousConfig)) closeVertx(previous, t -> {
+                    Util.report("Closing Vertx failed", t);
+                    return null;
+                });
                 // 加入新的vertx实例
                 val vertx = externalVertx.getVertx();
                 if (nonNull(vertx)) vertxs.put(vertxName, vertx);
