@@ -1,18 +1,18 @@
 -- noinspection SqlNoDataSourceInspectionForFile
 
 -- [prepareRollSqlLog]
-CREATE TABLE $activeTableName$ (
-  `LOG_ID` BIGINT NOT NULL,
-  `LOG_CONTENT` TEXT,
-  `LOG_DATE` DATETIME,
-  PRIMARY KEY (`LOG_ID`)
+create table $activeTableName$ (
+  `log_id` bigint not null,
+  `log_content` text,
+  `log_date` datetime,
+  primary key (`log_id`)
 )
 
 -- [logRollSqlLog]
-INSERT INTO $activeTableName$
-      (LOG_ID
-      ,LOG_CONTENT
-      ,LOG_DATE)
-VALUES(#event.westId#
+insert into $activeTableName$
+      (log_id
+      ,log_content
+      ,log_date)
+values(#event.westId#
       ,#arg.logContent#
-      ,CURRENT_TIMESTAMP())
+      ,current_timestamp())

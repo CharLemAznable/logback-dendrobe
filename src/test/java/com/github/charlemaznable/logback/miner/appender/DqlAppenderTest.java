@@ -13,6 +13,8 @@ import org.n3r.eql.diamond.Dql;
 import org.n3r.eql.mtcp.MtcpContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testcontainers.containers.MySQLContainer;
+import org.testcontainers.utility.DockerImageName;
 
 import java.time.Duration;
 import java.util.Date;
@@ -33,23 +35,30 @@ public class DqlAppenderTest {
     private static final String DB1 = "db1";
     private static final String DB_MTCP = "db.mtcp";
     private static final String CREATE_TABLE_SIMPLE_LOG = "" +
-            "CREATE TABLE `SIMPLE_LOG` (" +
-            "  `LOG_ID` BIGINT NOT NULL," +
-            "  `LOG_CONTENT` TEXT," +
-            "  `LOG_DATE` DATETIME," +
-            "  `LOG_DATE_TIME` DATETIME," +
-            "  PRIMARY KEY (`LOG_ID`)" +
+            "create table `simple_log` (" +
+            "  `log_id` bigint not null," +
+            "  `log_content` text," +
+            "  `log_date` datetime(3)," +
+            "  `log_date_time` datetime(3)," +
+            "  primary key (`log_id`)" +
             ");\n";
     private static final String SELECT_SIMPLE_LOGS = "" +
-            "SELECT LOG_ID, LOG_CONTENT, LOG_DATE, LOG_DATE_TIME FROM SIMPLE_LOG ORDER BY LOG_ID";
+            "select log_id, log_content, log_date, log_date_time from simple_log order by log_id";
     private static final String SELECT_SIMPLE_LOG_BY_ID = "" +
-            "SELECT LOG_ID, LOG_CONTENT, LOG_DATE, LOG_DATE_TIME FROM SIMPLE_LOG WHERE LOG_ID = ##";
+            "select log_id, log_content, log_date, log_date_time from simple_log where log_id = ##";
 
     private static Logger root;
     private static Logger self;
 
+    private static final DockerImageName mysqlImageName = DockerImageName.parse("mysql:5.7.34");
+    private static MySQLContainer mysql0 = new MySQLContainer<>(mysqlImageName).withDatabaseName(DB0);
+    private static MySQLContainer mysql1 = new MySQLContainer<>(mysqlImageName).withDatabaseName(DB1);
+
     @BeforeAll
     public static void beforeAll() {
+        mysql0.start();
+        mysql1.start();
+
         await().forever().until(() -> nonNull(
                 DiamondSubscriber.getInstance().getDiamondRemoteChecker()));
         Object diamondRemoteChecker = DiamondSubscriber.getInstance().getDiamondRemoteChecker();
@@ -57,20 +66,20 @@ public class DqlAppenderTest {
                 .field("diamondAllListener").field("allListeners").call("size").<Integer>get());
         MockDiamondServer.setUpMockServer();
         MockDiamondServer.setConfigInfo("EqlConfig", DB0, "" +
-                "driver=org.h2.Driver\n" +
-                "url=jdbc:h2:mem:db0;DB_CLOSE_DELAY=-1;MODE=MySQL;DATABASE_TO_LOWER=TRUE\n" +
-                "user=\n" +
-                "password=\n");
+                "driver=com.mysql.cj.jdbc.Driver\n" +
+                "url=" + mysql0.getJdbcUrl() + "\n" +
+                "user=" + mysql0.getUsername() + "\n" +
+                "password=" + mysql0.getPassword() + "\n");
         MockDiamondServer.setConfigInfo("EqlConfig", DB1, "" +
-                "driver=org.h2.Driver\n" +
-                "url=jdbc:h2:mem:db1;DB_CLOSE_DELAY=-1;MODE=MySQL;DATABASE_TO_LOWER=TRUE\n" +
-                "user=\n" +
-                "password=\n");
+                "driver=com.mysql.cj.jdbc.Driver\n" +
+                "url=" + mysql1.getJdbcUrl() + "\n" +
+                "user=" + mysql1.getUsername() + "\n" +
+                "password=" + mysql1.getPassword() + "\n");
         MockDiamondServer.setConfigInfo("EqlConfig", DB_MTCP, "" +
-                "driver=org.h2.Driver\n" +
-                "url=jdbc:h2:mem:db0;DB_CLOSE_DELAY=-1;MODE=MySQL;DATABASE_TO_LOWER=TRUE\n" +
-                "user=\n" +
-                "password=\n" +
+                "driver=com.mysql.cj.jdbc.Driver\n" +
+                "url=" + mysql0.getJdbcUrl() + "\n" +
+                "user=" + mysql0.getUsername() + "\n" +
+                "password=" + mysql0.getPassword() + "\n" +
                 "connection.impl=com.github.charlemaznable.logback.miner.appender.MtcpAssertConnection\n");
 
         new Dql(DB0).execute("" +
@@ -86,11 +95,13 @@ public class DqlAppenderTest {
     @AfterAll
     public static void afterAll() {
         MockDiamondServer.tearDownMockServer();
+        mysql0.stop();
+        mysql1.stop();
     }
 
     @Test
     public void testDqlAppender() {
-        val sql = "INSERT INTO SIMPLE_LOG (LOG_ID,LOG_CONTENT,LOG_DATE,LOG_DATE_TIME) VALUES(#event.westId#,CONCAT('(', #property.miner#, '|', #mdc.tenantId#, '|', #mdc.tenantCode#, ')', #event.message#, #event.exception#),CURRENT_TIMESTAMP(),CURRENT_TIMESTAMP())";
+        val sql = "insert into simple_log (log_id,log_content,log_date,log_date_time) values(#event.westId#,concat('(', #property.miner#, '|', ifnull(#mdc.tenantId#, ''), '|', ifnull(#mdc.tenantCode#, ''), ')', #event.message#, #event.exception#),current_timestamp(),current_timestamp())";
         val future = MockDiamondServer.updateDiamond("Logback", "test", "" +
                 "context.property[miner]=test\n" +
                 "root[dql.level]=info\n" +
@@ -231,14 +242,14 @@ public class DqlAppenderTest {
 
     @Test
     public void testDqlAppenderRolling() {
-        val sql = "INSERT INTO $activeTableName$ (LOG_ID,LOG_CONTENT,LOG_DATE) VALUES(#event.westId#,#event.message#,CURRENT_TIMESTAMP())";
-        val tableNamePattern = "D_ROLLING_LOG_%d{yyyyMMddHHmmss}";
+        val sql = "insert into $activeTableName$ (log_id,log_content,log_date) values(#event.westId#,#event.message#,current_timestamp())";
+        val tableNamePattern = "d_rolling_log_%d{yyyyMMddHHmmss}";
         val prepareSql = "" +
-                "CREATE TABLE $activeTableName$ (" +
-                "  `LOG_ID` BIGINT NOT NULL," +
-                "  `LOG_CONTENT` TEXT," +
-                "  `LOG_DATE` DATETIME," +
-                "  PRIMARY KEY (`LOG_ID`)" +
+                "create table $activeTableName$ (" +
+                "  `log_id` bigint not null," +
+                "  `log_content` text," +
+                "  `log_date` datetime(3)," +
+                "  primary key (`log_id`)" +
                 ");\n";
         val future = MockDiamondServer.updateDiamond("Logback", "test", "" +
                 "com.github.charlemaznable.logback.miner.appender.DqlAppenderTest[appenders]=[dql]\n" +

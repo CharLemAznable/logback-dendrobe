@@ -13,6 +13,9 @@ import org.junit.jupiter.api.Test;
 import org.n3r.diamond.client.impl.DiamondSubscriber;
 import org.n3r.diamond.client.impl.MockDiamondServer;
 import org.n3r.eql.diamond.Dql;
+import org.slf4j.helpers.Util;
+import org.testcontainers.containers.MySQLContainer;
+import org.testcontainers.utility.DockerImageName;
 
 import java.util.Date;
 
@@ -31,15 +34,20 @@ public class DqlAppenderBatchTest {
 
     private static final String DBBatch = "db_batch";
     private static final String CREATE_TABLE_SIMPLE_LOG = "" +
-            "CREATE TABLE `SIMPLE_LOG` (" +
-            "  `LOG_ID` BIGINT NOT NULL," +
-            "  `LOG_CONTENT` TEXT," +
-            "  `LOG_DATE` DATETIME," +
-            "  PRIMARY KEY (`LOG_ID`)" +
+            "create table `simple_log` (" +
+            "  `log_id` bigint not null," +
+            "  `log_content` text," +
+            "  `log_date` datetime(3)," +
+            "  primary key (`log_id`)" +
             ");\n";
+
+    private static final DockerImageName mysqlImageName = DockerImageName.parse("mysql:5.7.34");
+    private static MySQLContainer mysql = new MySQLContainer<>(mysqlImageName).withDatabaseName(DBBatch);
 
     @BeforeAll
     public static void beforeAll() {
+        mysql.start();
+
         await().forever().until(() -> nonNull(
                 DiamondSubscriber.getInstance().getDiamondRemoteChecker()));
         Object diamondRemoteChecker = DiamondSubscriber.getInstance().getDiamondRemoteChecker();
@@ -47,10 +55,10 @@ public class DqlAppenderBatchTest {
                 .field("diamondAllListener").field("allListeners").call("size").<Integer>get());
         MockDiamondServer.setUpMockServer();
         MockDiamondServer.setConfigInfo("EqlConfig", DBBatch, "" +
-                "driver=org.h2.Driver\n" +
-                "url=jdbc:h2:mem:db_batch;DB_CLOSE_DELAY=-1;MODE=MySQL;DATABASE_TO_LOWER=TRUE\n" +
-                "user=\n" +
-                "password=\n");
+                "driver=com.mysql.cj.jdbc.Driver\n" +
+                "url=" + mysql.getJdbcUrl() + "\n" +
+                "user=" + mysql.getUsername() + "\n" +
+                "password=" + mysql.getPassword() + "\n");
 
         new Dql(DBBatch).execute("" +
                 CREATE_TABLE_SIMPLE_LOG);
@@ -59,6 +67,7 @@ public class DqlAppenderBatchTest {
     @AfterAll
     public static void afterAll() {
         MockDiamondServer.tearDownMockServer();
+        mysql.stop();
     }
 
     @SneakyThrows
@@ -115,7 +124,9 @@ public class DqlAppenderBatchTest {
         routineRun(threadCount, () -> batchRunLog(TIMES));
         val batchRunLogTime = currentTimeMillis() - startLogTime;
 
-        assertTrue(batchRunLogTime < batchRunTime * 1.1); // 性能损耗小于10%
+        assertTrue(batchRunLogTime > batchRunTime);
+        Util.report("Original time: " + batchRunTime + "ms, " +
+                "logging time: " + batchRunLogTime + "ms.");
     }
 
     @Getter

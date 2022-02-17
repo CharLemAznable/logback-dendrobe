@@ -13,7 +13,7 @@ import java.util.Date;
 @Getter
 @Setter
 @LogbackBean("db1")
-@LogbackTable("SIMPLE_LOG")
+@LogbackTable("simple_log")
 public class AnnotatedLog {
 
     @LogbackColumn("log_id")

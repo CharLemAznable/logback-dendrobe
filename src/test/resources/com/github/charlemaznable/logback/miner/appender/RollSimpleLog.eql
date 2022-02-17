@@ -1,8 +1,8 @@
 -- noinspection SqlNoDataSourceInspectionForFile
 
 -- [prepare]
-CREATE TABLE $activeTableName$ (
-  `LOG_ID` BIGINT NOT NULL,
-  `LOG_CONTENT` TEXT,
-  PRIMARY KEY (`LOG_ID`)
+create table $activeTableName$ (
+  `log_id` bigint not null,
+  `log_content` text,
+  primary key (`log_id`)
 )
