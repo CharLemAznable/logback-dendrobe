@@ -14,7 +14,7 @@ import java.util.function.Function;
 import static com.google.common.collect.Maps.newHashMap;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 
-final class LoggingEventElf {
+public final class LoggingEventElf {
 
     private static Map<String, Function<ILoggingEvent, String>> eventConverterMap = newHashMap();
 
@@ -69,7 +69,7 @@ final class LoggingEventElf {
                 Objects.toString(WestId.next()));
     }
 
-    static Map<String, Object> buildEventMap(ILoggingEvent eventObject) {
+    public static Map<String, Object> buildEventMap(ILoggingEvent eventObject) {
         Map<String, Object> paramMap = newHashMap();
 
         Map<String, String> eventMap = newHashMap();

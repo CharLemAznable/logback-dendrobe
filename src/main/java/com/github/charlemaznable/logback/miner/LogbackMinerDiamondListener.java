@@ -7,7 +7,6 @@ import ch.qos.logback.classic.spi.LoggerContextListener;
 import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.spi.LifeCycle;
 import ch.qos.logback.core.util.COWArrayList;
-import com.github.charlemaznable.logback.miner.appender.ConsoleAppender;
 import com.github.charlemaznable.logback.miner.configurator.AppenderConfigurator;
 import com.github.charlemaznable.logback.miner.configurator.Configurator;
 import com.github.charlemaznable.logback.miner.level.EffectorContext;
@@ -30,7 +29,7 @@ import java.util.ServiceLoader;
 
 import static ch.qos.logback.classic.ClassicConstants.DEFAULT_MAX_CALLEDER_DATA_DEPTH;
 import static ch.qos.logback.classic.LoggerContext.DEFAULT_PACKAGING_DATA;
-import static com.github.charlemaznable.logback.miner.configurator.ConfiguratorElf.CONSOLE_APPENDER_PREFIX;
+import static com.github.charlemaznable.logback.miner.console.ConsoleConfigurator.defaultConsoleAppender;
 import static com.github.charlemaznable.logback.miner.level.EffectorContextElf.EFFECTOR_CONTEXT;
 import static com.google.common.io.Closeables.closeQuietly;
 import static java.lang.Thread.currentThread;
@@ -222,11 +221,7 @@ public final class LogbackMinerDiamondListener implements DiamondListener, Logge
             });
 
             if (appenders.isEmpty()) {
-                val consoleAppender = new ConsoleAppender();
-                consoleAppender.setName(CONSOLE_APPENDER_PREFIX + ROOT_LOGGER_NAME);
-                consoleAppender.setContext(loggerContext);
-                loggerContext.getLogger(ROOT_LOGGER_NAME).addAppender(consoleAppender);
-                appenders.add(consoleAppender);
+                appenders.add(defaultConsoleAppender(loggerContext));
             }
             appenders.forEach(LifeCycle::start);
         }

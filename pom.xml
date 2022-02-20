@@ -26,11 +26,12 @@
 
     <properties>
         <sonar.exclusions>
-            src/main/java/com/github/charlemaznable/logback/miner/appender/ConsoleTarget.java
+            src/main/java/com/github/charlemaznable/logback/miner/console/ConsoleTarget.java
         </sonar.exclusions>
 
         <logback-miner-annotations.version>0.1.6-SNAPSHOT</logback-miner-annotations.version>
         <vertx-diamond-config.version>0.1.6-SNAPSHOT</vertx-diamond-config.version>
+        <es-diamond-config.version>0.0.6-SNAPSHOT</es-diamond-config.version>
     </properties>
 
     <dependencies>
@@ -43,6 +44,11 @@
             <groupId>com.github.charlemaznable</groupId>
             <artifactId>vertx-diamond-config</artifactId>
             <version>${vertx-diamond-config.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.charlemaznable</groupId>
+            <artifactId>es-diamond-config</artifactId>
+            <version>${es-diamond-config.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jetbrains</groupId>
@@ -104,6 +110,11 @@
         <dependency>
             <groupId>io.vertx</groupId>
             <artifactId>vertx-hazelcast</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>elasticsearch</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

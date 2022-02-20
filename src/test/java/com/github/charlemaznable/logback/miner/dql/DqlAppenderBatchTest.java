@@ -1,0 +1,143 @@
+package com.github.charlemaznable.logback.miner.dql;
+
+import com.github.bingoohuang.westid.WestId;
+import com.github.charlemaznable.logback.miner.annotation.LogbackBean;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.n3r.diamond.client.impl.DiamondSubscriber;
+import org.n3r.diamond.client.impl.MockDiamondServer;
+import org.n3r.eql.diamond.Dql;
+import org.slf4j.helpers.Util;
+import org.testcontainers.containers.MySQLContainer;
+import org.testcontainers.utility.DockerImageName;
+
+import java.util.Date;
+
+import static java.lang.Runtime.getRuntime;
+import static java.lang.System.currentTimeMillis;
+import static java.time.Duration.ofMillis;
+import static java.util.Objects.nonNull;
+import static org.awaitility.Awaitility.await;
+import static org.joor.Reflect.on;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+@Slf4j
+public class DqlAppenderBatchTest {
+
+    private static final String CLASS_NAME = DqlAppenderBatchTest.class.getName();
+
+    public final int TIMES = 1000;
+
+    private static final String DBBatch = "db_batch";
+    private static final String CREATE_TABLE_SIMPLE_LOG = "" +
+            "create table `simple_log` (" +
+            "  `log_id` bigint not null," +
+            "  `log_content` text," +
+            "  `log_date` datetime(3)," +
+            "  primary key (`log_id`)" +
+            ");\n";
+
+    private static final DockerImageName mysqlImageName = DockerImageName.parse("mysql:5.7.34");
+    private static MySQLContainer mysql = new MySQLContainer<>(mysqlImageName).withDatabaseName(DBBatch);
+
+    @BeforeAll
+    public static void beforeAll() {
+        mysql.start();
+
+        await().forever().until(() -> nonNull(
+                DiamondSubscriber.getInstance().getDiamondRemoteChecker()));
+        Object diamondRemoteChecker = DiamondSubscriber.getInstance().getDiamondRemoteChecker();
+        await().forever().until(() -> 1 <= on(diamondRemoteChecker)
+                .field("diamondAllListener").field("allListeners").call("size").<Integer>get());
+        MockDiamondServer.setUpMockServer();
+        MockDiamondServer.setConfigInfo("EqlConfig", DBBatch, "" +
+                "driver=com.mysql.cj.jdbc.Driver\n" +
+                "url=" + mysql.getJdbcUrl() + "\n" +
+                "user=" + mysql.getUsername() + "\n" +
+                "password=" + mysql.getPassword() + "\n");
+
+        new Dql(DBBatch).execute("" +
+                CREATE_TABLE_SIMPLE_LOG);
+    }
+
+    @AfterAll
+    public static void afterAll() {
+        MockDiamondServer.tearDownMockServer();
+        mysql.stop();
+    }
+
+    @SneakyThrows
+    public void batchRun(int times) {
+        for (int i = 0; i < times; ++i) {
+            await().pollDelay(ofMillis(10)).until(() -> true);
+        }
+    }
+
+    @SneakyThrows
+    public void batchRunLog(int times) {
+        for (int i = 0; i < times; ++i) {
+            await().pollDelay(ofMillis(10)).until(() -> true);
+            val simpleLog = new SimpleLog();
+            simpleLog.setLogId(Long.toString(WestId.next()));
+            simpleLog.setLogContent("simple log");
+            simpleLog.setLogDate(new Date());
+            log.info("simple log: {}", simpleLog);
+        }
+    }
+
+    @SneakyThrows
+    public void routineRun(int threadCount, Runnable target) {
+        val threads = new Thread[threadCount];
+        for (int i = 0; i < threadCount; i++) {
+            threads[i] = new Thread(target);
+            threads[i].start();
+        }
+
+        for (int i = 0; i < threadCount; i++) {
+            threads[i].join();
+        }
+    }
+
+    @Test
+    public void testDqlAppenderBatch() {
+        val future = MockDiamondServer.updateDiamond("Logback", "test", "" +
+                "eql[console.level]=off\norg.n3r.eql[console.level]=off\n" +
+                CLASS_NAME + "[level]=info\n" +
+                CLASS_NAME + "[dql.connection]=" + DBBatch + "\n" +
+                CLASS_NAME + "[console.level]=off\n" +
+                CLASS_NAME + "[console.target]=error\n" +
+                CLASS_NAME + "[vertx.level]=off\n" +
+                CLASS_NAME + "[vertx.name]=error\n");
+        await().forever().until(future::isDone);
+
+        val threadCount = getRuntime().availableProcessors() + 1;
+
+        val startTime = currentTimeMillis();
+        routineRun(threadCount, () -> batchRun(TIMES));
+        val batchRunTime = currentTimeMillis() - startTime;
+
+        val startLogTime = currentTimeMillis();
+        routineRun(threadCount, () -> batchRunLog(TIMES));
+        val batchRunLogTime = currentTimeMillis() - startLogTime;
+
+        assertTrue(batchRunLogTime > batchRunTime);
+        Util.report("Original time: " + batchRunTime + "ms, " +
+                "logging time: " + batchRunLogTime + "ms.");
+    }
+
+    @Getter
+    @Setter
+    @LogbackBean
+    public static class SimpleLog {
+
+        private String logId;
+        private String logContent;
+        private Date logDate;
+    }
+}

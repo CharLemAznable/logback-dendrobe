@@ -11,7 +11,7 @@ import java.nio.charset.StandardCharsets;
 public abstract class AsyncOutputStreamAppender extends AsyncAppender {
 
     public static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
-    public static final String DEFAULT_CONSOLE_PATTERN
+    public static final String DEFAULT_PATTERN
             = "%date [%20.20thread] %5level %50.50logger{50}\\(%4.4line\\): %message%n";
 
     @Getter
@@ -20,7 +20,7 @@ public abstract class AsyncOutputStreamAppender extends AsyncAppender {
     public AsyncOutputStreamAppender() {
         this.encoder = new PatternLayoutEncoder();
         this.encoder.setCharset(DEFAULT_CHARSET);
-        this.encoder.setPattern(DEFAULT_CONSOLE_PATTERN);
+        this.encoder.setPattern(DEFAULT_PATTERN);
     }
 
     @Override
