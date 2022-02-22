@@ -110,14 +110,14 @@ root[level]=info    # 配置根级别logger日志级别为info, 默认为debug, 
 
 数据库插入参数规则:
 
-  * 如参数中不包含```@LogbackBean```注解的类型的对象, 则使用默认连接默认插入SQL, 可选参数为```event.message```, ```mdc.XXX```, ```property.XXX```, 等
-  * 如参数中包含```@LogbackBean```注解的类型的对象, 则遍历所有此类参数进行数据库插入, 除上述可选参数外, 另可使用```arg.字段名```作为参数
-  * 可填写```@LogbackBean```注解的```value```, 覆盖日志配置的默认的dql连接配置
-  * 日志参数Bean默认插入的日志表名为类名的下划线格式, e.g. ```class TestLog```插入表```table TEST_LOG```, 可使用```@LogbackTable```注解另行指定
-  * 日志参数Bean默认插入的日志字段为类型声明的非静态字段, 列名为字段名的下划线格式, 可使用```@LogbackColumn```注解另行指定, 或使用```@LogbackSkip```注解指定排除
-  * 可使用```@LogbackSql```注解另行指定插入日志的```sqlFile```和```sqlId```, 默认为当前类型对应的```sqlFile```中的名为```[log{类名}]```的SQL语句
-  * 可使用```@LogbackRollingSql```注解指定滚动日志表名模式和滚动日志表准备sql语句, 需在sql语句中使用```$activeTableName$```替代滚动日志表名
-  * 使用```@LogbackRollingSql```时, 日志参数Bean默认插入的日志表名将改为```$activeTableName$```, 除非使用```@LogbackTable```或```@LogbackSql```进行自定义
+  * 如参数中不包含```@DqlLogBean```注解的类型的对象, 则使用默认连接默认插入SQL, 可选参数为```event.message```, ```mdc.XXX```, ```property.XXX```, 等
+  * 如参数中包含```@DqlLogBean```注解的类型的对象, 则遍历所有此类参数进行数据库插入, 除上述可选参数外, 另可使用```arg.字段名```作为参数
+  * 可填写```@DqlLogBean```注解的```value```, 覆盖日志配置的默认的dql连接配置
+  * 日志参数Bean默认插入的日志表名为类名的下划线格式, e.g. ```class TestLog```插入表```table TEST_LOG```, 可使用```@DqlLogTable```注解另行指定
+  * 日志参数Bean默认插入的日志字段为类型声明的非静态字段, 列名为字段名的下划线格式, 可使用```@DqlLogColumn```注解另行指定, 或使用```@DqlLogSkip```注解指定排除
+  * 可使用```@DqlLogSql```注解另行指定插入日志的```sqlFile```和```sqlId```, 默认为当前类型对应的```sqlFile```中的名为```[log{类名}]```的SQL语句
+  * 可使用```@DqlLogRollingSql```注解指定滚动日志表名模式和滚动日志表准备sql语句, 需在sql语句中使用```$activeTableName$```替代滚动日志表名
+  * 使用```@DqlLogRollingSql```时, 日志参数Bean默认插入的日志表名将改为```$activeTableName$```, 除非使用```@DqlLogTable```或```@DqlLogSql```进行自定义
 
 5. 配置Vert.x日志
 
@@ -223,10 +223,30 @@ logback.miner.dataId=default
   * 仅含有索引模式时, 使用```FixedWindowRollingPolicy```做为rollingPolicy, ```SizeBasedTriggeringPolicy```做为triggeringPolicy, 按```[rollingfile.minIndex]```, ```[rollingfile.maxIndex]```和```[rollingfile.maxFileSize]```配置, 默认值为```1```, ```7```和```10MB```
   * 不含以上两种模式时, 滚动文件输出不会开启
 
-10. 使用默认配置启动日志输出
+10. 配置ElasticSearch输出
 
 ```
-{logger-name}[appenders]=[console][dql][vertx][file][rollingfile]
+{logger-name}[es.level]=debug
+{logger-name}[es.name]=DEFAULT
+{logger-name}[es.index]={logger-name缩减字符串, 最长128个字符, 并将'.'替换为'_'}
+```
+
+以上配置中:
+
+  * "es.XXX"关键字不区分大小写
+  * 日志级别不区分大小写, 覆盖当前级别日志的```[level]```
+  * ElasticSearch日志级别未设置时, 优先使用当前级别日志的```[level]```, 若未设置```[level]```, 则使用父级日志的ElasticSearch日志级别
+  * es.name配置ElasticSearch客户端标识, 如果存在```diamond group:EsConfig dataId:[es.name]```配置, 则自动加载并初始化ElasticSearch客户端用于发送日志事件消息
+  * 可使用```EsClientManager#putExternalEsClient```方法配置自定义的ElasticSearch客户端, 需自行控制自定义ElasticSearch客户端的生命周期, 使用自定义的名称作为es.name配置
+  * es.index配置日志事件消息存储的ElasticSearch索引, 默认为: logger-name的缩减字符串, 最长128个字符, 并将'.'替换为'_'
+  * 日志事件存储的ElasticSearch文档结构参见```com.github.charlemaznable.logback.miner.appender.LoggingEventElf```
+
+配置以上任一项, 即启动对应级别logger ElasticSearch日志
+
+11. 使用默认配置启动日志输出
+
+```
+{logger-name}[appenders]=[console][dql][vertx][file][rollingfile][es]
 ```
 
 当仅需启动日志的某些输出端时, 可使用此配置:
@@ -236,4 +256,5 @@ logback.miner.dataId=default
   * 配置值中包含```[vertx]```字符串时, 启动默认Vert.x输出
   * 配置值中包含```[file]```字符串时, 启动默认文件输出, 但需另外配置```{logger-name}[file]```指定日志文件名
   * 配置值中包含```[rollingfile]```字符串时, 启动默认滚动文件输出, 但需另外配置```{logger-name}[rollingfile.fileNamePattern]```指定文件名滚动规则
+  * 配置值中包含```[es]```字符串时, 启动默认ElasticSearch输出
   * "appenders"关键字和配置值不区分大小写

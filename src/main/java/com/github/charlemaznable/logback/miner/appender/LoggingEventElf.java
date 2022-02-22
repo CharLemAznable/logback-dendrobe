@@ -7,6 +7,7 @@ import lombok.val;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
@@ -69,7 +70,7 @@ public final class LoggingEventElf {
                 Objects.toString(WestId.next()));
     }
 
-    public static Map<String, Object> buildEventMap(ILoggingEvent eventObject) {
+    public static EventMap buildEventMap(ILoggingEvent eventObject) {
         Map<String, Object> paramMap = newHashMap();
 
         Map<String, String> eventMap = newHashMap();
@@ -92,8 +93,22 @@ public final class LoggingEventElf {
         }
         paramMap.put("property", propMap);
 
-        return paramMap;
+        return new EventMap(paramMap);
     }
 
     private LoggingEventElf() {}
+
+    public static class EventMap extends HashMap<String, Object> {
+
+        private static final long serialVersionUID = -2969581445867351849L;
+
+        public EventMap(Map<String, Object> map) {
+            super(map);
+        }
+
+        public String westId() {
+            //noinspection unchecked
+            return ((Map<String, String>) this.get("event")).get("westId");
+        }
+    }
 }

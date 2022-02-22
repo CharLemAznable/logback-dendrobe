@@ -14,12 +14,12 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 
 import static com.github.charlemaznable.logback.miner.appender.LoggingEventElf.buildEventMap;
-import static com.github.charlemaznable.logback.miner.dql.DqlCaches.LogbackBeanDqlCache.getLogbackBeanDql;
-import static com.github.charlemaznable.logback.miner.dql.DqlCaches.LogbackBeanPresentCache.isLogbackBeanPresent;
-import static com.github.charlemaznable.logback.miner.dql.DqlCaches.LogbackPojoSqlCache.getLogbackPojoSql;
-import static com.github.charlemaznable.logback.miner.dql.DqlCaches.LogbackRollingSqlCache.getTableNamePattern;
-import static com.github.charlemaznable.logback.miner.dql.DqlCaches.LogbackSqlCache.useLogbackSql;
-import static com.github.charlemaznable.logback.miner.dql.DqlCaches.LogbackTableNameRollingCache.getTableNameRolling;
+import static com.github.charlemaznable.logback.miner.dql.DqlCaches.DqlLogBeanDqlCache.getDqlLogBeanDql;
+import static com.github.charlemaznable.logback.miner.dql.DqlCaches.DqlLogBeanPresentCache.isDqlLogBeanPresent;
+import static com.github.charlemaznable.logback.miner.dql.DqlCaches.DqlLogPojoSqlCache.getDqlLogPojoSql;
+import static com.github.charlemaznable.logback.miner.dql.DqlCaches.DqlLogRollingSqlCache.getTableNamePattern;
+import static com.github.charlemaznable.logback.miner.dql.DqlCaches.DqlLogSqlCache.useDqlLogSql;
+import static com.github.charlemaznable.logback.miner.dql.DqlCaches.DqlLogTableNameRollingCache.getTableNameRolling;
 import static com.github.charlemaznable.logback.miner.dql.DqlEffectorBuilder.DQL_EFFECTOR;
 import static com.github.charlemaznable.logback.miner.dql.DqlTableNameRolling.ACTIVE_TABLE_NAME;
 import static com.google.common.collect.Maps.newHashMap;
@@ -102,11 +102,11 @@ public final class DqlAppender extends AsyncAppender {
 
                 val argumentArray = defaultIfNull(eventObject.getArgumentArray(), new Object[0]);
                 val arguments = Arrays.stream(argumentArray)
-                        .filter(arg -> nonNull(arg) && isLogbackBeanPresent(arg.getClass()))
+                        .filter(arg -> nonNull(arg) && isDqlLogBeanPresent(arg.getClass()))
                         .collect(Collectors.toList());
-                // 日志不包含@LogbackBean注解的参数, 执行默认连接的默认SQL
+                // 日志不包含@DqlLogBean注解的参数, 执行默认连接的默认SQL
                 if (arguments.isEmpty()) {
-                    val dql = getLogbackBeanDql(dqlConnection);
+                    val dql = getDqlLogBeanDql(dqlConnection);
                     // 未指定默认连接或默认SQL, 则跳过
                     if (isNull(dql) || isBlank(dqlSql)) return;
 
@@ -120,10 +120,10 @@ public final class DqlAppender extends AsyncAppender {
                     return;
                 }
 
-                // 遍历@LogbackBean注解的参数
+                // 遍历@DqlLogBean注解的参数
                 for (val argument : arguments) {
                     val clazz = argument.getClass();
-                    val dql = getLogbackBeanDql(clazz, dqlConnection);
+                    val dql = getDqlLogBeanDql(clazz, dqlConnection);
                     // 参数类型注解未指定连接, 且Logger未指定默认连接, 则跳过
                     if (isNull(dql)) continue;
 
@@ -139,9 +139,9 @@ public final class DqlAppender extends AsyncAppender {
                     dql.params(currentMap).dynamics(currentMap);
 
                     // 指定sqlFile的情形
-                    if (useLogbackSql(clazz, dql)) dql.execute();
+                    if (useDqlLogSql(clazz, dql)) dql.execute();
                         // 根据POJO生成直接SQL
-                    else dql.execute(getLogbackPojoSql(clazz));
+                    else dql.execute(getDqlLogPojoSql(clazz));
                 }
 
             } finally {

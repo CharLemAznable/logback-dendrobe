@@ -1,12 +1,12 @@
 package com.github.charlemaznable.logback.miner.dql;
 
 import ch.qos.logback.core.Context;
-import com.github.charlemaznable.logback.miner.annotation.LogbackBean;
-import com.github.charlemaznable.logback.miner.annotation.LogbackColumn;
-import com.github.charlemaznable.logback.miner.annotation.LogbackRollingSql;
-import com.github.charlemaznable.logback.miner.annotation.LogbackSkip;
-import com.github.charlemaznable.logback.miner.annotation.LogbackSql;
-import com.github.charlemaznable.logback.miner.annotation.LogbackTable;
+import com.github.charlemaznable.logback.miner.annotation.DqlLogBean;
+import com.github.charlemaznable.logback.miner.annotation.DqlLogColumn;
+import com.github.charlemaznable.logback.miner.annotation.DqlLogRollingSql;
+import com.github.charlemaznable.logback.miner.annotation.DqlLogSkip;
+import com.github.charlemaznable.logback.miner.annotation.DqlLogSql;
+import com.github.charlemaznable.logback.miner.annotation.DqlLogTable;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -39,20 +39,20 @@ import static org.n3r.eql.util.Names.convertCamelToUnderscore;
 final class DqlCaches {
 
     /**
-     * 缓存 - 参数类型是否添加{@link LogbackBean}注解
+     * 缓存 - 参数类型是否添加{@link DqlLogBean}注解
      */
     @NoArgsConstructor(access = PRIVATE)
-    static class LogbackBeanPresentCache {
+    static class DqlLogBeanPresentCache {
 
         static LoadingCache<Class<?>, Boolean> cache
-                = newBuilder().build(CacheLoader.from(LogbackBeanPresentCache::loadCache));
+                = newBuilder().build(CacheLoader.from(DqlLogBeanPresentCache::loadCache));
 
-        static boolean isLogbackBeanPresent(Class<?> clazz) {
+        static boolean isDqlLogBeanPresent(Class<?> clazz) {
             return cache.getUnchecked(clazz);
         }
 
         static Boolean loadCache(Class<?> clazz) {
-            return clazz.isAnnotationPresent(LogbackBean.class);
+            return clazz.isAnnotationPresent(DqlLogBean.class);
         }
     }
 
@@ -60,12 +60,12 @@ final class DqlCaches {
      * 缓存 - 参数类型入库日志使用的{@link Dql}对象
      */
     @NoArgsConstructor(access = PRIVATE)
-    static class LogbackBeanDqlCache {
+    static class DqlLogBeanDqlCache {
 
         static LoadingCache<Class<?>, String> cache
-                = newBuilder().build(CacheLoader.from(LogbackBeanDqlCache::loadCache));
+                = newBuilder().build(CacheLoader.from(DqlLogBeanDqlCache::loadCache));
 
-        static Dql getLogbackBeanDql(String defaultConnection) {
+        static Dql getDqlLogBeanDql(String defaultConnection) {
             if (isBlank(defaultConnection)) return null;
 
             val properties = new Miner().getProperties(EQL_CONFIG_GROUP_NAME, defaultConnection);
@@ -73,7 +73,7 @@ final class DqlCaches {
             return new Dql(defaultConnection);
         }
 
-        static Dql getLogbackBeanDql(Class<?> clazz, String defaultConnection) {
+        static Dql getDqlLogBeanDql(Class<?> clazz, String defaultConnection) {
             val configConnection = cache.getUnchecked(clazz);
             val connectionName = defaultIfBlank(configConnection, defaultConnection);
             if (isBlank(connectionName)) return null;
@@ -85,7 +85,7 @@ final class DqlCaches {
 
         @Nonnull
         static String loadCache(Class<?> clazz) {
-            return requireNonNull(clazz.getAnnotation(LogbackBean.class)).value();
+            return requireNonNull(clazz.getAnnotation(DqlLogBean.class)).value();
         }
     }
 
@@ -93,27 +93,27 @@ final class DqlCaches {
      * 缓存 - 处理参数类型入库日志使用的{@link Dql#useSqlFile(String)}
      */
     @NoArgsConstructor(access = PRIVATE)
-    static class LogbackSqlCache {
+    static class DqlLogSqlCache {
 
-        static LoadingCache<Class<?>, Optional<LogbackSql>> cache
-                = newBuilder().build(CacheLoader.from(LogbackSqlCache::loadCache));
+        static LoadingCache<Class<?>, Optional<DqlLogSql>> cache
+                = newBuilder().build(CacheLoader.from(DqlLogSqlCache::loadCache));
 
-        static boolean useLogbackSql(Class<?> clazz, Dql dql) {
-            val logbackSqlOptional = cache.getUnchecked(clazz);
-            if (!logbackSqlOptional.isPresent()) return false;
+        static boolean useDqlLogSql(Class<?> clazz, Dql dql) {
+            val dqlLogSqlOptional = cache.getUnchecked(clazz);
+            if (!dqlLogSqlOptional.isPresent()) return false;
 
-            val logbackSql = logbackSqlOptional.get();
-            useSqlFile(dql, logbackSql.sqlFile(),
-                    logbackSql.sqlClass(), clazz);
+            val dqlLogSql = dqlLogSqlOptional.get();
+            useSqlFile(dql, dqlLogSql.sqlFile(),
+                    dqlLogSql.sqlClass(), clazz);
 
-            dql.id(defaultIfBlank(logbackSql.sqlId(),
+            dql.id(defaultIfBlank(dqlLogSql.sqlId(),
                     "log" + clazz.getSimpleName()));
             return true;
         }
 
         @Nonnull
-        static Optional<LogbackSql> loadCache(Class<?> clazz) {
-            return Optional.ofNullable(clazz.getAnnotation(LogbackSql.class));
+        static Optional<DqlLogSql> loadCache(Class<?> clazz) {
+            return Optional.ofNullable(clazz.getAnnotation(DqlLogSql.class));
         }
     }
 
@@ -121,12 +121,12 @@ final class DqlCaches {
      * 缓存 - 参数类型默认PojoSql
      */
     @NoArgsConstructor(access = PRIVATE)
-    static class LogbackPojoSqlCache {
+    static class DqlLogPojoSqlCache {
 
         static LoadingCache<Class<?>, String> cache
-                = newBuilder().build(CacheLoader.from(LogbackPojoSqlCache::loadCache));
+                = newBuilder().build(CacheLoader.from(DqlLogPojoSqlCache::loadCache));
 
-        static String getLogbackPojoSql(Class<?> clazz) {
+        static String getDqlLogPojoSql(Class<?> clazz) {
             return cache.getUnchecked(clazz);
         }
 
@@ -152,11 +152,11 @@ final class DqlCaches {
         }
 
         private static String parseTableName(Class<?> clazz) {
-            val logbackRolling = clazz.getAnnotation(LogbackRollingSql.class);
-            if (nonNull(logbackRolling)) return "$" + ACTIVE_TABLE_NAME + "$";
+            val dqlLogRollingSql = clazz.getAnnotation(DqlLogRollingSql.class);
+            if (nonNull(dqlLogRollingSql)) return "$" + ACTIVE_TABLE_NAME + "$";
 
-            val logbackTable = clazz.getAnnotation(LogbackTable.class);
-            return nonNull(logbackTable) ? logbackTable.value()
+            val dqlLogTable = clazz.getAnnotation(DqlLogTable.class);
+            return nonNull(dqlLogTable) ? dqlLogTable.value()
                     : convertCamelToUnderscore(clazz.getSimpleName());
         }
 
@@ -165,7 +165,7 @@ final class DqlCaches {
             val pojoFields = new ArrayList<Field>();
             for (val field : declaredFields) {
                 if (Modifier.isStatic(field.getModifiers()) ||
-                        field.isAnnotationPresent(LogbackSkip.class)) continue;
+                        field.isAnnotationPresent(DqlLogSkip.class)) continue;
 
                 pojoFields.add(field);
             }
@@ -173,8 +173,8 @@ final class DqlCaches {
         }
 
         private static String parseColumnName(Field field) {
-            val logbackColumn = field.getAnnotation(LogbackColumn.class);
-            return nonNull(logbackColumn) ? logbackColumn.value()
+            val dqlLogColumn = field.getAnnotation(DqlLogColumn.class);
+            return nonNull(dqlLogColumn) ? dqlLogColumn.value()
                     : convertCamelToUnderscore(field.getName());
         }
     }
@@ -183,7 +183,7 @@ final class DqlCaches {
      * 缓存 - 表名滚动配置缓存
      */
     @NoArgsConstructor(access = PRIVATE)
-    static class LogbackTableNameRollingCache {
+    static class DqlLogTableNameRollingCache {
 
         static DqlTableNameRolling nullTableNameRolling = new DqlTableNameRolling(null, null);
 
@@ -201,35 +201,35 @@ final class DqlCaches {
      * 缓存 - 表名滚动注解配置缓存
      */
     @NoArgsConstructor(access = PRIVATE)
-    static class LogbackRollingSqlCache {
+    static class DqlLogRollingSqlCache {
 
-        static LoadingCache<Class<?>, Optional<LogbackRollingSql>> cache
-                = newBuilder().build(CacheLoader.from(LogbackRollingSqlCache::loadCache));
+        static LoadingCache<Class<?>, Optional<DqlLogRollingSql>> cache
+                = newBuilder().build(CacheLoader.from(DqlLogRollingSqlCache::loadCache));
 
         static String getTableNamePattern(Class<?> clazz) {
-            val logbackRollingOptional = cache.getUnchecked(clazz);
-            if (!logbackRollingOptional.isPresent()) return null;
+            val dqlLogRollingSqlOptional = cache.getUnchecked(clazz);
+            if (!dqlLogRollingSqlOptional.isPresent()) return null;
 
-            val logbackRolling = logbackRollingOptional.get();
-            return logbackRolling.tableNamePattern();
+            val dqlLogRollingSql = dqlLogRollingSqlOptional.get();
+            return dqlLogRollingSql.tableNamePattern();
         }
 
-        static boolean useLogbackRollingSql(Class<?> clazz, Dql dql) {
-            val logbackRollingOptional = cache.getUnchecked(clazz);
-            if (!logbackRollingOptional.isPresent()) return false;
+        static boolean useDqlLogRollingSql(Class<?> clazz, Dql dql) {
+            val dqlLogRollingSqlOptional = cache.getUnchecked(clazz);
+            if (!dqlLogRollingSqlOptional.isPresent()) return false;
 
-            val logbackRolling = logbackRollingOptional.get();
-            useSqlFile(dql, logbackRolling.sqlFile(),
-                    logbackRolling.sqlClass(), clazz);
+            val dqlLogRollingSql = dqlLogRollingSqlOptional.get();
+            useSqlFile(dql, dqlLogRollingSql.sqlFile(),
+                    dqlLogRollingSql.sqlClass(), clazz);
 
-            dql.id(defaultIfBlank(logbackRolling.sqlId(),
+            dql.id(defaultIfBlank(dqlLogRollingSql.sqlId(),
                     "prepare" + clazz.getSimpleName()));
             return true;
         }
 
         @Nonnull
-        static Optional<LogbackRollingSql> loadCache(Class<?> clazz) {
-            return Optional.ofNullable(clazz.getAnnotation(LogbackRollingSql.class));
+        static Optional<DqlLogRollingSql> loadCache(Class<?> clazz) {
+            return Optional.ofNullable(clazz.getAnnotation(DqlLogRollingSql.class));
         }
     }
 

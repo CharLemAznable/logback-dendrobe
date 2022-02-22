@@ -1,7 +1,7 @@
 package com.github.charlemaznable.logback.miner.dql;
 
 import com.github.bingoohuang.westid.WestId;
-import com.github.charlemaznable.logback.miner.annotation.LogbackBean;
+import com.github.charlemaznable.logback.miner.annotation.DqlLogBean;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
@@ -17,10 +17,12 @@ import org.slf4j.helpers.Util;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.utility.DockerImageName;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import static java.lang.Runtime.getRuntime;
 import static java.lang.System.currentTimeMillis;
+import static java.math.BigDecimal.ROUND_HALF_UP;
 import static java.time.Duration.ofMillis;
 import static java.util.Objects.nonNull;
 import static org.awaitility.Awaitility.await;
@@ -76,6 +78,10 @@ public class DqlAppenderBatchTest {
     public void batchRun(int times) {
         for (int i = 0; i < times; ++i) {
             await().pollDelay(ofMillis(10)).until(() -> true);
+            val simpleLog = new SimpleLog();
+            simpleLog.setLogId(Long.toString(WestId.next()));
+            simpleLog.setLogContent("simple log");
+            simpleLog.setLogDate(new Date());
         }
     }
 
@@ -128,12 +134,14 @@ public class DqlAppenderBatchTest {
 
         assertTrue(batchRunLogTime > batchRunTime);
         Util.report("Original time: " + batchRunTime + "ms, " +
-                "logging time: " + batchRunLogTime + "ms.");
+                "logging time: " + batchRunLogTime + "ms, " +
+                "rating: " + new BigDecimal(batchRunLogTime).divide(
+                new BigDecimal(batchRunTime), 2, ROUND_HALF_UP).toString());
     }
 
     @Getter
     @Setter
-    @LogbackBean
+    @DqlLogBean
     public static class SimpleLog {
 
         private String logId;

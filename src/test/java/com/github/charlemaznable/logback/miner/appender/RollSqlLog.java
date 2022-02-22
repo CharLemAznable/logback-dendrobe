@@ -1,8 +1,8 @@
 package com.github.charlemaznable.logback.miner.appender;
 
-import com.github.charlemaznable.logback.miner.annotation.LogbackBean;
-import com.github.charlemaznable.logback.miner.annotation.LogbackRollingSql;
-import com.github.charlemaznable.logback.miner.annotation.LogbackSql;
+import com.github.charlemaznable.logback.miner.annotation.DqlLogBean;
+import com.github.charlemaznable.logback.miner.annotation.DqlLogRollingSql;
+import com.github.charlemaznable.logback.miner.annotation.DqlLogSql;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -10,9 +10,9 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-@LogbackBean
-@LogbackSql
-@LogbackRollingSql(tableNamePattern = "B_ROLLING_LOG_%d{yyyyMMddHHmmss}")
+@DqlLogBean
+@DqlLogSql
+@DqlLogRollingSql(tableNamePattern = "B_ROLLING_LOG_%d{yyyyMMddHHmmss}")
 public class RollSqlLog {
 
     private String logId;

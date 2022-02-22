@@ -1,12 +1,12 @@
 package com.github.charlemaznable.logback.miner.appender;
 
-import com.github.charlemaznable.logback.miner.annotation.LogbackBean;
+import com.github.charlemaznable.logback.miner.annotation.DqlLogBean;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-@LogbackBean("error")
+@DqlLogBean("error")
 public class ErrorLog {
 
     private String logId;

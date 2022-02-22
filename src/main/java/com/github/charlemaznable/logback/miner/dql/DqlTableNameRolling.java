@@ -11,7 +11,7 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.function.Consumer;
 
-import static com.github.charlemaznable.logback.miner.dql.DqlCaches.LogbackRollingSqlCache.useLogbackRollingSql;
+import static com.github.charlemaznable.logback.miner.dql.DqlCaches.DqlLogRollingSqlCache.useDqlLogRollingSql;
 import static com.google.common.collect.Maps.newHashMap;
 import static java.lang.System.currentTimeMillis;
 import static java.util.Objects.nonNull;
@@ -65,7 +65,7 @@ public final class DqlTableNameRolling {
 
     public void rolling(Dql dql, Class<?> clazz) {
         rolling(tableName -> {
-            if (!useLogbackRollingSql(clazz, dql)) return;
+            if (!useDqlLogRollingSql(clazz, dql)) return;
             val currentMap = newHashMap();
             currentMap.put(ACTIVE_TABLE_NAME, tableName);
             dql.params(currentMap).dynamics(currentMap).execute();

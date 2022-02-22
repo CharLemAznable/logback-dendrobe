@@ -109,6 +109,7 @@ public class ConsoleAppenderTest {
                 CLASS_NAME + "[VERTX.LEVEL]=OFF\n" +
                 CLASS_NAME + "[FILE.LEVEL]=OFF\n" +
                 CLASS_NAME + "[ROLLINGFILE.LEVEL]=OFF\n" +
+                CLASS_NAME + "[ES.LEVEL]=OFF\n" +
                 CLASS_NAME + "[CONSOLE.LEVEL]=debug\n" +
                 CLASS_NAME + "[CONSOLE.PATTERN]=%5level %message%n\n" +
                 CLASS_NAME + "[CONSOLE.TARGET]=test-debug\n");
@@ -145,6 +146,7 @@ public class ConsoleAppenderTest {
                 CLASS_NAME + "[VERTX.LEVEL]=OFF\n" +
                 CLASS_NAME + "[FILE.LEVEL]=OFF\n" +
                 CLASS_NAME + "[ROLLINGFILE.LEVEL]=OFF\n" +
+                CLASS_NAME + "[ES.LEVEL]=OFF\n" +
                 CLASS_NAME + "[CONSOLE.LEVEL]=info\n" +
                 CLASS_NAME + "[CONSOLE.PATTERN]=%5level %message%n\n" +
                 CLASS_NAME + "[CONSOLE.TARGET]=test-info\n");
@@ -183,6 +185,7 @@ public class ConsoleAppenderTest {
                 CLASS_NAME + "[VERTX.LEVEL]=OFF\n" +
                 CLASS_NAME + "[FILE.LEVEL]=OFF\n" +
                 CLASS_NAME + "[ROLLINGFILE.LEVEL]=OFF\n" +
+                CLASS_NAME + "[ES.LEVEL]=OFF\n" +
                 CLASS_NAME + "[CONSOLE.LEVEL]=warn\n" +
                 CLASS_NAME + "[CONSOLE.PATTERN]=%5level %message%n\n" +
                 CLASS_NAME + "[CONSOLE.TARGET]=test-warn\n");
@@ -223,6 +226,7 @@ public class ConsoleAppenderTest {
                 CLASS_NAME + "[VERTX.LEVEL]=OFF\n" +
                 CLASS_NAME + "[FILE.LEVEL]=OFF\n" +
                 CLASS_NAME + "[ROLLINGFILE.LEVEL]=OFF\n" +
+                CLASS_NAME + "[ES.LEVEL]=OFF\n" +
                 CLASS_NAME + "[CONSOLE.LEVEL]=error\n" +
                 CLASS_NAME + "[CONSOLE.PATTERN]=%5level %message%n\n" +
                 CLASS_NAME + "[CONSOLE.TARGET]=test-error\n");

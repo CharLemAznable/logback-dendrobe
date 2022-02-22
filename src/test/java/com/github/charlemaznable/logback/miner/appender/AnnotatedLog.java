@@ -1,9 +1,9 @@
 package com.github.charlemaznable.logback.miner.appender;
 
-import com.github.charlemaznable.logback.miner.annotation.LogbackBean;
-import com.github.charlemaznable.logback.miner.annotation.LogbackColumn;
-import com.github.charlemaznable.logback.miner.annotation.LogbackSkip;
-import com.github.charlemaznable.logback.miner.annotation.LogbackTable;
+import com.github.charlemaznable.logback.miner.annotation.DqlLogBean;
+import com.github.charlemaznable.logback.miner.annotation.DqlLogColumn;
+import com.github.charlemaznable.logback.miner.annotation.DqlLogSkip;
+import com.github.charlemaznable.logback.miner.annotation.DqlLogTable;
 import lombok.Getter;
 import lombok.Setter;
 import org.joda.time.DateTime;
@@ -12,18 +12,18 @@ import java.util.Date;
 
 @Getter
 @Setter
-@LogbackBean("db1")
-@LogbackTable("simple_log")
+@DqlLogBean("db1")
+@DqlLogTable("simple_log")
 public class AnnotatedLog {
 
-    @LogbackColumn("log_id")
+    @DqlLogColumn("log_id")
     private String aLogId;
-    @LogbackColumn("log_content")
+    @DqlLogColumn("log_content")
     private String aLogContent;
-    @LogbackColumn("log_date")
+    @DqlLogColumn("log_date")
     private Date aLogDate;
-    @LogbackColumn("log_date_time")
+    @DqlLogColumn("log_date_time")
     private DateTime aLogDateTime;
-    @LogbackSkip
+    @DqlLogSkip
     private String aLogSkip;
 }
