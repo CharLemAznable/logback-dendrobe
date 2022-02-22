@@ -3,14 +3,15 @@ package com.github.charlemaznable.logback.miner.configurator;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
 import com.github.charlemaznable.logback.miner.level.Effector;
+import lombok.NoArgsConstructor;
 import lombok.val;
 
 import static com.github.charlemaznable.logback.miner.level.EffectorContextElf.getEffectorContext;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static lombok.AccessLevel.PRIVATE;
 
+@NoArgsConstructor(access = PRIVATE)
 public final class ConfiguratorElf {
-
-    private ConfiguratorElf() {}
 
     static String propertyKey(String key, String prefix, String suffix) {
         return key.substring(prefix.length(), key.length() - suffix.length());

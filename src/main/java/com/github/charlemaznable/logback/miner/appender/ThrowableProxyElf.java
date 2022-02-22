@@ -4,13 +4,14 @@ import ch.qos.logback.classic.spi.IThrowableProxy;
 import ch.qos.logback.classic.spi.ThrowableProxy;
 import ch.qos.logback.classic.spi.ThrowableProxyUtil;
 import ch.qos.logback.core.CoreConstants;
+import lombok.NoArgsConstructor;
 import lombok.val;
 
 import static java.util.Objects.isNull;
+import static lombok.AccessLevel.PRIVATE;
 
+@NoArgsConstructor(access = PRIVATE)
 public final class ThrowableProxyElf {
-
-    private ThrowableProxyElf() {}
 
     public static String toString(Throwable t) {
         return toString(new ThrowableProxy(t));

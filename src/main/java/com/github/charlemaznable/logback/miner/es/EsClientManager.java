@@ -4,6 +4,7 @@ import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.Subscribe;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.val;
 import org.elasticsearch.client.RestHighLevelClient;
 
@@ -18,7 +19,9 @@ import static com.github.charlemaznable.es.diamond.EsConfigDiamondElf.parseStone
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static java.util.concurrent.Executors.newFixedThreadPool;
+import static lombok.AccessLevel.PRIVATE;
 
+@NoArgsConstructor(access = PRIVATE)
 public final class EsClientManager {
 
     private static final Map<String, RestHighLevelClient> esClients = new ConcurrentHashMap<>();
@@ -94,8 +97,6 @@ public final class EsClientManager {
     public static void configEsClient(String esName) {
         eventBus.post(esName);
     }
-
-    private EsClientManager() {}
 
     @AllArgsConstructor
     @Getter

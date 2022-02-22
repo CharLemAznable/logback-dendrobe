@@ -3,6 +3,7 @@ package com.github.charlemaznable.logback.miner.appender;
 import ch.qos.logback.classic.spi.CallerData;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import com.github.bingoohuang.westid.WestId;
+import lombok.NoArgsConstructor;
 import lombok.val;
 
 import java.text.SimpleDateFormat;
@@ -13,8 +14,10 @@ import java.util.Objects;
 import java.util.function.Function;
 
 import static com.google.common.collect.Maps.newHashMap;
+import static lombok.AccessLevel.PRIVATE;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 
+@NoArgsConstructor(access = PRIVATE)
 public final class LoggingEventElf {
 
     private static Map<String, Function<ILoggingEvent, String>> eventConverterMap = newHashMap();
@@ -95,8 +98,6 @@ public final class LoggingEventElf {
 
         return new EventMap(paramMap);
     }
-
-    private LoggingEventElf() {}
 
     public static class EventMap extends HashMap<String, Object> {
 

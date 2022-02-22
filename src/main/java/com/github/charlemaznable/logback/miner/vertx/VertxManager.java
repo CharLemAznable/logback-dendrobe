@@ -6,6 +6,7 @@ import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.val;
 import org.slf4j.helpers.Util;
 
@@ -21,7 +22,9 @@ import static com.github.charlemaznable.vertx.diamond.VertxElf.closeVertxImmedia
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static java.util.concurrent.Executors.newFixedThreadPool;
+import static lombok.AccessLevel.PRIVATE;
 
+@NoArgsConstructor(access = PRIVATE)
 public final class VertxManager {
 
     private static final Map<String, Vertx> vertxs = new ConcurrentHashMap<>();
@@ -97,8 +100,6 @@ public final class VertxManager {
     public static void configVertx(String vertxName) {
         eventBus.post(vertxName);
     }
-
-    private VertxManager() {}
 
     private static void closeVertxWithReport(Vertx vertx) {
         closeVertx(vertx, t -> {

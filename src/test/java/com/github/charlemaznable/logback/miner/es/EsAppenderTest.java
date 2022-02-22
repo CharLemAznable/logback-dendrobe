@@ -1,6 +1,10 @@
 package com.github.charlemaznable.logback.miner.es;
 
 import com.github.charlemaznable.es.diamond.EsConfig;
+import com.github.charlemaznable.logback.miner.annotation.EsLogBean;
+import com.github.charlemaznable.logback.miner.annotation.EsLogIndex;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -119,10 +123,11 @@ public class EsAppenderTest {
         }
 
         await().until(() -> nonNull(EsClientManager.getEsClient("DEFAULT")));
-        root.info("root es log 1");
-        self.info("self es log 1");
-        await().timeout(Duration.ofSeconds(20)).untilAsserted(() ->
-                assertSearchContent("self es log 1"));
+        root.info("root es log {}", new TestLog1("1"));
+        self.info("self es log {}", new TestLog1("1"));
+        // .timeout(Duration.ofSeconds(20))
+        await().forever().untilAsserted(() ->
+                assertSearchContent("self es log 1", "1"));
 
         // 2. 内部配置, EsConfig未更改
         val future2 = MockDiamondServer.updateDiamond("Logback", "test", "" +
@@ -147,10 +152,10 @@ public class EsAppenderTest {
                 CLASS_NAME + "[es.index]=logback.miner\n");
         await().forever().until(future3::isDone);
 
-        root.info("root es log 2");
-        self.info("self es log 2");
+        root.info("root es log {}", new TestLog2("2"));
+        self.info("self es log {}", new TestLog2("2"));
         await().timeout(Duration.ofSeconds(20)).untilAsserted(() ->
-                assertSearchContent("self es log 2"));
+                assertSearchContent("self es log 2", "2"));
 
         // 4. 内部配置, EsConfig删除
         ConcurrentHashMap<DiamondAxis, String> mocks = onClass(MockDiamondServer.class).field("mocks").get();
@@ -195,7 +200,7 @@ public class EsAppenderTest {
         root.info("root es log custom");
         self.info("self es log custom");
         await().timeout(Duration.ofSeconds(20)).untilAsserted(() ->
-                assertSearchContent("self es log custom"));
+                assertSearchContent("self es log custom", null));
 
         // 2. 重新加载, 不影响外部导入
         val future2 = MockDiamondServer.updateDiamond("Logback", "test", "" +
@@ -209,7 +214,7 @@ public class EsAppenderTest {
         root.info("root es log reload");
         self.info("self es log reload");
         await().timeout(Duration.ofSeconds(20)).untilAsserted(() ->
-                assertSearchContent("self es log reload"));
+                assertSearchContent("self es log reload", null));
 
         // 3. 清除外部导入, 不影响es实例运行
         EsClientManager.putExternalEsClient("CUSTOM", null);
@@ -241,7 +246,7 @@ public class EsAppenderTest {
         root.info("root es log cross internal1");
         self.info("self es log cross internal1");
         await().timeout(Duration.ofSeconds(20)).untilAsserted(() ->
-                assertSearchContent("self es log cross internal1"));
+                assertSearchContent("self es log cross internal1", null));
 
         val crossConfig = new EsConfig();
         crossConfig.setUris(newArrayList(elasticsearch.getHttpHostAddress()));
@@ -254,7 +259,7 @@ public class EsAppenderTest {
         root.info("root es log cross external");
         self.info("self es log cross external");
         await().timeout(Duration.ofSeconds(20)).untilAsserted(() ->
-                assertSearchContent("self es log cross external"));
+                assertSearchContent("self es log cross external", null));
 
         // 2. 重新加载, 外部导入被内部配置覆盖
         val future2 = MockDiamondServer.updateDiamond("Logback", "test", "" +
@@ -267,7 +272,7 @@ public class EsAppenderTest {
         root.info("root es log cross internal2");
         self.info("self es log cross internal2");
         await().timeout(Duration.ofSeconds(20)).untilAsserted(() ->
-                assertSearchContent("self es log cross internal2"));
+                assertSearchContent("self es log cross internal2", null));
 
         MockDiamondServer.tearDownMockServer();
     }
@@ -278,8 +283,45 @@ public class EsAppenderTest {
         assertDoesNotThrow(() -> EsClientManager.putExternalEsClient(null, null));
     }
 
+    @EsLogBean
+    @AllArgsConstructor
+    @Getter
+    public static class TestLog1 {
+
+        private String info;
+
+        @Override
+        public String toString() {
+            return info;
+        }
+    }
+
+    @EsLogBean
+    @EsLogIndex
+    @AllArgsConstructor
+    @Getter
+    public static class TestLog2 {
+
+        private String info;
+
+        @Override
+        public String toString() {
+            return info;
+        }
+    }
+
+    @SuppressWarnings("unchecked")
     @SneakyThrows
-    private void assertSearchContent(String content) {
+    private void assertSearchContent(String content, String info) {
+        val all = new SearchRequest();
+        all.source(SearchSourceBuilder.searchSource()
+                .query(QueryBuilders.matchAllQuery()));
+        val allResp = esClient.search(all, DEFAULT);
+        System.out.println(allResp.getHits().getHits().length);
+        for (val hit : allResp.getHits()) {
+            System.out.println(hit.getSourceAsString());
+        }
+
         val searchRequest = new SearchRequest();
         searchRequest.source(SearchSourceBuilder.searchSource()
                 .query(QueryBuilders.matchQuery("event.message", content)));
@@ -287,7 +329,7 @@ public class EsAppenderTest {
         val searchResponseHits = searchResponse.getHits();
         assertTrue(searchResponseHits.getHits().length > 0);
         val responseMap = searchResponseHits.getAt(0).getSourceAsMap();
-        //noinspection unchecked
         assertEquals(content, ((Map<String, String>) responseMap.get("event")).get("message"));
+        if (nonNull(info)) assertEquals(info, ((Map<String, String>) responseMap.get("arg")).get("info"));
     }
 }

@@ -1,5 +1,7 @@
 package com.github.charlemaznable.logback.miner.vertx;
 
+import com.github.charlemaznable.logback.miner.annotation.VertxLogAddress;
+import com.github.charlemaznable.logback.miner.annotation.VertxLogBean;
 import com.github.charlemaznable.vertx.diamond.VertxElf;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
@@ -7,6 +9,8 @@ import io.vertx.core.VertxOptions;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.json.JsonObject;
 import io.vertx.spi.cluster.hazelcast.HazelcastClusterManager;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.jupiter.api.AfterAll;
@@ -41,6 +45,7 @@ public class VertxAppenderTest {
 
     private static Vertx vertx;
     private static String lastEventMessage;
+    private static String lastArgInfo;
     private static Logger root;
     private static Logger self;
 
@@ -59,6 +64,8 @@ public class VertxAppenderTest {
                 (Handler<Message<JsonObject>>) event -> {
                     try {
                         lastEventMessage = event.body().getJsonObject("event").getString("message");
+                        val arg = event.body().getJsonObject("arg");
+                        if (nonNull(arg)) lastArgInfo = arg.getString("info");
                     } catch (Exception e) {
                         lastEventMessage = null;
                     }
@@ -97,10 +104,12 @@ public class VertxAppenderTest {
         }
 
         await().until(() -> nonNull(VertxManager.getVertx("DEFAULT")));
-        root.info("root vertx log");
-        self.info("self vertx log");
-        await().timeout(Duration.ofSeconds(20)).untilAsserted(() ->
-                assertEquals("self vertx log", lastEventMessage));
+        root.info("root vertx log {}", new TestLog1("old"));
+        self.info("self vertx log {}", new TestLog1("old"));
+        await().timeout(Duration.ofSeconds(20)).untilAsserted(() -> {
+            assertEquals("self vertx log old", lastEventMessage);
+            assertEquals("old", lastArgInfo);
+        });
 
         // 2. 内部配置, VertxConfig未更改
         val future2 = MockDiamondServer.updateDiamond("Logback", "test", "" +
@@ -134,10 +143,12 @@ public class VertxAppenderTest {
             int defaultWorkerPoolSize = on(vertx).field("defaultWorkerPoolSize").get();
             return 24 == defaultWorkerPoolSize;
         });
-        root.info("root vertx log new");
-        self.info("self vertx log new");
-        await().timeout(Duration.ofSeconds(20)).untilAsserted(() ->
-                assertEquals("self vertx log new", lastEventMessage));
+        root.info("root vertx log {}", new TestLog2("new"));
+        self.info("self vertx log {}", new TestLog2("new"));
+        await().timeout(Duration.ofSeconds(20)).untilAsserted(() -> {
+            assertEquals("self vertx log new", lastEventMessage);
+            assertEquals("new", lastArgInfo);
+        });
 
         // 4. 内部配置, VertxConfig删除
         ConcurrentHashMap<DiamondAxis, String> mocks = onClass(MockDiamondServer.class).field("mocks").get();
@@ -299,5 +310,32 @@ public class VertxAppenderTest {
     public void testVertxAppenderCoverage() {
         assertNull(VertxManager.getVertx(null));
         assertDoesNotThrow(() -> VertxManager.putExternalVertx(null, null));
+    }
+
+    @VertxLogBean
+    @AllArgsConstructor
+    @Getter
+    public static class TestLog1 {
+
+        private String info;
+
+        @Override
+        public String toString() {
+            return info;
+        }
+    }
+
+    @VertxLogBean
+    @VertxLogAddress
+    @AllArgsConstructor
+    @Getter
+    public static class TestLog2 {
+
+        private String info;
+
+        @Override
+        public String toString() {
+            return info;
+        }
     }
 }

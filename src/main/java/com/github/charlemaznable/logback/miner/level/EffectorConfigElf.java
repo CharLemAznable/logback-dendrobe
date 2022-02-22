@@ -1,11 +1,12 @@
 package com.github.charlemaznable.logback.miner.level;
 
-import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 import java.util.ServiceLoader;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+import static lombok.AccessLevel.PRIVATE;
+
+@NoArgsConstructor(access = PRIVATE)
 final class EffectorConfigElf {
 
     private static ServiceLoader<EffectorBuilder> configurators;
