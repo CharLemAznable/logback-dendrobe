@@ -11,9 +11,10 @@ import org.n3r.diamond.client.impl.MockDiamondServer;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
-import java.time.Duration;
 import java.util.stream.Collectors;
 
+import static com.github.charlemaznable.core.lang.Await.awaitForMillis;
+import static com.github.charlemaznable.core.lang.Await.awaitForSeconds;
 import static java.util.Objects.nonNull;
 import static org.awaitility.Awaitility.await;
 import static org.joor.Reflect.on;
@@ -40,7 +41,7 @@ public class RollingFileAppenderTest {
     @Test
     public void testRollingFileAppender() {
         FileUtils.deleteQuietly(new File("rolling"));
-        await().pollDelay(Duration.ofSeconds(5)).until(() -> true);
+        awaitForSeconds(5);
 
         MockDiamondServer.setUpMockServer();
         val future = MockDiamondServer.updateDiamond("Logback", "test", "" +
@@ -67,7 +68,7 @@ public class RollingFileAppenderTest {
         log.info("info logging");
         log.warn("warn logging");
         log.error("error logging..");
-        await().pollDelay(Duration.ofSeconds(3)).until(() -> true);
+        awaitForSeconds(3);
 
         assertFalse(FileUtils.deleteQuietly(new File("rolling/RollingFileAppenderTest.log")));
 
@@ -100,7 +101,7 @@ public class RollingFileAppenderTest {
                     " WARN warn logging\n" +
                     "ERROR error logging\n");
         }
-        await().pollDelay(Duration.ofSeconds(3)).until(() -> true);
+        awaitForSeconds(3);
 
         FileUtils.waitFor(new File("rolling"), 5);
         val ilogs = FileUtils.listFiles(new File("rolling"), new String[]{"ilog"}, false)
@@ -140,7 +141,7 @@ public class RollingFileAppenderTest {
             expectBuilder.append(" INFO info logging\n" +
                     " WARN warn logging\n" +
                     "ERROR error logging\n");
-            await().pollDelay(Duration.ofSeconds(1)).until(() -> true);
+            awaitForSeconds(1);
         }
 
         FileUtils.waitFor(new File("rolling"), 5);
@@ -181,7 +182,7 @@ public class RollingFileAppenderTest {
             expectBuilder.append(" INFO info logging\n" +
                     " WARN warn logging\n" +
                     "ERROR error logging\n");
-            await().pollDelay(Duration.ofMillis(50)).until(() -> true);
+            awaitForMillis(50);
         }
 
         FileUtils.waitFor(new File("rolling"), 5);

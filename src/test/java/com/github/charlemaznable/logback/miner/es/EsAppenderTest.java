@@ -1,6 +1,6 @@
 package com.github.charlemaznable.logback.miner.es;
 
-import com.github.charlemaznable.es.diamond.EsConfig;
+import com.github.charlemaznable.core.es.EsConfig;
 import com.github.charlemaznable.logback.miner.annotation.EsLogBean;
 import com.github.charlemaznable.logback.miner.annotation.EsLogIndex;
 import lombok.AllArgsConstructor;
@@ -29,8 +29,9 @@ import java.time.Duration;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static com.github.charlemaznable.es.diamond.EsClientElf.buildEsClient;
-import static com.github.charlemaznable.es.diamond.EsClientElf.closeEsClient;
+import static com.github.charlemaznable.core.es.EsClientElf.buildEsClient;
+import static com.github.charlemaznable.core.es.EsClientElf.closeEsClient;
+import static com.github.charlemaznable.core.lang.Await.awaitForSeconds;
 import static com.github.charlemaznable.es.diamond.EsConfigDiamondElf.ES_CONFIG_GROUP_NAME;
 import static com.google.common.collect.Lists.newArrayList;
 import static java.util.Objects.isNull;
@@ -210,7 +211,7 @@ public class EsAppenderTest {
                 CLASS_NAME + "[es.name]=CUSTOM\n");
         await().forever().until(future2::isDone);
 
-        await().pollDelay(Duration.ofSeconds(5)).until(() -> true);
+        awaitForSeconds(5);
         root.info("root es log reload");
         self.info("self es log reload");
         await().timeout(Duration.ofSeconds(20)).untilAsserted(() ->

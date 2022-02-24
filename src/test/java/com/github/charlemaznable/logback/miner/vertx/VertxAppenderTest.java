@@ -1,8 +1,8 @@
 package com.github.charlemaznable.logback.miner.vertx;
 
+import com.github.charlemaznable.core.vertx.VertxElf;
 import com.github.charlemaznable.logback.miner.annotation.VertxLogAddress;
 import com.github.charlemaznable.logback.miner.annotation.VertxLogBean;
-import com.github.charlemaznable.vertx.diamond.VertxElf;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
@@ -26,6 +26,7 @@ import java.time.Duration;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static com.github.charlemaznable.core.lang.Await.awaitForSeconds;
 import static com.github.charlemaznable.vertx.diamond.VertxDiamondElf.VERTX_OPTIONS_GROUP_NAME;
 import static com.google.common.collect.Maps.newHashMap;
 import static java.util.Objects.isNull;
@@ -208,7 +209,7 @@ public class VertxAppenderTest {
                 CLASS_NAME + "[dql.level]=off\n");
         await().forever().until(future2::isDone);
 
-        await().pollDelay(Duration.ofSeconds(5)).until(() -> true);
+        awaitForSeconds(5);
         root.info("root vertx log reload");
         self.info("self vertx log reload");
         await().timeout(Duration.ofSeconds(20)).untilAsserted(() ->

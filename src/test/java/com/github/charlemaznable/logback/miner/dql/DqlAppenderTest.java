@@ -31,6 +31,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
+import static com.github.charlemaznable.core.lang.Await.awaitForSeconds;
 import static java.util.Objects.nonNull;
 import static org.awaitility.Awaitility.await;
 import static org.joor.Reflect.on;
@@ -282,7 +283,7 @@ public class DqlAppenderTest {
             expectBuilder.append("info logging\n" +
                     "warn logging\n" +
                     "error logging\n");
-            await().pollDelay(Duration.ofSeconds(1)).until(() -> true);
+            awaitForSeconds(1);
         }
 
         await().timeout(Duration.ofSeconds(30)).pollDelay(Duration.ofSeconds(3)).until(() -> {
@@ -318,7 +319,7 @@ public class DqlAppenderTest {
             expectBuilder.append("bean info logging\n" +
                     "bean warn logging\n" +
                     "bean error logging\n");
-            await().pollDelay(Duration.ofSeconds(1)).until(() -> true);
+            awaitForSeconds(1);
         }
 
         await().timeout(Duration.ofSeconds(30)).pollDelay(Duration.ofSeconds(3)).until(() -> {
@@ -359,7 +360,7 @@ public class DqlAppenderTest {
             expectBuilder.append(id3).append(":").append("simple info logging\n");
             expectBuilder.append(id4).append(":").append("simple warn logging\n");
             expectBuilder.append(id5).append(":").append("simple error logging\n");
-            await().pollDelay(Duration.ofSeconds(1)).until(() -> true);
+            awaitForSeconds(1);
         }
 
         await().timeout(Duration.ofSeconds(30)).pollDelay(Duration.ofSeconds(3)).until(() -> {

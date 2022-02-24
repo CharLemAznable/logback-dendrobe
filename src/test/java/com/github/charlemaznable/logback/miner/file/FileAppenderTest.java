@@ -11,8 +11,8 @@ import org.n3r.diamond.client.impl.MockDiamondServer;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
-import java.time.Duration;
 
+import static com.github.charlemaznable.core.lang.Await.awaitForSeconds;
 import static java.util.Objects.nonNull;
 import static org.awaitility.Awaitility.await;
 import static org.joor.Reflect.on;
@@ -54,7 +54,7 @@ public class FileAppenderTest {
         log.info("info logging");
         log.warn("warn logging");
         log.error("error logging");
-        await().pollDelay(Duration.ofSeconds(3)).until(() -> true);
+        awaitForSeconds(3);
 
         val future2 = MockDiamondServer.updateDiamond("Logback", "test", "" +
                 "context.property[miner]=test\n" +
@@ -73,7 +73,7 @@ public class FileAppenderTest {
         log.info("info logging append");
         log.warn("warn logging append");
         log.error("error logging append");
-        await().pollDelay(Duration.ofSeconds(3)).until(() -> true);
+        awaitForSeconds(3);
 
         val output = FileUtils.readFileToString(
                 new File("FileAppenderTest.log"), StandardCharsets.UTF_8);

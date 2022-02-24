@@ -8,8 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.n3r.diamond.client.impl.DiamondSubscriber;
 import org.n3r.diamond.client.impl.MockDiamondServer;
 
-import java.time.Duration;
-
+import static com.github.charlemaznable.core.lang.Await.awaitForSeconds;
 import static java.util.Objects.nonNull;
 import static org.awaitility.Awaitility.await;
 import static org.joor.Reflect.on;
@@ -60,7 +59,7 @@ public class ConsoleAppenderTest {
         log.warn("warn logging");
         log.error("error logging");
 
-        await().pollDelay(Duration.ofSeconds(3)).until(() -> true);
+        awaitForSeconds(3);
 
         val outputBuffer = ConsoleTarget.mockBufferByName("miner-config");
         assertNotNull(outputBuffer);
@@ -88,7 +87,7 @@ public class ConsoleAppenderTest {
         log.trace("trace3: {}, {}, {}", "multi1", "multi2", "multi3");
         log.trace("traceE:", new Exception("exception"));
 
-        await().pollDelay(Duration.ofSeconds(3)).until(() -> true);
+        awaitForSeconds(3);
 
         val outputBuffer = ConsoleTarget.mockBufferByName("test-trace");
         assertNotNull(outputBuffer);
@@ -125,7 +124,7 @@ public class ConsoleAppenderTest {
         log.debug("debug3: {}, {}, {}", "multi1", "multi2", "multi3");
         log.debug("debugE:", new Exception("exception"));
 
-        await().pollDelay(Duration.ofSeconds(3)).until(() -> true);
+        awaitForSeconds(3);
 
         val outputBuffer = ConsoleTarget.mockBufferByName("test-debug");
         assertNotNull(outputBuffer);
@@ -164,7 +163,7 @@ public class ConsoleAppenderTest {
         log.info("info3: {}, {}, {}", "multi1", "multi2", "multi3");
         log.info("infoE:", new Exception("exception"));
 
-        await().pollDelay(Duration.ofSeconds(3)).until(() -> true);
+        awaitForSeconds(3);
 
         val outputBuffer = ConsoleTarget.mockBufferByName("test-info");
         assertNotNull(outputBuffer);
@@ -205,7 +204,7 @@ public class ConsoleAppenderTest {
         log.warn("warn3: {}, {}, {}", "multi1", "multi2", "multi3");
         log.warn("warnE:", new Exception("exception"));
 
-        await().pollDelay(Duration.ofSeconds(3)).until(() -> true);
+        awaitForSeconds(3);
 
         val outputBuffer = ConsoleTarget.mockBufferByName("test-warn");
         assertNotNull(outputBuffer);
@@ -248,7 +247,7 @@ public class ConsoleAppenderTest {
         log.error("error3: {}, {}, {}", "multi1", "multi2", "multi3");
         log.error("errorE:", new Exception("exception"));
 
-        await().pollDelay(Duration.ofSeconds(3)).until(() -> true);
+        awaitForSeconds(3);
 
         val outputBuffer = ConsoleTarget.mockBufferByName("test-error");
         assertNotNull(outputBuffer);
