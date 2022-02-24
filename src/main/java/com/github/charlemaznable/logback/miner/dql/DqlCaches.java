@@ -42,6 +42,16 @@ import static org.n3r.eql.util.Names.convertCamelToUnderscore;
 @NoArgsConstructor(access = PRIVATE)
 final class DqlCaches {
 
+    static void useSqlFile(Dql dql, String sqlFile, Class<?> sqlClass, Class<?> clazz) {
+        if (isNotBlank(sqlFile)) {
+            dql.useSqlFile(sqlFile);
+        } else if (Void.class != sqlClass) {
+            dql.useSqlFile(sqlClass);
+        } else {
+            dql.useSqlFile(clazz);
+        }
+    }
+
     /**
      * 缓存 - 参数类型是否添加{@link DqlLogBean}注解
      */
@@ -233,16 +243,6 @@ final class DqlCaches {
         @Nonnull
         static Optional<DqlLogRollingSql> loadCache(Class<?> clazz) {
             return ofNullable(clazz.getAnnotation(DqlLogRollingSql.class));
-        }
-    }
-
-    static void useSqlFile(Dql dql, String sqlFile, Class<?> sqlClass, Class<?> clazz) {
-        if (isNotBlank(sqlFile)) {
-            dql.useSqlFile(sqlFile);
-        } else if (Void.class != sqlClass) {
-            dql.useSqlFile(sqlClass);
-        } else {
-            dql.useSqlFile(clazz);
         }
     }
 }

@@ -24,6 +24,21 @@ public final class VertxConfigurator extends AppenderConfigurator {
     private static final String VERTX_NAME_SUFFIX = "[vertx.name]";
     private static final String VERTX_ADDRESS_SUFFIX = "[vertx.address]";
 
+    private static VertxAppender vertxAppender(Logger logger) {
+        val vertxAppenderName = VERTX_APPENDER_PREFIX + logger.getName();
+        Appender<ILoggingEvent> vertxAppender = logger.getAppender(vertxAppenderName);
+        if (!(vertxAppender instanceof VertxAppender)) {
+            logger.detachAppender(vertxAppender);
+            vertxAppender = new VertxAppender();
+            vertxAppender.setName(vertxAppenderName);
+            vertxAppender.setContext(logger.getLoggerContext());
+            // default vertx address is logger name
+            ((VertxAppender) vertxAppender).setVertxAddress(logger.getName());
+            logger.addAppender(vertxAppender);
+        }
+        return (VertxAppender) vertxAppender;
+    }
+
     @Override
     public void configurate(LoggerContext loggerContext, String key, String value) {
         if (endsWithIgnoreCase(key, APPENDERS_SUFFIX)) {
@@ -45,20 +60,5 @@ public final class VertxConfigurator extends AppenderConfigurator {
             addAppenderIfAbsent(vertxAppender(logger(loggerContext,
                     key, VERTX_ADDRESS_SUFFIX)).setVertxAddress(value));
         }
-    }
-
-    private static VertxAppender vertxAppender(Logger logger) {
-        val vertxAppenderName = VERTX_APPENDER_PREFIX + logger.getName();
-        Appender<ILoggingEvent> vertxAppender = logger.getAppender(vertxAppenderName);
-        if (!(vertxAppender instanceof VertxAppender)) {
-            logger.detachAppender(vertxAppender);
-            vertxAppender = new VertxAppender();
-            vertxAppender.setName(vertxAppenderName);
-            vertxAppender.setContext(logger.getLoggerContext());
-            // default vertx address is logger name
-            ((VertxAppender) vertxAppender).setVertxAddress(logger.getName());
-            logger.addAppender(vertxAppender);
-        }
-        return (VertxAppender) vertxAppender;
     }
 }

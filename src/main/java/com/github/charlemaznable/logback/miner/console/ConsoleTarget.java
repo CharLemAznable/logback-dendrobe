@@ -68,11 +68,6 @@ final class ConsoleTarget {
     private final String name;
     private final OutputStream stream;
 
-    @Override
-    public String toString() {
-        return name;
-    }
-
     static ConsoleTarget findByName(String name) {
         for (val target : ConsoleTarget.values()) {
             if (target.name.equalsIgnoreCase(name)) {
@@ -99,6 +94,11 @@ final class ConsoleTarget {
     static MockBuffer mockBufferByName(String name) {
         if (!testMode) return null;
         return mocks.computeIfAbsent(name, k -> new MockBuffer());
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 
     static class MockBuffer extends OutputStream {

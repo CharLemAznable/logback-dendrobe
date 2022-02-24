@@ -30,6 +30,19 @@ public final class FileConfigurator extends AppenderConfigurator {
     private static final String FILE_BUFFER_SIZE_SUFFIX = "[file.bufferSize]";
     private static final String FILE_IMMEDIATE_FLUSH_SUFFIX = "[file.immediateFlush]";
 
+    private static FileAppender fileAppender(Logger logger) {
+        val fileAppenderName = FILE_APPENDER_PREFIX + logger.getName();
+        Appender<ILoggingEvent> fileAppender = logger.getAppender(fileAppenderName);
+        if (!(fileAppender instanceof FileAppender)) {
+            logger.detachAppender(fileAppender);
+            fileAppender = new FileAppender();
+            fileAppender.setName(fileAppenderName);
+            fileAppender.setContext(logger.getLoggerContext());
+            logger.addAppender(fileAppender);
+        }
+        return (FileAppender) fileAppender;
+    }
+
     @Override
     public void configurate(LoggerContext loggerContext, String key, String value) {
         if (endsWithIgnoreCase(key, APPENDERS_SUFFIX)) {
@@ -70,18 +83,5 @@ public final class FileConfigurator extends AppenderConfigurator {
             addAppenderIfAbsent(fileAppender(logger(loggerContext,
                     key, FILE_IMMEDIATE_FLUSH_SUFFIX)).setImmediateFlush(toBool(value)));
         }
-    }
-
-    private static FileAppender fileAppender(Logger logger) {
-        val fileAppenderName = FILE_APPENDER_PREFIX + logger.getName();
-        Appender<ILoggingEvent> fileAppender = logger.getAppender(fileAppenderName);
-        if (!(fileAppender instanceof FileAppender)) {
-            logger.detachAppender(fileAppender);
-            fileAppender = new FileAppender();
-            fileAppender.setName(fileAppenderName);
-            fileAppender.setContext(logger.getLoggerContext());
-            logger.addAppender(fileAppender);
-        }
-        return (FileAppender) fileAppender;
     }
 }

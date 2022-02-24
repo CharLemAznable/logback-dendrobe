@@ -26,6 +26,19 @@ public final class DqlConfigurator extends AppenderConfigurator {
     private static final String DQL_TABLE_NAME_PATTERN_SUFFIX = "[dql.tableNamePattern]";
     private static final String DQL_PREPARE_SQL_SUFFIX = "[dql.prepareSql]";
 
+    private static DqlAppender dqlAppender(Logger logger) {
+        val dqlAppenderName = DQL_APPENDER_PREFIX + logger.getName();
+        Appender<ILoggingEvent> dqlAppender = logger.getAppender(dqlAppenderName);
+        if (!(dqlAppender instanceof DqlAppender)) {
+            logger.detachAppender(dqlAppender);
+            dqlAppender = new DqlAppender();
+            dqlAppender.setName(dqlAppenderName);
+            dqlAppender.setContext(logger.getLoggerContext());
+            logger.addAppender(dqlAppender);
+        }
+        return (DqlAppender) dqlAppender;
+    }
+
     @Override
     public void configurate(LoggerContext loggerContext, String key, String value) {
         if (endsWithIgnoreCase(key, APPENDERS_SUFFIX)) {
@@ -54,18 +67,5 @@ public final class DqlConfigurator extends AppenderConfigurator {
             addAppenderIfAbsent(dqlAppender(logger(loggerContext,
                     key, DQL_PREPARE_SQL_SUFFIX)).setDqlPrepareSql(value));
         }
-    }
-
-    private static DqlAppender dqlAppender(Logger logger) {
-        val dqlAppenderName = DQL_APPENDER_PREFIX + logger.getName();
-        Appender<ILoggingEvent> dqlAppender = logger.getAppender(dqlAppenderName);
-        if (!(dqlAppender instanceof DqlAppender)) {
-            logger.detachAppender(dqlAppender);
-            dqlAppender = new DqlAppender();
-            dqlAppender.setName(dqlAppenderName);
-            dqlAppender.setContext(logger.getLoggerContext());
-            logger.addAppender(dqlAppender);
-        }
-        return (DqlAppender) dqlAppender;
     }
 }

@@ -18,10 +18,9 @@ import static java.util.Objects.nonNull;
 public final class Effector {
 
     private final Logger logger;
-
     private final Effector parent;
-    private List<Effector> childrenList;
     private final LoggerContext loggerContext;
+    private List<Effector> childrenList;
     private Map<String, EffectiveLevel> effectiveLevelMap = newHashMap();
 
     public Effector(Logger logger, Effector parent, LoggerContext loggerContext) {

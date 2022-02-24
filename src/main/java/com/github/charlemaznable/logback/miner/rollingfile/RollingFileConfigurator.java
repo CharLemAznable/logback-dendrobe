@@ -38,6 +38,19 @@ public final class RollingFileConfigurator extends AppenderConfigurator {
     private static final String ROLLING_FILE_MAX_HISTORY_SUFFIX = "[rollingfile.maxHistory]";
     private static final String ROLLING_FILE_CLEAN_HISTORY_ON_START_SUFFIX = "[rollingfile.cleanHistoryOnStart]";
 
+    static RollingFileAppender rollingFileAppender(Logger logger) {
+        val fileAppenderName = ROLLING_FILE_APPENDER_PREFIX + logger.getName();
+        Appender<ILoggingEvent> rollingFileAppender = logger.getAppender(fileAppenderName);
+        if (!(rollingFileAppender instanceof RollingFileAppender)) {
+            logger.detachAppender(rollingFileAppender);
+            rollingFileAppender = new RollingFileAppender();
+            rollingFileAppender.setName(fileAppenderName);
+            rollingFileAppender.setContext(logger.getLoggerContext());
+            logger.addAppender(rollingFileAppender);
+        }
+        return (RollingFileAppender) rollingFileAppender;
+    }
+
     @Override
     public void configurate(LoggerContext loggerContext, String key, String value) {
         if (endsWithIgnoreCase(key, APPENDERS_SUFFIX)) {
@@ -102,18 +115,5 @@ public final class RollingFileConfigurator extends AppenderConfigurator {
             addAppenderIfAbsent(rollingFileAppender(logger(loggerContext,
                     key, ROLLING_FILE_CLEAN_HISTORY_ON_START_SUFFIX)).setCleanHistoryOnStart(toBool(value)));
         }
-    }
-
-    static RollingFileAppender rollingFileAppender(Logger logger) {
-        val fileAppenderName = ROLLING_FILE_APPENDER_PREFIX + logger.getName();
-        Appender<ILoggingEvent> rollingFileAppender = logger.getAppender(fileAppenderName);
-        if (!(rollingFileAppender instanceof RollingFileAppender)) {
-            logger.detachAppender(rollingFileAppender);
-            rollingFileAppender = new RollingFileAppender();
-            rollingFileAppender.setName(fileAppenderName);
-            rollingFileAppender.setContext(logger.getLoggerContext());
-            logger.addAppender(rollingFileAppender);
-        }
-        return (RollingFileAppender) rollingFileAppender;
     }
 }

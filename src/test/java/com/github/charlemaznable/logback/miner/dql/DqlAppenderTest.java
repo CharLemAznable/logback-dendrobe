@@ -59,13 +59,11 @@ public class DqlAppenderTest {
             "select log_id, log_content, log_date, log_date_time from simple_log order by log_id";
     private static final String SELECT_SIMPLE_LOG_BY_ID = "" +
             "select log_id, log_content, log_date, log_date_time from simple_log where log_id = ##";
-
-    private static Logger root;
-    private static Logger self;
-
     private static final DockerImageName mysqlImageName = DockerImageName.parse("mysql:5.7.34");
     private static MySQLContainer mysql0 = new MySQLContainer<>(mysqlImageName).withDatabaseName(DB0);
     private static MySQLContainer mysql1 = new MySQLContainer<>(mysqlImageName).withDatabaseName(DB1);
+    private static Logger root;
+    private static Logger self;
 
     @BeforeAll
     public static void beforeAll() {

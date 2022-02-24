@@ -29,6 +29,25 @@ public final class EsConfigurator extends AppenderConfigurator {
 
     private static final Abbreviator abbreviator = new TargetLengthBasedClassNameAbbreviator(128);
 
+    private static EsAppender esAppender(Logger logger) {
+        val esAppenderName = ES_APPENDER_PREFIX + logger.getName();
+        Appender<ILoggingEvent> esAppender = logger.getAppender(esAppenderName);
+        if (!(esAppender instanceof EsAppender)) {
+            logger.detachAppender(esAppender);
+            esAppender = new EsAppender();
+            esAppender.setName(esAppenderName);
+            esAppender.setContext(logger.getLoggerContext());
+            // default index is logger name
+            ((EsAppender) esAppender).setEsIndex(defaultIndexName(logger));
+            logger.addAppender(esAppender);
+        }
+        return (EsAppender) esAppender;
+    }
+
+    private static String defaultIndexName(Logger logger) {
+        return replace(abbreviator.abbreviate(logger.getName()), ".", "_");
+    }
+
     @Override
     public void configurate(LoggerContext loggerContext, String key, String value) {
         if (endsWithIgnoreCase(key, APPENDERS_SUFFIX)) {
@@ -50,24 +69,5 @@ public final class EsConfigurator extends AppenderConfigurator {
             addAppenderIfAbsent(esAppender(logger(loggerContext,
                     key, ES_INDEX_SUFFIX)).setEsIndex(value));
         }
-    }
-
-    private static EsAppender esAppender(Logger logger) {
-        val esAppenderName = ES_APPENDER_PREFIX + logger.getName();
-        Appender<ILoggingEvent> esAppender = logger.getAppender(esAppenderName);
-        if (!(esAppender instanceof EsAppender)) {
-            logger.detachAppender(esAppender);
-            esAppender = new EsAppender();
-            esAppender.setName(esAppenderName);
-            esAppender.setContext(logger.getLoggerContext());
-            // default index is logger name
-            ((EsAppender) esAppender).setEsIndex(defaultIndexName(logger));
-            logger.addAppender(esAppender);
-        }
-        return (EsAppender) esAppender;
-    }
-
-    private static String defaultIndexName(Logger logger) {
-        return replace(abbreviator.abbreviate(logger.getName()), ".", "_");
     }
 }

@@ -36,6 +36,19 @@ public final class ConsoleConfigurator extends AppenderConfigurator {
         return consoleAppender;
     }
 
+    private static ConsoleAppender consoleAppender(Logger logger) {
+        val consoleAppenderName = CONSOLE_APPENDER_PREFIX + logger.getName();
+        Appender<ILoggingEvent> consoleAppender = logger.getAppender(consoleAppenderName);
+        if (!(consoleAppender instanceof ConsoleAppender)) {
+            logger.detachAppender(consoleAppender);
+            consoleAppender = new ConsoleAppender();
+            consoleAppender.setName(consoleAppenderName);
+            consoleAppender.setContext(logger.getLoggerContext());
+            logger.addAppender(consoleAppender);
+        }
+        return (ConsoleAppender) consoleAppender;
+    }
+
     @Override
     public void configurate(LoggerContext loggerContext, String key, String value) {
         if (endsWithIgnoreCase(key, APPENDERS_SUFFIX)) {
@@ -64,18 +77,5 @@ public final class ConsoleConfigurator extends AppenderConfigurator {
             addAppenderIfAbsent(consoleAppender(logger(loggerContext,
                     key, CONSOLE_IMMEDIATE_FLUSH_SUFFIX)).setImmediateFlush(toBool(value)));
         }
-    }
-
-    private static ConsoleAppender consoleAppender(Logger logger) {
-        val consoleAppenderName = CONSOLE_APPENDER_PREFIX + logger.getName();
-        Appender<ILoggingEvent> consoleAppender = logger.getAppender(consoleAppenderName);
-        if (!(consoleAppender instanceof ConsoleAppender)) {
-            logger.detachAppender(consoleAppender);
-            consoleAppender = new ConsoleAppender();
-            consoleAppender.setName(consoleAppenderName);
-            consoleAppender.setContext(logger.getLoggerContext());
-            logger.addAppender(consoleAppender);
-        }
-        return (ConsoleAppender) consoleAppender;
     }
 }

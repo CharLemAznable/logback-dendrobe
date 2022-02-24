@@ -55,19 +55,17 @@ public final class LogbackMinerDiamondListener implements DiamondListener, Logge
 
     private static ServiceLoader<Configurator> configurators;
 
-    private Properties defaultConfig;
-    private Properties minerConfig;
-
-    private LoggerContext loggerContext;
-    private EffectorContext effectorContext;
-    private EffectorTurboFilter effectorTurboFilter;
-
-    @Getter
-    private volatile boolean listening;
-
     static {
         configurators = ServiceLoader.load(Configurator.class);
     }
+
+    private Properties defaultConfig;
+    private Properties minerConfig;
+    private LoggerContext loggerContext;
+    private EffectorContext effectorContext;
+    private EffectorTurboFilter effectorTurboFilter;
+    @Getter
+    private volatile boolean listening;
 
     public LogbackMinerDiamondListener() {
         // 读取本地配置

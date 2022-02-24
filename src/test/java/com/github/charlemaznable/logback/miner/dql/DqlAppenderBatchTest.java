@@ -33,9 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class DqlAppenderBatchTest {
 
     private static final String CLASS_NAME = DqlAppenderBatchTest.class.getName();
-
-    public final int TIMES = 1000;
-
+    private static final int TIMES = 1000;
     private static final String DBBatch = "db_batch";
     private static final String CREATE_TABLE_SIMPLE_LOG = "" +
             "create table `simple_log` (" +
@@ -44,7 +42,6 @@ public class DqlAppenderBatchTest {
             "  `log_date` datetime(3)," +
             "  primary key (`log_id`)" +
             ");\n";
-
     private static final DockerImageName mysqlImageName = DockerImageName.parse("mysql:5.7.34");
     private static MySQLContainer mysql = new MySQLContainer<>(mysqlImageName).withDatabaseName(DBBatch);
 

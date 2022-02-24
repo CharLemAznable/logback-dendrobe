@@ -284,6 +284,20 @@ public class EsAppenderTest {
         assertDoesNotThrow(() -> EsClientManager.putExternalEsClient(null, null));
     }
 
+    @SuppressWarnings("unchecked")
+    @SneakyThrows
+    private void assertSearchContent(String content, String info) {
+        val searchRequest = new SearchRequest();
+        searchRequest.source(SearchSourceBuilder.searchSource()
+                .query(QueryBuilders.matchQuery("event.message", content)));
+        val searchResponse = esClient.search(searchRequest, DEFAULT);
+        val searchResponseHits = searchResponse.getHits();
+        assertTrue(searchResponseHits.getHits().length > 0);
+        val responseMap = searchResponseHits.getAt(0).getSourceAsMap();
+        assertEquals(content, ((Map<String, String>) responseMap.get("event")).get("message"));
+        if (nonNull(info)) assertEquals(info, ((Map<String, String>) responseMap.get("arg")).get("info"));
+    }
+
     @EsLogBean
     @AllArgsConstructor
     @Getter
@@ -309,19 +323,5 @@ public class EsAppenderTest {
         public String toString() {
             return info;
         }
-    }
-
-    @SuppressWarnings("unchecked")
-    @SneakyThrows
-    private void assertSearchContent(String content, String info) {
-        val searchRequest = new SearchRequest();
-        searchRequest.source(SearchSourceBuilder.searchSource()
-                .query(QueryBuilders.matchQuery("event.message", content)));
-        val searchResponse = esClient.search(searchRequest, DEFAULT);
-        val searchResponseHits = searchResponse.getHits();
-        assertTrue(searchResponseHits.getHits().length > 0);
-        val responseMap = searchResponseHits.getAt(0).getSourceAsMap();
-        assertEquals(content, ((Map<String, String>) responseMap.get("event")).get("message"));
-        if (nonNull(info)) assertEquals(info, ((Map<String, String>) responseMap.get("arg")).get("info"));
     }
 }
