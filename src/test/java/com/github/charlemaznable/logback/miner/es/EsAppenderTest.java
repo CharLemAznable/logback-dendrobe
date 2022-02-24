@@ -314,15 +314,6 @@ public class EsAppenderTest {
     @SuppressWarnings("unchecked")
     @SneakyThrows
     private void assertSearchContent(String content, String info) {
-        val all = new SearchRequest();
-        all.source(SearchSourceBuilder.searchSource()
-                .query(QueryBuilders.matchAllQuery()));
-        val allResp = esClient.search(all, DEFAULT);
-        System.out.println(allResp.getHits().getHits().length);
-        for (val hit : allResp.getHits()) {
-            System.out.println(hit.getSourceAsString());
-        }
-
         val searchRequest = new SearchRequest();
         searchRequest.source(SearchSourceBuilder.searchSource()
                 .query(QueryBuilders.matchQuery("event.message", content)));
