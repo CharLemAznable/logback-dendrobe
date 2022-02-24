@@ -3,6 +3,7 @@ package com.github.charlemaznable.logback.miner.es;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.pattern.Abbreviator;
 import ch.qos.logback.classic.pattern.TargetLengthBasedClassNameAbbreviator;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
@@ -25,6 +26,8 @@ public final class EsConfigurator extends AppenderConfigurator {
     private static final String ES_LEVEL_SUFFIX = "[es.level]";
     private static final String ES_NAME_SUFFIX = "[es.name]";
     private static final String ES_INDEX_SUFFIX = "[es.index]";
+
+    private static final Abbreviator abbreviator = new TargetLengthBasedClassNameAbbreviator(128);
 
     @Override
     public void configurate(LoggerContext loggerContext, String key, String value) {
@@ -65,8 +68,6 @@ public final class EsConfigurator extends AppenderConfigurator {
     }
 
     private static String defaultIndexName(Logger logger) {
-        val loggerName = logger.getName();
-        val abbreviator = new TargetLengthBasedClassNameAbbreviator(128);
-        return replace(abbreviator.abbreviate(loggerName), ".", "_");
+        return replace(abbreviator.abbreviate(logger.getName()), ".", "_");
     }
 }

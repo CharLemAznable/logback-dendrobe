@@ -13,7 +13,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 
-import static com.google.common.collect.Maps.newHashMap;
+import static com.github.charlemaznable.core.lang.Mapp.newHashMap;
+import static com.github.charlemaznable.core.lang.Mapp.of;
 import static lombok.AccessLevel.PRIVATE;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 
@@ -74,29 +75,16 @@ public final class LoggingEventElf {
     }
 
     public static EventMap buildEventMap(ILoggingEvent eventObject) {
-        Map<String, Object> paramMap = newHashMap();
-
-        Map<String, String> eventMap = newHashMap();
-        for (val eventEntry : eventConverterMap.entrySet()) {
-            eventMap.put(eventEntry.getKey(),
-                    eventEntry.getValue().apply(eventObject));
-        }
-        paramMap.put("event", eventMap);
-
-        Map<String, String> mdcMap = newHashMap();
-        for (val mdcEntry : eventObject.getMDCPropertyMap().entrySet()) {
-            mdcMap.put(mdcEntry.getKey(), mdcEntry.getValue());
-        }
-        paramMap.put("mdc", mdcMap);
-
-        Map<String, String> propMap = newHashMap();
-        for (val propEntry : eventObject.getLoggerContextVO().getPropertyMap().entrySet()) {
-            val key = propEntry.getKey();
-            propMap.put(key, defaultIfNull(propEntry.getValue(), System.getProperty(key)));
-        }
-        paramMap.put("property", propMap);
-
-        return new EventMap(paramMap);
+        val eventMap = eventConverterMap.entrySet().stream()
+                .<Map<String, String>>collect(HashMap::new, (m, e) -> m.put(e.getKey(),
+                        e.getValue().apply(eventObject)), Map::putAll);
+        val mdcMap = eventObject.getMDCPropertyMap().entrySet().stream()
+                .<Map<String, String>>collect(HashMap::new, (m, e) -> m.put(e.getKey(),
+                        e.getValue()), Map::putAll);
+        val propMap = eventObject.getLoggerContextVO().getPropertyMap().entrySet().stream()
+                .<Map<String, String>>collect(HashMap::new, (m, e) -> m.put(e.getKey(),
+                        defaultIfNull(e.getValue(), System.getProperty(e.getKey()))), Map::putAll);
+        return new EventMap(of("event", eventMap, "mdc", mdcMap, "property", propMap));
     }
 
     public static class EventMap extends HashMap<String, Object> {

@@ -17,7 +17,6 @@ public final class EffectorTurboFilter extends TurboFilter {
     public FilterReply decide(Marker marker, Logger logger, Level level,
                               String format, Object[] params, Throwable t) {
         val effector = effectorContext.getEffector(logger.getName());
-        return effector.isGreaterThanLevel(level)
-                ? FilterReply.DENY : FilterReply.ACCEPT;
+        return effector.isGreaterThanLevel(level) ? FilterReply.DENY : FilterReply.ACCEPT;
     }
 }

@@ -9,11 +9,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import static com.github.charlemaznable.core.lang.Condition.checkNotNull;
 import static com.github.charlemaznable.logback.miner.level.EffectorConfigElf.configurators;
 import static com.google.common.collect.Maps.newHashMap;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
-import static java.util.Objects.requireNonNull;
 
 public final class Effector {
 
@@ -109,7 +109,7 @@ public final class Effector {
     }
 
     private EffectiveLevel getEffectiveLevel(String effectorName) {
-        return requireNonNull(this.effectiveLevelMap.get(effectorName),
+        return checkNotNull(this.effectiveLevelMap.get(effectorName),
                 "Unknown Effector Name: " + effectorName);
     }
 

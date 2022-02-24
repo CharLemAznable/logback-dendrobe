@@ -8,7 +8,6 @@ import com.github.charlemaznable.logback.miner.annotation.DqlLogSkip;
 import com.github.charlemaznable.logback.miner.annotation.DqlLogSql;
 import com.github.charlemaznable.logback.miner.annotation.DqlLogTable;
 import com.google.common.cache.Cache;
-import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
@@ -23,15 +22,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static com.github.charlemaznable.core.lang.Condition.checkNotNull;
+import static com.github.charlemaznable.core.lang.Condition.checkNull;
+import static com.github.charlemaznable.core.lang.LoadingCachee.get;
+import static com.github.charlemaznable.core.lang.LoadingCachee.getUnchecked;
+import static com.github.charlemaznable.core.lang.LoadingCachee.manualCache;
+import static com.github.charlemaznable.core.lang.LoadingCachee.simpleCache;
+import static com.github.charlemaznable.core.lang.Str.isBlank;
+import static com.github.charlemaznable.core.lang.Str.isNotBlank;
 import static com.github.charlemaznable.logback.miner.dql.DqlTableNameRolling.ACTIVE_TABLE_NAME;
-import static com.google.common.cache.CacheBuilder.newBuilder;
-import static java.util.Objects.isNull;
+import static com.google.common.cache.CacheLoader.from;
 import static java.util.Objects.nonNull;
-import static java.util.Objects.requireNonNull;
+import static java.util.Optional.ofNullable;
 import static lombok.AccessLevel.PRIVATE;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
-import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.n3r.eql.config.EqlDiamondConfig.EQL_CONFIG_GROUP_NAME;
 import static org.n3r.eql.util.Names.convertCamelToUnderscore;
 
@@ -45,10 +49,10 @@ final class DqlCaches {
     static class DqlLogBeanPresentCache {
 
         static LoadingCache<Class<?>, Boolean> cache
-                = newBuilder().build(CacheLoader.from(DqlLogBeanPresentCache::loadCache));
+                = simpleCache(from(DqlLogBeanPresentCache::loadCache));
 
         static boolean isDqlLogBeanPresent(Class<?> clazz) {
-            return cache.getUnchecked(clazz);
+            return getUnchecked(cache, clazz);
         }
 
         static Boolean loadCache(Class<?> clazz) {
@@ -63,7 +67,7 @@ final class DqlCaches {
     static class DqlLogBeanDqlCache {
 
         static LoadingCache<Class<?>, String> cache
-                = newBuilder().build(CacheLoader.from(DqlLogBeanDqlCache::loadCache));
+                = simpleCache(from(DqlLogBeanDqlCache::loadCache));
 
         static Dql getDqlLogBeanDql(String defaultConnection) {
             if (isBlank(defaultConnection)) return null;
@@ -74,7 +78,7 @@ final class DqlCaches {
         }
 
         static Dql getDqlLogBeanDql(Class<?> clazz, String defaultConnection) {
-            val configConnection = cache.getUnchecked(clazz);
+            val configConnection = getUnchecked(cache, clazz);
             val connectionName = defaultIfBlank(configConnection, defaultConnection);
             if (isBlank(connectionName)) return null;
 
@@ -85,7 +89,7 @@ final class DqlCaches {
 
         @Nonnull
         static String loadCache(Class<?> clazz) {
-            return requireNonNull(clazz.getAnnotation(DqlLogBean.class)).value();
+            return checkNotNull(clazz.getAnnotation(DqlLogBean.class)).value();
         }
     }
 
@@ -96,10 +100,10 @@ final class DqlCaches {
     static class DqlLogSqlCache {
 
         static LoadingCache<Class<?>, Optional<DqlLogSql>> cache
-                = newBuilder().build(CacheLoader.from(DqlLogSqlCache::loadCache));
+                = simpleCache(from(DqlLogSqlCache::loadCache));
 
         static boolean useDqlLogSql(Class<?> clazz, Dql dql) {
-            val dqlLogSqlOptional = cache.getUnchecked(clazz);
+            val dqlLogSqlOptional = getUnchecked(cache, clazz);
             if (!dqlLogSqlOptional.isPresent()) return false;
 
             val dqlLogSql = dqlLogSqlOptional.get();
@@ -113,7 +117,7 @@ final class DqlCaches {
 
         @Nonnull
         static Optional<DqlLogSql> loadCache(Class<?> clazz) {
-            return Optional.ofNullable(clazz.getAnnotation(DqlLogSql.class));
+            return ofNullable(clazz.getAnnotation(DqlLogSql.class));
         }
     }
 
@@ -124,10 +128,10 @@ final class DqlCaches {
     static class DqlLogPojoSqlCache {
 
         static LoadingCache<Class<?>, String> cache
-                = newBuilder().build(CacheLoader.from(DqlLogPojoSqlCache::loadCache));
+                = simpleCache(from(DqlLogPojoSqlCache::loadCache));
 
         static String getDqlLogPojoSql(Class<?> clazz) {
-            return cache.getUnchecked(clazz);
+            return getUnchecked(cache, clazz);
         }
 
         static String loadCache(Class<?> clazz) {
@@ -156,8 +160,8 @@ final class DqlCaches {
             if (nonNull(dqlLogRollingSql)) return "$" + ACTIVE_TABLE_NAME + "$";
 
             val dqlLogTable = clazz.getAnnotation(DqlLogTable.class);
-            return nonNull(dqlLogTable) ? dqlLogTable.value()
-                    : convertCamelToUnderscore(clazz.getSimpleName());
+            return checkNull(dqlLogTable, () ->
+                    convertCamelToUnderscore(clazz.getSimpleName()), DqlLogTable::value);
         }
 
         private static List<Field> parsePojoFields(Class<?> clazz) {
@@ -174,8 +178,8 @@ final class DqlCaches {
 
         private static String parseColumnName(Field field) {
             val dqlLogColumn = field.getAnnotation(DqlLogColumn.class);
-            return nonNull(dqlLogColumn) ? dqlLogColumn.value()
-                    : convertCamelToUnderscore(field.getName());
+            return checkNull(dqlLogColumn, () ->
+                    convertCamelToUnderscore(field.getName()), DqlLogColumn::value);
         }
     }
 
@@ -187,13 +191,12 @@ final class DqlCaches {
 
         static DqlTableNameRolling nullTableNameRolling = new DqlTableNameRolling(null, null);
 
-        static Cache<String, DqlTableNameRolling> cache = newBuilder().build();
+        static Cache<String, DqlTableNameRolling> cache = manualCache();
 
         @SneakyThrows
         static DqlTableNameRolling getTableNameRolling(String tableNamePatternStr, Context context) {
-            if (isNull(tableNamePatternStr)) return nullTableNameRolling;
-            return cache.get(tableNamePatternStr, () ->
-                    new DqlTableNameRolling(tableNamePatternStr, context));
+            return checkNull(tableNamePatternStr, () -> nullTableNameRolling, k ->
+                    get(cache, k, () -> new DqlTableNameRolling(k, context)));
         }
     }
 
@@ -204,10 +207,10 @@ final class DqlCaches {
     static class DqlLogRollingSqlCache {
 
         static LoadingCache<Class<?>, Optional<DqlLogRollingSql>> cache
-                = newBuilder().build(CacheLoader.from(DqlLogRollingSqlCache::loadCache));
+                = simpleCache(from(DqlLogRollingSqlCache::loadCache));
 
         static String getTableNamePattern(Class<?> clazz) {
-            val dqlLogRollingSqlOptional = cache.getUnchecked(clazz);
+            val dqlLogRollingSqlOptional = getUnchecked(cache, clazz);
             if (!dqlLogRollingSqlOptional.isPresent()) return null;
 
             val dqlLogRollingSql = dqlLogRollingSqlOptional.get();
@@ -215,7 +218,7 @@ final class DqlCaches {
         }
 
         static boolean useDqlLogRollingSql(Class<?> clazz, Dql dql) {
-            val dqlLogRollingSqlOptional = cache.getUnchecked(clazz);
+            val dqlLogRollingSqlOptional = getUnchecked(cache, clazz);
             if (!dqlLogRollingSqlOptional.isPresent()) return false;
 
             val dqlLogRollingSql = dqlLogRollingSqlOptional.get();
@@ -229,7 +232,7 @@ final class DqlCaches {
 
         @Nonnull
         static Optional<DqlLogRollingSql> loadCache(Class<?> clazz) {
-            return Optional.ofNullable(clazz.getAnnotation(DqlLogRollingSql.class));
+            return ofNullable(clazz.getAnnotation(DqlLogRollingSql.class));
         }
     }
 

@@ -11,12 +11,12 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.function.Consumer;
 
+import static com.github.charlemaznable.core.lang.Condition.checkNotNull;
+import static com.github.charlemaznable.core.lang.Mapp.of;
+import static com.github.charlemaznable.core.lang.Str.isBlank;
 import static com.github.charlemaznable.logback.miner.dql.DqlCaches.DqlLogRollingSqlCache.useDqlLogRollingSql;
-import static com.google.common.collect.Maps.newHashMap;
 import static java.lang.System.currentTimeMillis;
 import static java.util.Objects.nonNull;
-import static java.util.Objects.requireNonNull;
-import static org.apache.commons.lang3.StringUtils.isBlank;
 
 public final class DqlTableNameRolling {
 
@@ -57,8 +57,7 @@ public final class DqlTableNameRolling {
     public void rolling(Dql dql, String prepareSql) {
         rolling(tableName -> {
             if (isBlank(prepareSql)) return;
-            val currentMap = newHashMap();
-            currentMap.put(ACTIVE_TABLE_NAME, tableName);
+            val currentMap = of(ACTIVE_TABLE_NAME, tableName);
             dql.params(currentMap).dynamics(currentMap).execute(prepareSql);
         });
     }
@@ -66,15 +65,14 @@ public final class DqlTableNameRolling {
     public void rolling(Dql dql, Class<?> clazz) {
         rolling(tableName -> {
             if (!useDqlLogRollingSql(clazz, dql)) return;
-            val currentMap = newHashMap();
-            currentMap.put(ACTIVE_TABLE_NAME, tableName);
+            val currentMap = of(ACTIVE_TABLE_NAME, tableName);
             dql.params(currentMap).dynamics(currentMap).execute();
         });
     }
 
     public void rolling(Consumer<String> rollover) {
         synchronized (rollingLock) {
-            if (isTrigging()) requireNonNull(rollover).accept(activeTableName);
+            if (isTrigging()) checkNotNull(rollover).accept(activeTableName);
         }
     }
 

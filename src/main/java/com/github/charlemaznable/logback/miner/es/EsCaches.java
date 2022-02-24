@@ -2,7 +2,6 @@ package com.github.charlemaznable.logback.miner.es;
 
 import com.github.charlemaznable.logback.miner.annotation.EsLogBean;
 import com.github.charlemaznable.logback.miner.annotation.EsLogIndex;
-import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import lombok.NoArgsConstructor;
 import lombok.val;
@@ -10,8 +9,11 @@ import lombok.val;
 import javax.annotation.Nonnull;
 import java.util.Optional;
 
-import static com.google.common.cache.CacheBuilder.newBuilder;
-import static java.util.Objects.requireNonNull;
+import static com.github.charlemaznable.core.lang.Condition.checkNotNull;
+import static com.github.charlemaznable.core.lang.LoadingCachee.getUnchecked;
+import static com.github.charlemaznable.core.lang.LoadingCachee.simpleCache;
+import static com.google.common.cache.CacheLoader.from;
+import static java.util.Optional.ofNullable;
 import static lombok.AccessLevel.PRIVATE;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 
@@ -25,10 +27,10 @@ public final class EsCaches {
     static class EsLogBeanPresentCache {
 
         static LoadingCache<Class<?>, Boolean> cache
-                = newBuilder().build(CacheLoader.from(EsLogBeanPresentCache::loadCache));
+                = simpleCache(from(EsLogBeanPresentCache::loadCache));
 
         static boolean isEsLogBeanPresent(Class<?> clazz) {
-            return cache.getUnchecked(clazz);
+            return getUnchecked(cache, clazz);
         }
 
         static Boolean loadCache(Class<?> clazz) {
@@ -43,17 +45,17 @@ public final class EsCaches {
     static class EsLogBeanEsNameCache {
 
         static LoadingCache<Class<?>, String> cache
-                = newBuilder().build(CacheLoader.from(EsLogBeanEsNameCache::loadCache));
+                = simpleCache(from(EsLogBeanEsNameCache::loadCache));
 
         static String getEsName(Class<?> clazz, String defaultEsName) {
-            val configEsName = cache.getUnchecked(clazz);
+            val configEsName = getUnchecked(cache, clazz);
             val esName = defaultIfBlank(configEsName, defaultEsName);
             return defaultIfBlank(esName, null);
         }
 
         @Nonnull
         static String loadCache(Class<?> clazz) {
-            return requireNonNull(clazz.getAnnotation(EsLogBean.class)).value();
+            return checkNotNull(clazz.getAnnotation(EsLogBean.class)).value();
         }
     }
 
@@ -64,10 +66,10 @@ public final class EsCaches {
     static class EsLogIndexCache {
 
         static LoadingCache<Class<?>, Optional<EsLogIndex>> cache
-                = newBuilder().build(CacheLoader.from(EsLogIndexCache::loadCache));
+                = simpleCache(from(EsLogIndexCache::loadCache));
 
         static String getEsIndex(Class<?> clazz, String defaultEsIndex) {
-            val esLogIndexOptional = cache.getUnchecked(clazz);
+            val esLogIndexOptional = getUnchecked(cache, clazz);
             val esIndex = !esLogIndexOptional.isPresent() ? defaultEsIndex
                     : defaultIfBlank(esLogIndexOptional.get().value(), defaultEsIndex);
             return defaultIfBlank(esIndex, null);
@@ -75,7 +77,7 @@ public final class EsCaches {
 
         @Nonnull
         static Optional<EsLogIndex> loadCache(Class<?> clazz) {
-            return Optional.ofNullable(clazz.getAnnotation(EsLogIndex.class));
+            return ofNullable(clazz.getAnnotation(EsLogIndex.class));
         }
     }
 }

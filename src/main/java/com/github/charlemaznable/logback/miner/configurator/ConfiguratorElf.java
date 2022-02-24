@@ -4,10 +4,9 @@ import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
 import com.github.charlemaznable.logback.miner.level.Effector;
 import lombok.NoArgsConstructor;
-import lombok.val;
 
+import static com.github.charlemaznable.core.lang.Condition.checkNotNull;
 import static com.github.charlemaznable.logback.miner.level.EffectorContextElf.getEffectorContext;
-import static com.google.common.base.Preconditions.checkNotNull;
 import static lombok.AccessLevel.PRIVATE;
 
 @NoArgsConstructor(access = PRIVATE)
@@ -30,7 +29,6 @@ public final class ConfiguratorElf {
     }
 
     public static Effector effector(LoggerContext loggerContext, String key, String suffix) {
-        val effectorContext = checkNotNull(getEffectorContext(loggerContext));
-        return effectorContext.getEffector(loggerName(key, suffix));
+        return checkNotNull(getEffectorContext(loggerContext)).getEffector(loggerName(key, suffix));
     }
 }

@@ -14,11 +14,13 @@ import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static com.github.charlemaznable.core.lang.Condition.notNullThen;
+import static com.github.charlemaznable.core.lang.Condition.notNullThenRun;
+import static com.github.charlemaznable.core.vertx.VertxElf.buildVertx;
+import static com.github.charlemaznable.core.vertx.VertxElf.closeVertx;
+import static com.github.charlemaznable.core.vertx.VertxElf.closeVertxImmediately;
 import static com.github.charlemaznable.vertx.diamond.VertxDiamondElf.getVertxOptionsStone;
 import static com.github.charlemaznable.vertx.diamond.VertxDiamondElf.parseStoneToVertxOptions;
-import static com.github.charlemaznable.vertx.diamond.VertxElf.buildVertx;
-import static com.github.charlemaznable.vertx.diamond.VertxElf.closeVertx;
-import static com.github.charlemaznable.vertx.diamond.VertxElf.closeVertxImmediately;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static java.util.concurrent.Executors.newFixedThreadPool;
@@ -88,13 +90,11 @@ public final class VertxManager {
     }
 
     public static Vertx getVertx(String vertxName) {
-        if (isNull(vertxName)) return null;
-        return vertxs.get(vertxName);
+        return notNullThen(vertxName, vertxs::get);
     }
 
     public static void putExternalVertx(String vertxName, @Nullable Vertx vertx) {
-        if (isNull(vertxName)) return;
-        eventBus.post(new ExternalVertx(vertxName, vertx));
+        notNullThenRun(vertxName, name -> eventBus.post(new ExternalVertx(name, vertx)));
     }
 
     public static void configVertx(String vertxName) {

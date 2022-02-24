@@ -12,8 +12,10 @@ import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static com.github.charlemaznable.es.diamond.EsClientElf.buildEsClient;
-import static com.github.charlemaznable.es.diamond.EsClientElf.closeEsClient;
+import static com.github.charlemaznable.core.es.EsClientElf.buildEsClient;
+import static com.github.charlemaznable.core.es.EsClientElf.closeEsClient;
+import static com.github.charlemaznable.core.lang.Condition.notNullThen;
+import static com.github.charlemaznable.core.lang.Condition.notNullThenRun;
 import static com.github.charlemaznable.es.diamond.EsConfigDiamondElf.getEsConfigStone;
 import static com.github.charlemaznable.es.diamond.EsConfigDiamondElf.parseStoneToEsConfig;
 import static java.util.Objects.isNull;
@@ -85,13 +87,11 @@ public final class EsClientManager {
     }
 
     public static RestHighLevelClient getEsClient(String esName) {
-        if (isNull(esName)) return null;
-        return esClients.get(esName);
+        return notNullThen(esName, esClients::get);
     }
 
     public static void putExternalEsClient(String esName, @Nullable RestHighLevelClient esClient) {
-        if (isNull(esName)) return;
-        eventBus.post(new ExternalEsClient(esName, esClient));
+        notNullThenRun(esName, name -> eventBus.post(new ExternalEsClient(name, esClient)));
     }
 
     public static void configEsClient(String esName) {

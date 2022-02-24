@@ -50,16 +50,17 @@
             src/main/java/com/github/charlemaznable/logback/miner/console/ConsoleTarget.java
         </sonar.exclusions>
 
-        <logback-miner-annotations.version>0.1.6-SNAPSHOT</logback-miner-annotations.version>
+        <char-elves.version>0.0.6-SNAPSHOT</char-elves.version>
         <vertx-diamond-config.version>0.1.6-SNAPSHOT</vertx-diamond-config.version>
         <es-diamond-config.version>0.0.6-SNAPSHOT</es-diamond-config.version>
+        <logback-miner-annotations.version>0.1.6-SNAPSHOT</logback-miner-annotations.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>com.github.charlemaznable</groupId>
-            <artifactId>logback-miner-annotations</artifactId>
-            <version>${logback-miner-annotations.version}</version>
+            <artifactId>char-elves</artifactId>
+            <version>${char-elves.version}</version>
         </dependency>
         <dependency>
             <groupId>com.github.charlemaznable</groupId>
@@ -72,16 +73,9 @@
             <version>${es-diamond-config.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.jetbrains</groupId>
-            <artifactId>annotations</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.google.auto.service</groupId>
-            <artifactId>auto-service</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
+            <groupId>com.github.charlemaznable</groupId>
+            <artifactId>logback-miner-annotations</artifactId>
+            <version>${logback-miner-annotations.version}</version>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
@@ -109,8 +103,13 @@
         </dependency>
 
         <dependency>
-            <groupId>org.awaitility</groupId>
-            <artifactId>awaitility</artifactId>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>elasticsearch</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -124,18 +123,8 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>joda-time</groupId>
-            <artifactId>joda-time</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>io.vertx</groupId>
             <artifactId>vertx-hazelcast</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.testcontainers</groupId>
-            <artifactId>elasticsearch</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

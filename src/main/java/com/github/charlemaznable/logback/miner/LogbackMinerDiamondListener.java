@@ -7,6 +7,7 @@ import ch.qos.logback.classic.spi.LoggerContextListener;
 import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.spi.LifeCycle;
 import ch.qos.logback.core.util.COWArrayList;
+import com.github.charlemaznable.core.config.impl.PropertiesConfigLoader;
 import com.github.charlemaznable.logback.miner.configurator.AppenderConfigurator;
 import com.github.charlemaznable.logback.miner.configurator.Configurator;
 import com.github.charlemaznable.logback.miner.level.EffectorContext;
@@ -20,23 +21,20 @@ import org.n3r.diamond.client.DiamondStone;
 import org.n3r.diamond.client.Miner;
 import org.n3r.diamond.client.impl.DiamondSubscriber;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.ServiceLoader;
 
 import static ch.qos.logback.classic.ClassicConstants.DEFAULT_MAX_CALLEDER_DATA_DEPTH;
 import static ch.qos.logback.classic.LoggerContext.DEFAULT_PACKAGING_DATA;
+import static com.github.charlemaznable.core.lang.ClzPath.classResource;
+import static com.github.charlemaznable.core.lang.Condition.checkNull;
+import static com.github.charlemaznable.core.lang.Str.toStr;
 import static com.github.charlemaznable.logback.miner.console.ConsoleConfigurator.defaultConsoleAppender;
 import static com.github.charlemaznable.logback.miner.level.EffectorContextElf.EFFECTOR_CONTEXT;
-import static com.google.common.io.Closeables.closeQuietly;
-import static java.lang.Thread.currentThread;
 import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
-import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.startsWithIgnoreCase;
+import static org.apache.commons.lang3.math.NumberUtils.toInt;
 import static org.n3r.diamond.client.impl.DiamondUtils.parseStoneToProperties;
 import static org.n3r.diamond.client.impl.DiamondUtils.toBool;
 import static org.slf4j.Logger.ROOT_LOGGER_NAME;
@@ -132,21 +130,9 @@ public final class LogbackMinerDiamondListener implements DiamondListener, Logge
     }
 
     private Properties loadLocalConfig() {
-        val result = new Properties();
-        val localConfigURL = currentThread().getContextClassLoader()
-                .getResource("logback-miner.properties");
-        if (nonNull(localConfigURL)) {
-            InputStream inputStream = null;
-            try {
-                inputStream = localConfigURL.openStream();
-                result.load(inputStream);
-            } catch (IOException ignored) {
-                // ignored
-            } finally {
-                closeQuietly(inputStream);
-            }
-        }
-        return rebuildProperties(result);
+        val localConfigURL = classResource("logback-miner.properties");
+        return rebuildProperties(checkNull(localConfigURL, Properties::new,
+                url -> new PropertiesConfigLoader().loadConfigable(url).getProperties()));
     }
 
     private Properties rebuildProperties(Properties properties) {
@@ -234,27 +220,17 @@ public final class LogbackMinerDiamondListener implements DiamondListener, Logge
 
     @SuppressWarnings("SameParameterValue")
     private boolean getBool(String key, boolean defValue) {
-        val raw = getRaw(key);
-        if (isBlank(raw)) return defValue;
-        return toBool(raw);
+        return toBool(getRaw(key));
     }
 
     @SuppressWarnings("SameParameterValue")
     private int getInt(String key, int defValue) {
-        val raw = getRaw(key);
-        if (isBlank(raw)) return defValue;
-        try {
-            return Integer.parseInt(raw);
-        } catch (NumberFormatException e) {
-            return defValue;
-        }
+        return toInt(getRaw(key), defValue);
     }
 
     @SuppressWarnings("SameParameterValue")
     private List<String> getList(String key) {
-        val raw = getRaw(key);
-        if (isBlank(raw)) return new ArrayList<>();
         return Splitter.on(",").omitEmptyStrings()
-                .trimResults().splitToList(raw);
+                .trimResults().splitToList(toStr(getRaw(key)));
     }
 }
