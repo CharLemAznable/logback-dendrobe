@@ -65,7 +65,8 @@ final class DqlCaches {
             return getUnchecked(cache, clazz);
         }
 
-        static Boolean loadCache(Class<?> clazz) {
+        @Nonnull
+        static Boolean loadCache(@Nonnull Class<?> clazz) {
             return clazz.isAnnotationPresent(DqlLogBean.class);
         }
     }
@@ -98,7 +99,7 @@ final class DqlCaches {
         }
 
         @Nonnull
-        static String loadCache(Class<?> clazz) {
+        static String loadCache(@Nonnull Class<?> clazz) {
             return checkNotNull(clazz.getAnnotation(DqlLogBean.class)).value();
         }
     }
@@ -126,7 +127,7 @@ final class DqlCaches {
         }
 
         @Nonnull
-        static Optional<DqlLogSql> loadCache(Class<?> clazz) {
+        static Optional<DqlLogSql> loadCache(@Nonnull Class<?> clazz) {
             return ofNullable(clazz.getAnnotation(DqlLogSql.class));
         }
     }
@@ -144,7 +145,8 @@ final class DqlCaches {
             return getUnchecked(cache, clazz);
         }
 
-        static String loadCache(Class<?> clazz) {
+        @Nonnull
+        static String loadCache(@Nonnull Class<?> clazz) {
             val tableName = parseTableName(clazz);
             val insertSql = new StringBuilder("insert into ").append(tableName).append("(");
             val valuesSql = new StringBuilder(") values(");
@@ -241,7 +243,7 @@ final class DqlCaches {
         }
 
         @Nonnull
-        static Optional<DqlLogRollingSql> loadCache(Class<?> clazz) {
+        static Optional<DqlLogRollingSql> loadCache(@Nonnull Class<?> clazz) {
             return ofNullable(clazz.getAnnotation(DqlLogRollingSql.class));
         }
     }

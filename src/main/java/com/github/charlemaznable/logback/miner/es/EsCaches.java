@@ -33,7 +33,8 @@ public final class EsCaches {
             return getUnchecked(cache, clazz);
         }
 
-        static Boolean loadCache(Class<?> clazz) {
+        @Nonnull
+        static Boolean loadCache(@Nonnull Class<?> clazz) {
             return clazz.isAnnotationPresent(EsLogBean.class);
         }
     }
@@ -54,7 +55,7 @@ public final class EsCaches {
         }
 
         @Nonnull
-        static String loadCache(Class<?> clazz) {
+        static String loadCache(@Nonnull Class<?> clazz) {
             return checkNotNull(clazz.getAnnotation(EsLogBean.class)).value();
         }
     }
@@ -76,7 +77,7 @@ public final class EsCaches {
         }
 
         @Nonnull
-        static Optional<EsLogIndex> loadCache(Class<?> clazz) {
+        static Optional<EsLogIndex> loadCache(@Nonnull Class<?> clazz) {
             return ofNullable(clazz.getAnnotation(EsLogIndex.class));
         }
     }

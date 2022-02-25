@@ -33,7 +33,8 @@ public final class VertxCaches {
             return getUnchecked(cache, clazz);
         }
 
-        static Boolean loadCache(Class<?> clazz) {
+        @Nonnull
+        static Boolean loadCache(@Nonnull Class<?> clazz) {
             return clazz.isAnnotationPresent(VertxLogBean.class);
         }
     }
@@ -54,7 +55,7 @@ public final class VertxCaches {
         }
 
         @Nonnull
-        static String loadCache(Class<?> clazz) {
+        static String loadCache(@Nonnull Class<?> clazz) {
             return checkNotNull(clazz.getAnnotation(VertxLogBean.class)).value();
         }
     }
@@ -76,7 +77,7 @@ public final class VertxCaches {
         }
 
         @Nonnull
-        static Optional<VertxLogAddress> loadCache(Class<?> clazz) {
+        static Optional<VertxLogAddress> loadCache(@Nonnull Class<?> clazz) {
             return ofNullable(clazz.getAnnotation(VertxLogAddress.class));
         }
     }
