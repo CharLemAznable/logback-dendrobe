@@ -10,11 +10,13 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.function.Function;
 
 import static com.github.charlemaznable.core.lang.Mapp.newHashMap;
 import static com.github.charlemaznable.core.lang.Mapp.of;
+import static com.github.charlemaznable.core.lang.Mapp.toMap;
 import static lombok.AccessLevel.PRIVATE;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 
@@ -76,14 +78,11 @@ public final class LoggingEventElf {
 
     public static EventMap buildEventMap(ILoggingEvent eventObject) {
         val eventMap = eventConverterMap.entrySet().stream()
-                .<Map<String, String>>collect(HashMap::new, (m, e) -> m.put(e.getKey(),
-                        e.getValue().apply(eventObject)), Map::putAll);
+                .collect(toMap(Entry::getKey, e -> e.getValue().apply(eventObject)));
         val mdcMap = eventObject.getMDCPropertyMap().entrySet().stream()
-                .<Map<String, String>>collect(HashMap::new, (m, e) -> m.put(e.getKey(),
-                        e.getValue()), Map::putAll);
+                .collect(toMap(Entry::getKey, Entry::getValue));
         val propMap = eventObject.getLoggerContextVO().getPropertyMap().entrySet().stream()
-                .<Map<String, String>>collect(HashMap::new, (m, e) -> m.put(e.getKey(),
-                        defaultIfNull(e.getValue(), System.getProperty(e.getKey()))), Map::putAll);
+                .collect(toMap(Entry::getKey, e -> defaultIfNull(e.getValue(), System.getProperty(e.getKey()))));
         return new EventMap(of("event", eventMap, "mdc", mdcMap, "property", propMap));
     }
 
