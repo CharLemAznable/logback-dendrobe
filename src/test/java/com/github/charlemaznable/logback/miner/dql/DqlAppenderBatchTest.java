@@ -27,7 +27,7 @@ import static java.math.BigDecimal.ROUND_HALF_UP;
 import static java.util.Objects.nonNull;
 import static org.awaitility.Awaitility.await;
 import static org.joor.Reflect.on;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 @Slf4j
 public class DqlAppenderBatchTest {
@@ -71,7 +71,6 @@ public class DqlAppenderBatchTest {
         mysql.stop();
     }
 
-    @SneakyThrows
     public void batchRun(int times) {
         for (int i = 0; i < times; ++i) {
             awaitForMillis(10);
@@ -82,7 +81,6 @@ public class DqlAppenderBatchTest {
         }
     }
 
-    @SneakyThrows
     public void batchRunLog(int times) {
         for (int i = 0; i < times; ++i) {
             awaitForMillis(10);
@@ -122,14 +120,13 @@ public class DqlAppenderBatchTest {
         val threadCount = getRuntime().availableProcessors() + 1;
 
         val startTime = currentTimeMillis();
-        routineRun(threadCount, () -> batchRun(TIMES));
+        assertDoesNotThrow(() -> routineRun(threadCount, () -> batchRun(TIMES)));
         val batchRunTime = currentTimeMillis() - startTime;
 
         val startLogTime = currentTimeMillis();
-        routineRun(threadCount, () -> batchRunLog(TIMES));
+        assertDoesNotThrow(() -> routineRun(threadCount, () -> batchRunLog(TIMES)));
         val batchRunLogTime = currentTimeMillis() - startLogTime;
 
-        assertTrue(batchRunLogTime > batchRunTime);
         Util.report("Original time: " + batchRunTime + "ms, " +
                 "logging time: " + batchRunLogTime + "ms, " +
                 "rating: " + new BigDecimal(batchRunLogTime).divide(

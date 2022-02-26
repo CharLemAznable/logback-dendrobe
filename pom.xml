@@ -58,14 +58,29 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.github.charlemaznable</groupId>
-            <artifactId>char-elves</artifactId>
-            <version>${char-elves.version}</version>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.github.bingoohuang</groupId>
+            <artifactId>eql</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.github.bingoohuang</groupId>
+            <artifactId>westid</artifactId>
         </dependency>
         <dependency>
             <groupId>com.github.charlemaznable</groupId>
-            <artifactId>vertx-diamond-config</artifactId>
-            <version>${vertx-diamond-config.version}</version>
+            <artifactId>char-elves</artifactId>
+            <version>${char-elves.version}</version>
         </dependency>
         <dependency>
             <groupId>com.github.charlemaznable</groupId>
@@ -77,28 +92,17 @@
             <artifactId>logback-miner-annotations</artifactId>
             <version>${logback-miner-annotations.version}</version>
         </dependency>
-
         <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>druid</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.github.bingoohuang</groupId>
-            <artifactId>eql</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.github.bingoohuang</groupId>
-            <artifactId>westid</artifactId>
+            <groupId>com.github.charlemaznable</groupId>
+            <artifactId>vertx-diamond-config</artifactId>
+            <version>${vertx-diamond-config.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-hazelcast</artifactId>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
@@ -117,11 +121,6 @@
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>mysql</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.vertx</groupId>
-            <artifactId>vertx-hazelcast</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
