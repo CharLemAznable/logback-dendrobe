@@ -7,10 +7,14 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.n3r.diamond.client.impl.DiamondSubscriber;
 import org.n3r.diamond.client.impl.MockDiamondServer;
+import org.slf4j.helpers.Util;
+
+import java.math.BigDecimal;
 
 import static com.github.charlemaznable.core.lang.Await.awaitForMillis;
 import static java.lang.Runtime.getRuntime;
 import static java.lang.System.currentTimeMillis;
+import static java.math.BigDecimal.ROUND_HALF_UP;
 import static java.util.Objects.nonNull;
 import static org.awaitility.Awaitility.await;
 import static org.joor.Reflect.on;
@@ -86,7 +90,11 @@ public class ConsoleAppenderBatchTest {
         routineRun(threadCount, () -> batchRunLog(TIMES));
         val batchRunLogTime = currentTimeMillis() - startLogTime;
 
-        assertTrue(batchRunLogTime < batchRunTime * 1.05); // 性能损耗小于5%
+        assertTrue(batchRunLogTime > batchRunTime);
+        Util.report("Original time: " + batchRunTime + "ms, " +
+                "logging time: " + batchRunLogTime + "ms, " +
+                "rating: " + new BigDecimal(batchRunLogTime).divide(
+                new BigDecimal(batchRunTime), 2, ROUND_HALF_UP).toString());
 
         MockDiamondServer.tearDownMockServer();
         ConsoleTarget.tearDownMockConsole();
