@@ -51,9 +51,9 @@
         </sonar.exclusions>
 
         <char-elves.version>0.0.6-SNAPSHOT</char-elves.version>
-        <vertx-diamond-config.version>0.1.6-SNAPSHOT</vertx-diamond-config.version>
         <es-diamond-config.version>0.0.6-SNAPSHOT</es-diamond-config.version>
         <logback-miner-annotations.version>0.1.6-SNAPSHOT</logback-miner-annotations.version>
+        <vertx-diamond-config.version>0.1.6-SNAPSHOT</vertx-diamond-config.version>
     </properties>
 
     <dependencies>
