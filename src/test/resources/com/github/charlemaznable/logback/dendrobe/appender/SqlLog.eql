@@ -1,0 +1,15 @@
+-- noinspection SqlNoDataSourceInspectionForFile
+
+-- [logSqlLog]
+insert into simple_log
+      (log_id
+      ,log_content
+      ,log_date
+      ,log_date_time)
+values(#arg.logId#
+      ,concat('(', #property.dendrobe#, '|'
+      , ifnull(#mdc.tenantId#, ''), '|'
+      , ifnull(#mdc.tenantCode#, ''), ')'
+      , #event.message#, #event.exception#)
+      ,current_timestamp()
+      ,current_timestamp())

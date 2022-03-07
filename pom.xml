@@ -10,18 +10,18 @@
         <version>0.0.7-SNAPSHOT</version>
     </parent>
 
-    <artifactId>logback-miner</artifactId>
+    <artifactId>logback-dendrobe</artifactId>
     <version>0.1.7-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>Logback Miner</name>
-    <url>https://github.com/CharLemAznable/logback-miner</url>
-    <description>Diamond Miner Extension of Logback Classic Module.</description>
+    <name>Logback Dendrobe</name>
+    <url>https://github.com/CharLemAznable/logback-dendrobe</url>
+    <description>Logback Custom Extension.</description>
 
     <scm>
-        <connection>scm:git:https://github.com/CharLemAznable/logback-miner.git</connection>
-        <developerConnection>scm:git:https://github.com/CharLemAznable/logback-miner.git</developerConnection>
-        <url>https://github.com/CharLemAznable/logback-miner</url>
+        <connection>scm:git:https://github.com/CharLemAznable/logback-dendrobe.git</connection>
+        <developerConnection>scm:git:https://github.com/CharLemAznable/logback-dendrobe.git</developerConnection>
+        <url>https://github.com/CharLemAznable/logback-dendrobe</url>
     </scm>
 
     <repositories>
@@ -45,15 +45,13 @@
     </repositories>
 
     <properties>
-        <sonar.projectKey>CharLemAznable_logback-miner</sonar.projectKey>
+        <sonar.projectKey>CharLemAznable_logback-dendrobe</sonar.projectKey>
         <sonar.exclusions>
-            src/main/java/com/github/charlemaznable/logback/miner/console/ConsoleTarget.java
+            src/main/java/com/github/charlemaznable/logback/dendrobe/console/ConsoleTarget.java
         </sonar.exclusions>
 
         <char-elves.version>0.0.7-SNAPSHOT</char-elves.version>
-        <es-diamond-config.version>0.0.7-SNAPSHOT</es-diamond-config.version>
-        <logback-miner-annotations.version>0.1.7-SNAPSHOT</logback-miner-annotations.version>
-        <vertx-diamond-config.version>0.1.7-SNAPSHOT</vertx-diamond-config.version>
+        <logback-dendrobe-annotations.version>0.1.7-SNAPSHOT</logback-dendrobe-annotations.version>
     </properties>
 
     <dependencies>
@@ -84,20 +82,15 @@
         </dependency>
         <dependency>
             <groupId>com.github.charlemaznable</groupId>
-            <artifactId>es-diamond-config</artifactId>
-            <version>${es-diamond-config.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.github.charlemaznable</groupId>
-            <artifactId>logback-miner-annotations</artifactId>
-            <version>${logback-miner-annotations.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.github.charlemaznable</groupId>
-            <artifactId>vertx-diamond-config</artifactId>
-            <version>${vertx-diamond-config.version}</version>
+            <artifactId>logback-dendrobe-annotations</artifactId>
+            <version>${logback-dendrobe-annotations.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>io.vertx</groupId>
             <artifactId>vertx-hazelcast</artifactId>

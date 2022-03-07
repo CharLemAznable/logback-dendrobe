@@ -1,59 +1,53 @@
-### logback-miner
+### logback-dendrobe
 
-[![Build](https://github.com/CharLemAznable/logback-miner/actions/workflows/build.yml/badge.svg)](https://github.com/CharLemAznable/logback-miner/actions/workflows/build.yml)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.charlemaznable/logback-miner/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.charlemaznable/logback-miner/)
+[![Build](https://github.com/CharLemAznable/logback-dendrobe/actions/workflows/build.yml/badge.svg)](https://github.com/CharLemAznable/logback-dendrobe/actions/workflows/build.yml)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.charlemaznable/logback-dendrobe/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.charlemaznable/logback-dendrobe/)
 [![MIT Licence](https://badges.frapsoft.com/os/mit/mit.svg?v=103)](https://opensource.org/licenses/mit-license.php)
-![GitHub code size](https://img.shields.io/github/languages/code-size/CharLemAznable/logback-miner)
+![GitHub code size](https://img.shields.io/github/languages/code-size/CharLemAznable/logback-dendrobe)
 
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=CharLemAznable_logback-miner&metric=alert_status)](https://sonarcloud.io/dashboard?id=CharLemAznable_logback-miner)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=CharLemAznable_logback-dendrobe&metric=alert_status)](https://sonarcloud.io/dashboard?id=CharLemAznable_logback-dendrobe)
 
-[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=CharLemAznable_logback-miner&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=CharLemAznable_logback-miner)
-[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=CharLemAznable_logback-miner&metric=bugs)](https://sonarcloud.io/dashboard?id=CharLemAznable_logback-miner)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=CharLemAznable_logback-dendrobe&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=CharLemAznable_logback-dendrobe)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=CharLemAznable_logback-dendrobe&metric=bugs)](https://sonarcloud.io/dashboard?id=CharLemAznable_logback-dendrobe)
 
-[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=CharLemAznable_logback-miner&metric=security_rating)](https://sonarcloud.io/dashboard?id=CharLemAznable_logback-miner)
-[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=CharLemAznable_logback-miner&metric=vulnerabilities)](https://sonarcloud.io/dashboard?id=CharLemAznable_logback-miner)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=CharLemAznable_logback-dendrobe&metric=security_rating)](https://sonarcloud.io/dashboard?id=CharLemAznable_logback-dendrobe)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=CharLemAznable_logback-dendrobe&metric=vulnerabilities)](https://sonarcloud.io/dashboard?id=CharLemAznable_logback-dendrobe)
 
-[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=CharLemAznable_logback-miner&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=CharLemAznable_logback-miner)
-[![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=CharLemAznable_logback-miner&metric=sqale_index)](https://sonarcloud.io/dashboard?id=CharLemAznable_logback-miner)
-[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=CharLemAznable_logback-miner&metric=code_smells)](https://sonarcloud.io/dashboard?id=CharLemAznable_logback-miner)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=CharLemAznable_logback-dendrobe&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=CharLemAznable_logback-dendrobe)
+[![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=CharLemAznable_logback-dendrobe&metric=sqale_index)](https://sonarcloud.io/dashboard?id=CharLemAznable_logback-dendrobe)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=CharLemAznable_logback-dendrobe&metric=code_smells)](https://sonarcloud.io/dashboard?id=CharLemAznable_logback-dendrobe)
 
-[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=CharLemAznable_logback-miner&metric=ncloc)](https://sonarcloud.io/dashboard?id=CharLemAznable_logback-miner)
-[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=CharLemAznable_logback-miner&metric=coverage)](https://sonarcloud.io/dashboard?id=CharLemAznable_logback-miner)
-[![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=CharLemAznable_logback-miner&metric=duplicated_lines_density)](https://sonarcloud.io/dashboard?id=CharLemAznable_logback-miner)
+[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=CharLemAznable_logback-dendrobe&metric=ncloc)](https://sonarcloud.io/dashboard?id=CharLemAznable_logback-dendrobe)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=CharLemAznable_logback-dendrobe&metric=coverage)](https://sonarcloud.io/dashboard?id=CharLemAznable_logback-dendrobe)
+[![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=CharLemAznable_logback-dendrobe&metric=duplicated_lines_density)](https://sonarcloud.io/dashboard?id=CharLemAznable_logback-dendrobe)
 
 自定义扩展Logback-Classic.
 
 ##### Maven Dependency
 
-```xml
-<dependency>
-  <groupId>com.github.charlemaznable</groupId>
-  <artifactId>logback-miner</artifactId>
-  <version>0.1.6</version>
-</dependency>
-```
+待发布.
 
 ##### Maven Dependency SNAPSHOT
 
 ```xml
 <dependency>
   <groupId>com.github.charlemaznable</groupId>
-  <artifactId>logback-miner</artifactId>
+  <artifactId>logback-dendrobe</artifactId>
   <version>0.1.7-SNAPSHOT</version>
 </dependency>
 ```
 
 #### 目标功能
 
-1. 热更新日志配置
-2. 简化日志配置, 将xml格式替换为properties格式, 并省略常用默认配置
-3. 日志默认配置, 使用异步日志队列
-4. 特定类型的日志参数Bean映射插入数据库日志表
-5. 通过配置Vert.x集群, 将日志事件转化为EventBus消息, 便于将来统一日志服务
+1. 简化日志配置, 将xml格式替换为properties格式, 并省略常用默认配置
+2. 日志默认配置, 使用异步日志队列
+3. 特定类型的日志参数Bean映射插入数据库日志表
+4. 通过配置Vert.x集群, 将日志事件转化为EventBus消息, 便于将来统一日志服务
+5. 通过配置ES客户端, 将日志数据直接提交ES存储
 
 #### 快速开始
 
-1. 本地类路径添加配置文件```logback-miner.properties```:
+1. 本地类路径添加配置文件```logback-dendrobe.properties```:
 
 ```
 root[level]=info    # 配置根级别logger日志级别为info, 默认为debug, "level"关键字和日志级别不区分大小写
@@ -89,34 +83,34 @@ root[level]=info    # 配置根级别logger日志级别为info, 默认为debug, 
 4. 配置数据库日志
 
 ```
-{logger-name}[dql.level]=debug
-{logger-name}[dql.connection]=DEFAULT
-{logger-name}[dql.sql]=
-{logger-name}[dql.tableNamePattern]=
-{logger-name}[dql.prepareSql]=
+{logger-name}[eql.level]=debug
+{logger-name}[eql.connection]=DEFAULT
+{logger-name}[eql.sql]=
+{logger-name}[eql.tableNamePattern]=
+{logger-name}[eql.prepareSql]=
 ```
 
 以上配置中:
 
-  * "dql.XXX"关键字不区分大小写
+  * "eql.XXX"关键字不区分大小写
   * 日志级别不区分大小写, 覆盖当前级别日志的```[level]```
   * 数据库日志级别未设置时, 优先使用当前级别日志的```[level]```, 若未设置```[level]```, 则使用父级日志的数据库日志级别
-  * dql.connection配置默认使用的Dql连接配置名, 即```new Dql("XXX")```中的```"XXX"```
-  * dql.sql配置默认使用的日志插入SQL语句, 可选参数参见```com.github.charlemaznable.logback.miner.appender.LoggingEventElf```, 如: ```event.message```, ```mdc.XXX```, ```property.XXX```, 等
-  * 配置dql.tableNamePattern可设置按日期时间滚动日志表, 配置dql.prepareSql可动态创建滚动日志表, 需在sql语句中使用```$activeTableName$```替代滚动日志表名
+  * eql.connection配置默认使用的Eql连接配置名, 即```new Eql("XXX")```中的```"XXX"```
+  * eql.sql配置默认使用的日志插入SQL语句, 可选参数参见```com.github.charlemaznable.logback.dendrobe.appender.LoggingEventElf```, 如: ```event.message```, ```mdc.XXX```, ```property.XXX```, 等
+  * 配置eql.tableNamePattern可设置按日期时间滚动日志表, 配置eql.prepareSql可动态创建滚动日志表, 需在sql语句中使用```$activeTableName$```替代滚动日志表名
 
 配置以上任一项, 即启动对应级别logger数据库日志
 
 数据库插入参数规则:
 
-  * 如参数中不包含```@DqlLogBean```注解的类型的对象, 则使用默认连接默认插入SQL, 可选参数为```event.message```, ```mdc.XXX```, ```property.XXX```, 等
-  * 如参数中包含```@DqlLogBean```注解的类型的对象, 则遍历所有此类参数进行数据库插入, 除上述可选参数外, 另可使用```arg.字段名```作为参数
-  * 可填写```@DqlLogBean```注解的```value```, 覆盖日志配置的默认的dql连接配置
-  * 日志参数Bean默认插入的日志表名为类名的下划线格式, e.g. ```class TestLog```插入表```table TEST_LOG```, 可使用```@DqlLogTable```注解另行指定
-  * 日志参数Bean默认插入的日志字段为类型声明的非静态字段, 列名为字段名的下划线格式, 可使用```@DqlLogColumn```注解另行指定, 或使用```@DqlLogSkip```注解指定排除
-  * 可使用```@DqlLogSql```注解另行指定插入日志的```sqlFile```和```sqlId```, 默认为当前类型对应的```sqlFile```中的名为```[log{类名}]```的SQL语句
-  * 可使用```@DqlLogRollingSql```注解指定滚动日志表名模式和滚动日志表准备sql语句, 需在sql语句中使用```$activeTableName$```替代滚动日志表名
-  * 使用```@DqlLogRollingSql```时, 日志参数Bean默认插入的日志表名将改为```$activeTableName$```, 除非使用```@DqlLogTable```或```@DqlLogSql```进行自定义
+  * 如参数中不包含```@EqlLogBean```注解的类型的对象, 则使用默认连接默认插入SQL, 可选参数为```event.message```, ```mdc.XXX```, ```property.XXX```, 等
+  * 如参数中包含```@EqlLogBean```注解的类型的对象, 则遍历所有此类参数进行数据库插入, 除上述可选参数外, 另可使用```arg.字段名```作为参数
+  * 可填写```@EqlLogBean```注解的```value```, 覆盖日志配置的默认的eql连接配置
+  * 日志参数Bean默认插入的日志表名为类名的下划线格式, e.g. ```class TestLog```插入表```table TEST_LOG```, 可使用```@EqlLogTable```注解另行指定
+  * 日志参数Bean默认插入的日志字段为类型声明的非静态字段, 列名为字段名的下划线格式, 可使用```@EqlLogColumn```注解另行指定, 或使用```@EqlLogSkip```注解指定排除
+  * 可使用```@EqlLogSql```注解另行指定插入日志的```sqlFile```和```sqlId```, 默认为当前类型对应的```sqlFile```中的名为```[log{类名}]```的SQL语句
+  * 可使用```@EqlLogRollingSql```注解指定滚动日志表名模式和滚动日志表准备sql语句, 需在sql语句中使用```$activeTableName$```替代滚动日志表名
+  * 使用```@EqlLogRollingSql```时, 日志参数Bean默认插入的日志表名将改为```$activeTableName$```, 除非使用```@EqlLogTable```或```@EqlLogSql```进行自定义
 
 5. 配置Vert.x日志
 
@@ -148,18 +142,7 @@ context.frameworkPackages=
 context.property[property-name]=property-value  # 配置上下文属性参数, 可用于日志输出参数
 ```
 
-7. 配置热更新
-
-```
-logback.miner.group=Logback
-logback.miner.dataId=default
-```
-
-启动时, 将自动读取```diamond group:Logback dataId:default```配置内容为Properties格式, 覆盖本地配置文件```logback-miner.properties```中的同名配置
-
-在```diamond group:Logback dataId:default```内容更新后, 将自动更新日志配置, 但仍以本地配置文件```logback-miner.properties```中的配置作为默认配置
-
-8. 配置文件输出
+7. 配置文件输出
 
 ```
 {logger-name}[file]={filepath/filename}
@@ -184,7 +167,7 @@ logback.miner.dataId=default
 
 若未配置```[file]```项或配置为空, 则文件输出不会开启
 
-9. 配置滚动文件输出
+8. 配置滚动文件输出
 
 ```
 {logger-name}[rollingfile]={filepath/filename}
@@ -222,7 +205,7 @@ logback.miner.dataId=default
   * 仅含有索引模式时, 使用```FixedWindowRollingPolicy```做为rollingPolicy, ```SizeBasedTriggeringPolicy```做为triggeringPolicy, 按```[rollingfile.minIndex]```, ```[rollingfile.maxIndex]```和```[rollingfile.maxFileSize]```配置, 默认值为```1```, ```7```和```10MB```
   * 不含以上两种模式时, 滚动文件输出不会开启
 
-10. 配置ElasticSearch输出
+9. 配置ElasticSearch输出
 
 ```
 {logger-name}[es.level]=debug
@@ -238,20 +221,20 @@ logback.miner.dataId=default
   * es.name配置ElasticSearch客户端标识, 如果存在```diamond group:EsConfig dataId:[es.name]```配置, 则自动加载并初始化ElasticSearch客户端用于发送日志事件消息
   * 可使用```EsClientManager#putExternalEsClient```方法配置自定义的ElasticSearch客户端, 需自行控制自定义ElasticSearch客户端的生命周期, 使用自定义的名称作为es.name配置
   * es.index配置日志事件消息存储的ElasticSearch索引, 默认为: logger-name的缩减字符串, 最长128个字符, 并将'.'替换为'_'
-  * 日志事件存储的ElasticSearch文档结构参见```com.github.charlemaznable.logback.miner.appender.LoggingEventElf```
+  * 日志事件存储的ElasticSearch文档结构参见```com.github.charlemaznable.logback.dendrobe.appender.LoggingEventElf```
 
 配置以上任一项, 即启动对应级别logger ElasticSearch日志
 
-11. 使用默认配置启动日志输出
+10. 使用默认配置启动日志输出
 
 ```
-{logger-name}[appenders]=[console][dql][vertx][file][rollingfile][es]
+{logger-name}[appenders]=[console][eql][vertx][file][rollingfile][es]
 ```
 
 当仅需启动日志的某些输出端时, 可使用此配置:
 
   * 配置值中包含```[console]```字符串时, 启动默认控制台输出
-  * 配置值中包含```[dql]```字符串时, 启动默认数据库输出
+  * 配置值中包含```[eql]```字符串时, 启动默认数据库输出
   * 配置值中包含```[vertx]```字符串时, 启动默认Vert.x输出
   * 配置值中包含```[file]```字符串时, 启动默认文件输出, 但需另外配置```{logger-name}[file]```指定日志文件名
   * 配置值中包含```[rollingfile]```字符串时, 启动默认滚动文件输出, 但需另外配置```{logger-name}[rollingfile.fileNamePattern]```指定文件名滚动规则
