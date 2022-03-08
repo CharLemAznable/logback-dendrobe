@@ -37,7 +37,6 @@ import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SuppressWarnings("Duplicates")
 @Slf4j
 public class EqlAppenderTest {
 

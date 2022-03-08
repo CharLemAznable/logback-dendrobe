@@ -20,7 +20,6 @@ public final class EffectorContext {
         this.effectorCache.put(ROOT_LOGGER_NAME, this.root);
     }
 
-    @SuppressWarnings("Duplicates")
     public Effector getEffector(String name) {
         if (name == null) throw new IllegalArgumentException("name argument cannot be null");
         if (ROOT_LOGGER_NAME.equalsIgnoreCase(name)) return root;
