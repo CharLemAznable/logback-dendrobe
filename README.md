@@ -95,7 +95,7 @@ root[level]=info    # 配置根级别logger日志级别为info, 默认为debug, 
   * "eql.XXX"关键字不区分大小写
   * 日志级别不区分大小写, 覆盖当前级别日志的```[level]```
   * 数据库日志级别未设置时, 优先使用当前级别日志的```[level]```, 若未设置```[level]```, 则使用父级日志的数据库日志级别
-  * eql.connection配置默认使用的Eql连接配置名, 即```new Eql("XXX")```中的```"XXX"```
+  * eql.connection配置默认使用的Eql连接配置名, 即```new Eql("XXX")```中的```"XXX"```, 默认连接配置文件路径为```eql/eql-XXX.properties```
   * eql.sql配置默认使用的日志插入SQL语句, 可选参数参见```com.github.charlemaznable.logback.dendrobe.appender.LoggingEventElf```, 如: ```event.message```, ```mdc.XXX```, ```property.XXX```, 等
   * 配置eql.tableNamePattern可设置按日期时间滚动日志表, 配置eql.prepareSql可动态创建滚动日志表, 需在sql语句中使用```$activeTableName$```替代滚动日志表名
 
@@ -125,7 +125,7 @@ root[level]=info    # 配置根级别logger日志级别为info, 默认为debug, 
   * "vertx.XXX"关键字不区分大小写
   * 日志级别不区分大小写, 覆盖当前级别日志的```[level]```
   * Vert.x日志级别未设置时, 优先使用当前级别日志的```[level]```, 若未设置```[level]```, 则使用父级日志的Vert.x日志级别
-  * vertx.name配置Vert.x实例标识, 如果存在```diamond group:VertxOptions dataId:[vertx.name]```配置, 则自动加载并初始化Vert.x实例用于发送日志事件消息
+  * vertx.name配置Vert.x实例标识, 如果存在```vertx-${vertx.name}.properties```配置文件, 则自动加载并初始化Vert.x实例用于发送日志事件消息
   * 可使用```VertxManager#putExternalVertx```方法配置自定义的Vert.x实例, 需自行控制自定义Vert.x实例的生命周期, 使用自定义的名称作为vertx.name配置
   * vertx.address配置日志事件消息发送的地址topic, 默认为logger-name
   * 日志事件消息的接收端处理器类型为```io.vertx.core.Handler<io.vertx.core.eventbus.Message<io.vertx.core.json.JsonObject>>```, 其中JsonObject包含```event```, ```mdc```和```property```三个子JsonObject
@@ -218,7 +218,7 @@ context.property[property-name]=property-value  # 配置上下文属性参数, �
   * "es.XXX"关键字不区分大小写
   * 日志级别不区分大小写, 覆盖当前级别日志的```[level]```
   * ElasticSearch日志级别未设置时, 优先使用当前级别日志的```[level]```, 若未设置```[level]```, 则使用父级日志的ElasticSearch日志级别
-  * es.name配置ElasticSearch客户端标识, 如果存在```diamond group:EsConfig dataId:[es.name]```配置, 则自动加载并初始化ElasticSearch客户端用于发送日志事件消息
+  * es.name配置ElasticSearch客户端标识, 如果存在```es-${es.name}.properties```配置文件, 则自动加载并初始化ElasticSearch客户端用于发送日志事件消息
   * 可使用```EsClientManager#putExternalEsClient```方法配置自定义的ElasticSearch客户端, 需自行控制自定义ElasticSearch客户端的生命周期, 使用自定义的名称作为es.name配置
   * es.index配置日志事件消息存储的ElasticSearch索引, 默认为: logger-name的缩减字符串, 最长128个字符, 并将'.'替换为'_'
   * 日志事件存储的ElasticSearch文档结构参见```com.github.charlemaznable.logback.dendrobe.appender.LoggingEventElf```
