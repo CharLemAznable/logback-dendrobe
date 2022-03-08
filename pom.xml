@@ -47,7 +47,8 @@
     <properties>
         <sonar.projectKey>CharLemAznable_logback-dendrobe</sonar.projectKey>
         <sonar.exclusions>
-            src/main/java/com/github/charlemaznable/logback/dendrobe/console/ConsoleTarget.java
+            src/main/java/com/github/charlemaznable/logback/dendrobe/console/ConsoleTarget.java,
+            src/main/java/com/github/charlemaznable/logback/dendrobe/impl/DefaultHotUpdater.java
         </sonar.exclusions>
 
         <char-elves.version>0.0.7-SNAPSHOT</char-elves.version>
