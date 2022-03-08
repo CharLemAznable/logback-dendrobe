@@ -1,6 +1,6 @@
 package com.github.charlemaznable.logback.dendrobe.vertx;
 
-import com.github.charlemaznable.logback.dendrobe.vertx.VertxOptionsServiceElf.DefaultVertxOptionsService;
+import com.github.charlemaznable.logback.dendrobe.impl.DefaultVertxOptionsService;
 import com.google.auto.service.AutoService;
 
 import java.util.Map;

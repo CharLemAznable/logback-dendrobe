@@ -1,6 +1,6 @@
 package com.github.charlemaznable.logback.dendrobe.es;
 
-import com.github.charlemaznable.logback.dendrobe.es.EsConfigServiceElf.DefaultEsConfigService;
+import com.github.charlemaznable.logback.dendrobe.impl.DefaultEsConfigService;
 import com.google.auto.service.AutoService;
 
 import java.util.Map;

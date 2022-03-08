@@ -12,6 +12,7 @@ import com.github.charlemaznable.logback.dendrobe.configurator.AppenderConfigura
 import com.github.charlemaznable.logback.dendrobe.configurator.Configurator;
 import com.github.charlemaznable.logback.dendrobe.effect.EffectorContext;
 import com.github.charlemaznable.logback.dendrobe.effect.EffectorTurboFilter;
+import com.github.charlemaznable.logback.dendrobe.impl.DefaultHotUpdater;
 import com.google.common.base.Splitter;
 import lombok.val;
 
@@ -210,13 +211,5 @@ public final class LogbackDendrobeListener implements LoggerContextListener {
     private List<String> getList(String key) {
         return Splitter.on(",").omitEmptyStrings()
                 .trimResults().splitToList(toStr(getRaw(key)));
-    }
-
-    private static class DefaultHotUpdater implements HotUpdater {
-
-        @Override
-        public void initialize(LogbackDendrobeListener listener, Properties config) {
-            // empty method
-        }
     }
 }
