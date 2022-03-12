@@ -25,7 +25,13 @@
 
 ##### Maven Dependency
 
-待发布.
+```xml
+<dependency>
+  <groupId>com.github.charlemaznable</groupId>
+  <artifactId>logback-dendrobe</artifactId>
+  <version>0.1.7</version>
+</dependency>
+```
 
 ##### Maven Dependency SNAPSHOT
 
@@ -33,7 +39,7 @@
 <dependency>
   <groupId>com.github.charlemaznable</groupId>
   <artifactId>logback-dendrobe</artifactId>
-  <version>0.1.7-SNAPSHOT</version>
+  <version>0.1.8-SNAPSHOT</version>
 </dependency>
 ```
 
