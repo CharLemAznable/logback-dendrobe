@@ -2,7 +2,6 @@ package com.github.charlemaznable.logback.dendrobe.console;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.experimental.Delegate;
 import lombok.val;
 
 import javax.annotation.Nonnull;
@@ -16,15 +15,49 @@ final class ConsoleTarget {
     static final ConsoleTarget SYSTEM_OUT
             = new ConsoleTarget("System.out", new OutputStream() {
 
-        @Delegate
-        private final OutputStream out = System.out;
+        @Override
+        public void write(int b) {
+            System.out.write(b);
+        }
+
+        @Override
+        public void write(@Nonnull byte[] b) {
+            write(b, 0, b.length);
+        }
+
+        @Override
+        public void write(@Nonnull byte[] b, int off, int len) {
+            System.out.write(b, off, len);
+        }
+
+        @Override
+        public void flush() {
+            System.out.flush();
+        }
     });
 
     static final ConsoleTarget SYSTEM_ERR
             = new ConsoleTarget("System.err", new OutputStream() {
 
-        @Delegate
-        private final OutputStream out = System.err;
+        @Override
+        public void write(int b) {
+            System.err.write(b);
+        }
+
+        @Override
+        public void write(@Nonnull byte[] b) {
+            write(b, 0, b.length);
+        }
+
+        @Override
+        public void write(@Nonnull byte[] b, int off, int len) {
+            System.err.write(b, off, len);
+        }
+
+        @Override
+        public void flush() {
+            System.err.flush();
+        }
     });
 
     static final ConsoleTarget[] values = new ConsoleTarget[]{SYSTEM_OUT, SYSTEM_ERR};
