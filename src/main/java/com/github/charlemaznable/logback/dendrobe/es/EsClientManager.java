@@ -14,10 +14,11 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import static com.github.charlemaznable.core.es.EsClientElf.buildEsClient;
-import static com.github.charlemaznable.core.es.EsClientElf.closeEsClient;
 import static com.github.charlemaznable.core.lang.Condition.notNullThen;
 import static com.github.charlemaznable.core.lang.Condition.notNullThenRun;
+import static com.github.charlemaznable.logback.dendrobe.es.EsBatchClient.closeClient;
+import static com.github.charlemaznable.logback.dendrobe.es.EsBatchClient.startClient;
+import static com.github.charlemaznable.logback.dendrobe.es.EsBatchClient.stopClient;
 import static com.github.charlemaznable.logback.dendrobe.es.EsConfigServiceElf.configService;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -27,7 +28,7 @@ import static lombok.AccessLevel.PRIVATE;
 @NoArgsConstructor(access = PRIVATE)
 public final class EsClientManager {
 
-    private static final Map<String, RestHighLevelClient> esClients = new ConcurrentHashMap<>();
+    private static final Map<String, EsBatchClient> esClients = new ConcurrentHashMap<>();
     private static final Map<String, String> esConfigs = new ConcurrentHashMap<>();
     private static final AsyncEventBus eventBus;
     private static final CopyOnWriteArrayList<EsClientManagerListener> listeners = new CopyOnWriteArrayList<>();
@@ -49,7 +50,7 @@ public final class EsClientManager {
                     // 缓存存在, 表示之前的EsClient为内部配置的EsClient
                     // 则此处需要移除此内部配置的EsClient
                     // 移除内部配置的EsClient实例并关闭
-                    closeEsClient(esClients.remove(esName));
+                    closeClient(stopClient(esClients.remove(esName)));
                     return;
                 }
 
@@ -57,17 +58,18 @@ public final class EsClientManager {
                 if (configValue.equals(esConfigs.get(esName))) return;
                 // 校验配置
                 val esConfig = configService().parseEsConfig(esName, configValue);
+                val batchConfig = configService().parseEsBatchConfig(esName, configValue);
                 // 不论之前的EsClient是内部配置的还是外部导入的
                 // 此处都需要以当前的内部配置EsClient覆盖之
                 // 保存配置缓存
                 val previousConfig = esConfigs.put(esName, configValue);
                 // 移除之前的EsClient实例
-                val previous = esClients.remove(esName);
+                val previous = stopClient(esClients.remove(esName));
                 // 缓存存在, 表示之前的EsClient为内部配置的EsClient
                 // 则此处需要同步关闭, 对外部导入的EsClient不做操作
-                if (nonNull(previousConfig)) closeEsClient(previous);
+                if (nonNull(previousConfig)) closeClient(previous);
                 // 同步新建EsClient实例并加入
-                esClients.put(esName, buildEsClient(esConfig));
+                esClients.put(esName, startClient(esConfig, batchConfig));
                 notifyBus.post(esName);
             }
 
@@ -79,14 +81,15 @@ public final class EsClientManager {
                 // 清除同名配置缓存
                 val previousConfig = esConfigs.remove(esName);
                 // 移除之前的EsClient实例
-                val previous = esClients.remove(esName);
+                val previous = stopClient(esClients.remove(esName));
                 // 缓存存在, 表示之前的EsClient为内部配置的EsClient
                 // 则此处需要同步关闭, 对外部导入的EsClient不做操作
-                if (nonNull(previousConfig)) closeEsClient(previous);
+                if (nonNull(previousConfig)) closeClient(previous);
                 // 加入新的EsClient实例
                 val esClient = externalEsClient.getEsClient();
+                val batchConfig = externalEsClient.getBatchConfig();
                 if (nonNull(esClient)) {
-                    esClients.put(esName, esClient);
+                    esClients.put(esName, startClient(esClient, batchConfig));
                     notifyBus.post(esName);
                 }
             }
@@ -107,12 +110,16 @@ public final class EsClientManager {
         });
     }
 
-    public static RestHighLevelClient getEsClient(String esName) {
+    public static EsBatchClient getEsClient(String esName) {
         return notNullThen(esName, esClients::get);
     }
 
     public static void putExternalEsClient(String esName, @Nullable RestHighLevelClient esClient) {
-        notNullThenRun(esName, name -> eventBus.post(new ExternalEsClient(name, esClient)));
+        putExternalEsClient(esName, esClient, new EsBatchConfig());
+    }
+
+    public static void putExternalEsClient(String esName, @Nullable RestHighLevelClient esClient, EsBatchConfig batchConfig) {
+        notNullThenRun(esName, name -> eventBus.post(new ExternalEsClient(name, esClient, batchConfig)));
     }
 
     public static void configEsClient(String esName) {
@@ -133,5 +140,6 @@ public final class EsClientManager {
 
         private String esName;
         private RestHighLevelClient esClient;
+        private EsBatchConfig batchConfig;
     }
 }

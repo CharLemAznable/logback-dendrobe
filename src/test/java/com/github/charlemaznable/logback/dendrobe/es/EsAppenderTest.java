@@ -101,7 +101,11 @@ public class EsAppenderTest implements EsClientManagerListener {
         configured = false;
         setConfig("DEFAULT", "uris=" + elasticsearch.getHttpHostAddress() + "\n" +
                 "username=" + ELASTICSEARCH_USERNAME + "\n" +
-                "password=" + ELASTICSEARCH_PASSWORD + "\n");
+                "password=" + ELASTICSEARCH_PASSWORD + "\n" +
+                "maxBatchSize=1024\n" +
+                "initialDelay=4\n" +
+                "delay=4\n" +
+                "unit=SECONDS\n");
         listener().reset(parseStringToProperties("" +
                 "root[console.level]=info\n" +
                 CLASS_NAME + "[appenders]=[es]\n" +

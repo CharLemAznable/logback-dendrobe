@@ -7,4 +7,6 @@ public interface EsConfigService {
     String getEsConfigValue(String configKey);
 
     EsConfig parseEsConfig(String configKey, String configValue);
+
+    EsBatchConfig parseEsBatchConfig(String configKey, String configValue);
 }

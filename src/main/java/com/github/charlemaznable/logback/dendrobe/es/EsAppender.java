@@ -8,17 +8,9 @@ import ch.qos.logback.core.spi.FilterReply;
 import com.github.charlemaznable.logback.dendrobe.appender.AsyncAppender;
 import com.github.charlemaznable.logback.dendrobe.effect.Effector;
 import lombok.Setter;
-import lombok.SneakyThrows;
 import lombok.val;
-import org.elasticsearch.action.ActionListener;
-import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.action.index.IndexResponse;
-import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.common.xcontent.XContentType;
-import org.slf4j.helpers.Util;
 
 import java.util.Arrays;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.github.bingoohuang.utils.lang.Mapp.desc;
@@ -31,7 +23,6 @@ import static com.google.common.collect.Maps.newHashMap;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
-import static org.elasticsearch.client.RequestOptions.DEFAULT;
 
 public final class EsAppender extends AsyncAppender {
 
@@ -98,7 +89,7 @@ public final class EsAppender extends AsyncAppender {
             if (arguments.isEmpty()) {
                 val esClient = EsClientManager.getEsClient(esName);
                 if (isNull(esClient) || isNull(esIndex)) return;
-                indexAsync(esClient, esIndex, westId, paramMap);
+                esClient.addRequest(esIndex, westId, paramMap);
                 return;
             }
 
@@ -111,25 +102,8 @@ public final class EsAppender extends AsyncAppender {
 
                 val currentMap = newHashMap(paramMap);
                 currentMap.put("arg", desc(argument)); // trans to map
-                indexAsync(esClient, index, westId, currentMap);
+                esClient.addRequest(index, westId, currentMap);
             }
-        }
-
-        @SneakyThrows
-        private void indexAsync(RestHighLevelClient client, String index, String id, Map<String, ?> source) {
-            val indexRequest = new IndexRequest(index).id(id);
-            indexRequest.source(source, XContentType.JSON);
-            client.indexAsync(indexRequest, DEFAULT, new ActionListener<IndexResponse>() {
-                @Override
-                public void onResponse(IndexResponse indexResponse) {
-                    // empty method
-                }
-
-                @Override
-                public void onFailure(Exception e) {
-                    Util.report("ElasticSearch index failed", e);
-                }
-            });
         }
     }
 }
