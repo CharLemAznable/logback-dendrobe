@@ -2,6 +2,7 @@ package com.github.charlemaznable.logback.dendrobe.es;
 
 import com.github.charlemaznable.core.es.EsConfig;
 import com.github.charlemaznable.core.lang.concurrent.BatchExecutor;
+import com.github.charlemaznable.core.lang.concurrent.BatchExecutorConfig;
 import lombok.val;
 import org.elasticsearch.action.ActionListener;
 import org.elasticsearch.action.DocWriteRequest;
@@ -24,11 +25,11 @@ public final class EsBatchClient extends BatchExecutor<DocWriteRequest<?>> {
 
     private RestHighLevelClient client;
 
-    public static EsBatchClient startClient(EsConfig esConfig, EsBatchConfig batchConfig) {
+    public static EsBatchClient startClient(EsConfig esConfig, BatchExecutorConfig batchConfig) {
         return startClient(buildEsClient(esConfig), batchConfig);
     }
 
-    public static EsBatchClient startClient(RestHighLevelClient client, EsBatchConfig batchConfig) {
+    public static EsBatchClient startClient(RestHighLevelClient client, BatchExecutorConfig batchConfig) {
         val batchClient = new EsBatchClient(client, batchConfig);
         batchClient.start();
         return batchClient;
@@ -45,9 +46,8 @@ public final class EsBatchClient extends BatchExecutor<DocWriteRequest<?>> {
         closeEsClient(batchClient.client);
     }
 
-    public EsBatchClient(RestHighLevelClient client, EsBatchConfig batchConfig) {
-        super(batchConfig.getMaxBatchSize(), batchConfig.getInitialDelay(),
-                batchConfig.getDelay(), batchConfig.getUnit());
+    public EsBatchClient(RestHighLevelClient client, BatchExecutorConfig batchConfig) {
+        super(batchConfig);
         this.client = client;
     }
 

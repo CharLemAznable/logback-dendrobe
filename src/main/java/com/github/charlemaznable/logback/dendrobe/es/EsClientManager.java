@@ -1,5 +1,6 @@
 package com.github.charlemaznable.logback.dendrobe.es;
 
+import com.github.charlemaznable.core.lang.concurrent.BatchExecutorConfig;
 import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.Subscribe;
 import lombok.AllArgsConstructor;
@@ -16,6 +17,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import static com.github.charlemaznable.core.lang.Condition.notNullThen;
 import static com.github.charlemaznable.core.lang.Condition.notNullThenRun;
+import static com.github.charlemaznable.core.lang.Condition.nullThen;
 import static com.github.charlemaznable.logback.dendrobe.es.EsBatchClient.closeClient;
 import static com.github.charlemaznable.logback.dendrobe.es.EsBatchClient.startClient;
 import static com.github.charlemaznable.logback.dendrobe.es.EsBatchClient.stopClient;
@@ -58,7 +60,7 @@ public final class EsClientManager {
                 if (configValue.equals(esConfigs.get(esName))) return;
                 // 校验配置
                 val esConfig = configService().parseEsConfig(esName, configValue);
-                val batchConfig = configService().parseEsBatchConfig(esName, configValue);
+                val batchConfig = configService().parseBatchExecutorConfig(esName, configValue);
                 // 不论之前的EsClient是内部配置的还是外部导入的
                 // 此处都需要以当前的内部配置EsClient覆盖之
                 // 保存配置缓存
@@ -115,11 +117,13 @@ public final class EsClientManager {
     }
 
     public static void putExternalEsClient(String esName, @Nullable RestHighLevelClient esClient) {
-        putExternalEsClient(esName, esClient, new EsBatchConfig());
+        putExternalEsClient(esName, esClient, null);
     }
 
-    public static void putExternalEsClient(String esName, @Nullable RestHighLevelClient esClient, EsBatchConfig batchConfig) {
-        notNullThenRun(esName, name -> eventBus.post(new ExternalEsClient(name, esClient, batchConfig)));
+    public static void putExternalEsClient(String esName, @Nullable RestHighLevelClient esClient,
+                                           @Nullable BatchExecutorConfig batchConfig) {
+        notNullThenRun(esName, name -> eventBus.post(
+                new ExternalEsClient(name, esClient, nullThen(batchConfig, BatchExecutorConfig::new))));
     }
 
     public static void configEsClient(String esName) {
@@ -140,6 +144,6 @@ public final class EsClientManager {
 
         private String esName;
         private RestHighLevelClient esClient;
-        private EsBatchConfig batchConfig;
+        private BatchExecutorConfig batchConfig;
     }
 }

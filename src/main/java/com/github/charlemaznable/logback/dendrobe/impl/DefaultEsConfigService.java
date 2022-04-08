@@ -1,7 +1,7 @@
 package com.github.charlemaznable.logback.dendrobe.impl;
 
 import com.github.charlemaznable.core.es.EsConfig;
-import com.github.charlemaznable.logback.dendrobe.es.EsBatchConfig;
+import com.github.charlemaznable.core.lang.concurrent.BatchExecutorConfig;
 import com.github.charlemaznable.logback.dendrobe.es.EsConfigService;
 import lombok.val;
 
@@ -9,7 +9,7 @@ import static com.github.charlemaznable.core.es.EsClientElf.parsePropertiesToEsC
 import static com.github.charlemaznable.core.lang.ClzPath.classResourceAsString;
 import static com.github.charlemaznable.core.lang.Propertiess.parseStringToProperties;
 import static com.github.charlemaznable.core.lang.Propertiess.tryDecrypt;
-import static com.github.charlemaznable.logback.dendrobe.es.EsBatchConfig.parsePropertiesToEsBatchConfig;
+import static com.github.charlemaznable.core.lang.concurrent.BatchExecutorConfigElf.parsePropertiesToBatchExecutorConfig;
 
 public class DefaultEsConfigService implements EsConfigService {
 
@@ -26,8 +26,8 @@ public class DefaultEsConfigService implements EsConfigService {
     }
 
     @Override
-    public EsBatchConfig parseEsBatchConfig(String configKey, String configValue) {
+    public BatchExecutorConfig parseBatchExecutorConfig(String configKey, String configValue) {
         val properties = parseStringToProperties(configValue);
-        return parsePropertiesToEsBatchConfig(tryDecrypt(properties, configKey));
+        return parsePropertiesToBatchExecutorConfig(tryDecrypt(properties, configKey));
     }
 }
