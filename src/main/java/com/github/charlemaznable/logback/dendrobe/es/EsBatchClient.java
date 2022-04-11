@@ -57,7 +57,7 @@ public final class EsBatchClient extends BatchExecutor<DocWriteRequest<?>> {
 
     @Override
     public void batchExecute(List<DocWriteRequest<?>> requests) {
-        if (requests.isEmpty() || isNull(client)) return;
+        if (isNull(client)) return;
         client.bulkAsync(new BulkRequest().add(requests), DEFAULT,
                 new ActionListener<BulkResponse>() {
                     @Override
