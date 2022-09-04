@@ -27,6 +27,7 @@ import static java.util.Objects.nonNull;
 import static java.util.concurrent.Executors.newFixedThreadPool;
 import static lombok.AccessLevel.PRIVATE;
 
+@SuppressWarnings("deprecation")
 @NoArgsConstructor(access = PRIVATE)
 public final class EsClientManager {
 

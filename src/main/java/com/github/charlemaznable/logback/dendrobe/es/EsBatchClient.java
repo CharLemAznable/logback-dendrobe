@@ -10,7 +10,7 @@ import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.common.xcontent.XContentType;
+import org.elasticsearch.xcontent.XContentType;
 import org.slf4j.helpers.Util;
 
 import java.util.List;
@@ -21,6 +21,7 @@ import static com.github.charlemaznable.core.es.EsClientElf.closeEsClient;
 import static java.util.Objects.isNull;
 import static org.elasticsearch.client.RequestOptions.DEFAULT;
 
+@SuppressWarnings("deprecation")
 public final class EsBatchClient extends BatchExecutor<DocWriteRequest<?>> {
 
     private RestHighLevelClient client;
