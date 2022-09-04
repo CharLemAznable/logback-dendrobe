@@ -48,7 +48,7 @@ public class EsAppenderTest implements EsClientManagerListener {
 
     private static final String CLASS_NAME = EsAppenderTest.class.getName();
 
-    private static final String ELASTICSEARCH_VERSION = "7.15.2";
+    private static final String ELASTICSEARCH_VERSION = "7.17.4";
     private static final DockerImageName ELASTICSEARCH_IMAGE = DockerImageName
             .parse("docker.elastic.co/elasticsearch/elasticsearch")
             .withTag(ELASTICSEARCH_VERSION);
