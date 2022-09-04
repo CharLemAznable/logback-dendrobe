@@ -55,9 +55,7 @@ public class VertxAppenderTest implements VertxManagerListener {
     public static void beforeAll() {
         val vertxOptions = new VertxOptions();
         vertxOptions.setWorkerPoolSize(10);
-        val hazelcastConfig = new Config();
-        hazelcastConfig.getNetworkConfig().getJoin().getMulticastConfig().setEnabled(true);
-        vertxOptions.setClusterManager(new HazelcastClusterManager(hazelcastConfig));
+        vertxOptions.setClusterManager(new TestHazelcastClusterManager());
         vertx = VertxElf.buildVertx(vertxOptions);
         vertx.eventBus().consumer("logback.dendrobe",
                 (Handler<Message<JsonObject>>) event -> {
@@ -86,7 +84,7 @@ public class VertxAppenderTest implements VertxManagerListener {
         // 1. 内部配置, 从无到有
         configured = false;
         setConfig("DEFAULT", "workerPoolSize=42\n" +
-                "clusterManager=@io.vertx.spi.cluster.hazelcast.HazelcastClusterManager\n");
+                "clusterManager=@" + TestHazelcastClusterManager.class.getName() + "\n");
         listener().reset(parseStringToProperties("" +
                 "root[console.level]=info\n" +
                 CLASS_NAME + "[appenders]=[vertx]\n" +
@@ -118,7 +116,7 @@ public class VertxAppenderTest implements VertxManagerListener {
         // 3. 内部配置, VertxConfig更改
         configured = false;
         setConfig("DEFAULT", "workerPoolSize=24\n" +
-                "clusterManager=@io.vertx.spi.cluster.hazelcast.HazelcastClusterManager\n");
+                "clusterManager=@" + TestHazelcastClusterManager.class.getName() + "\n");
         listener().reset(parseStringToProperties("" +
                 "root[console.level]=info\n" +
                 CLASS_NAME + "[vertx.level]=info\n" +
@@ -170,9 +168,7 @@ public class VertxAppenderTest implements VertxManagerListener {
         // 1. 外部导入, 从无到有
         val vertxOptions = new VertxOptions();
         vertxOptions.setWorkerPoolSize(42);
-        val hazelcastConfig = new Config();
-        hazelcastConfig.getNetworkConfig().getJoin().getMulticastConfig().setEnabled(true);
-        vertxOptions.setClusterManager(new HazelcastClusterManager(hazelcastConfig));
+        vertxOptions.setClusterManager(new TestHazelcastClusterManager());
         val vertx = VertxElf.buildVertx(vertxOptions);
         VertxManager.putExternalVertx("CUSTOM", vertx);
         await().forever().until(() -> configured);
@@ -220,7 +216,7 @@ public class VertxAppenderTest implements VertxManagerListener {
         // 1. 内部配置转外部导入
         configured = false;
         setConfig("CROSS", "workerPoolSize=42\n" +
-                "clusterManager=@io.vertx.spi.cluster.hazelcast.HazelcastClusterManager\n");
+                "clusterManager=@" + TestHazelcastClusterManager.class.getName() + "\n");
         listener().reset(parseStringToProperties("" +
                 "root[console.level]=info\n" +
                 CLASS_NAME + "[vertx.level]=info\n" +
@@ -238,9 +234,7 @@ public class VertxAppenderTest implements VertxManagerListener {
         configured = false;
         val vertxOptions = new VertxOptions();
         vertxOptions.setWorkerPoolSize(24);
-        val hazelcastConfig = new Config();
-        hazelcastConfig.getNetworkConfig().getJoin().getMulticastConfig().setEnabled(true);
-        vertxOptions.setClusterManager(new HazelcastClusterManager(hazelcastConfig));
+        vertxOptions.setClusterManager(new TestHazelcastClusterManager());
         val vertx = VertxElf.buildVertx(vertxOptions);
         VertxManager.putExternalVertx("CROSS", vertx);
         await().forever().until(() -> configured);
@@ -323,6 +317,16 @@ public class VertxAppenderTest implements VertxManagerListener {
         @Override
         public String toString() {
             return info;
+        }
+    }
+
+    public static class TestHazelcastClusterManager extends HazelcastClusterManager {
+
+        public TestHazelcastClusterManager() {
+            super();
+            val hazelcastConfig = new Config();
+            hazelcastConfig.getNetworkConfig().getJoin().getMulticastConfig().setEnabled(true);
+            this.setConfig(hazelcastConfig);
         }
     }
 }
