@@ -3,6 +3,7 @@ package com.github.charlemaznable.logback.dendrobe.vertx;
 import com.github.charlemaznable.core.vertx.VertxElf;
 import com.github.charlemaznable.logback.dendrobe.VertxLogAddress;
 import com.github.charlemaznable.logback.dendrobe.VertxLogBean;
+import com.hazelcast.config.Config;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
@@ -54,7 +55,9 @@ public class VertxAppenderTest implements VertxManagerListener {
     public static void beforeAll() {
         val vertxOptions = new VertxOptions();
         vertxOptions.setWorkerPoolSize(10);
-        vertxOptions.setClusterManager(new HazelcastClusterManager());
+        val hazelcastConfig = new Config();
+        hazelcastConfig.getNetworkConfig().getJoin().getMulticastConfig().setEnabled(true);
+        vertxOptions.setClusterManager(new HazelcastClusterManager(hazelcastConfig));
         vertx = VertxElf.buildVertx(vertxOptions);
         vertx.eventBus().consumer("logback.dendrobe",
                 (Handler<Message<JsonObject>>) event -> {
@@ -167,7 +170,9 @@ public class VertxAppenderTest implements VertxManagerListener {
         // 1. 外部导入, 从无到有
         val vertxOptions = new VertxOptions();
         vertxOptions.setWorkerPoolSize(42);
-        vertxOptions.setClusterManager(new HazelcastClusterManager());
+        val hazelcastConfig = new Config();
+        hazelcastConfig.getNetworkConfig().getJoin().getMulticastConfig().setEnabled(true);
+        vertxOptions.setClusterManager(new HazelcastClusterManager(hazelcastConfig));
         val vertx = VertxElf.buildVertx(vertxOptions);
         VertxManager.putExternalVertx("CUSTOM", vertx);
         await().forever().until(() -> configured);
@@ -233,7 +238,9 @@ public class VertxAppenderTest implements VertxManagerListener {
         configured = false;
         val vertxOptions = new VertxOptions();
         vertxOptions.setWorkerPoolSize(24);
-        vertxOptions.setClusterManager(new HazelcastClusterManager());
+        val hazelcastConfig = new Config();
+        hazelcastConfig.getNetworkConfig().getJoin().getMulticastConfig().setEnabled(true);
+        vertxOptions.setClusterManager(new HazelcastClusterManager(hazelcastConfig));
         val vertx = VertxElf.buildVertx(vertxOptions);
         VertxManager.putExternalVertx("CROSS", vertx);
         await().forever().until(() -> configured);
