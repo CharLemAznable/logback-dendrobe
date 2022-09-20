@@ -7,11 +7,11 @@
     <parent>
         <groupId>com.github.charlemaznable</groupId>
         <artifactId>char-dependencies</artifactId>
-        <version>0.0.9-SNAPSHOT</version>
+        <version>0.1.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>logback-dendrobe</artifactId>
-    <version>0.1.9-SNAPSHOT</version>
+    <version>0.2.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>Logback Dendrobe</name>
@@ -51,8 +51,8 @@
             src/main/java/com/github/charlemaznable/logback/dendrobe/impl/DefaultHotUpdater.java
         </sonar.exclusions>
 
-        <char-elves.version>0.0.9-SNAPSHOT</char-elves.version>
-        <logback-dendrobe-annotations.version>0.1.9-SNAPSHOT</logback-dendrobe-annotations.version>
+        <char-elves.version>0.1.1-SNAPSHOT</char-elves.version>
+        <logback-dendrobe-annotations.version>0.2.1-SNAPSHOT</logback-dendrobe-annotations.version>
     </properties>
 
     <dependencies>
