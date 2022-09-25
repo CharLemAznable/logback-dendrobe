@@ -1,36 +1,30 @@
 package com.github.charlemaznable.logback.dendrobe.es;
 
+import co.elastic.clients.elasticsearch.ElasticsearchAsyncClient;
+import co.elastic.clients.elasticsearch.core.BulkRequest;
+import co.elastic.clients.elasticsearch.core.bulk.BulkOperation;
 import com.github.charlemaznable.core.es.EsConfig;
 import com.github.charlemaznable.core.lang.concurrent.BatchExecutor;
 import com.github.charlemaznable.core.lang.concurrent.BatchExecutorConfig;
 import lombok.val;
-import org.elasticsearch.action.ActionListener;
-import org.elasticsearch.action.DocWriteRequest;
-import org.elasticsearch.action.bulk.BulkRequest;
-import org.elasticsearch.action.bulk.BulkResponse;
-import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.xcontent.XContentType;
 import org.slf4j.helpers.Util;
 
 import java.util.List;
 import java.util.Map;
 
-import static com.github.charlemaznable.core.es.EsClientElf.buildEsClient;
-import static com.github.charlemaznable.core.es.EsClientElf.closeEsClient;
+import static com.github.charlemaznable.core.es.EsClientElf.buildElasticsearchAsyncClient;
+import static com.github.charlemaznable.core.es.EsClientElf.closeElasticsearchApiClient;
 import static java.util.Objects.isNull;
-import static org.elasticsearch.client.RequestOptions.DEFAULT;
 
-@SuppressWarnings("deprecation")
-public final class EsBatchClient extends BatchExecutor<DocWriteRequest<?>> {
+public final class EsBatchClient extends BatchExecutor<BulkOperation> {
 
-    private RestHighLevelClient client;
+    private ElasticsearchAsyncClient client;
 
     public static EsBatchClient startClient(EsConfig esConfig, BatchExecutorConfig batchConfig) {
-        return startClient(buildEsClient(esConfig), batchConfig);
+        return startClient(buildElasticsearchAsyncClient(esConfig), batchConfig);
     }
 
-    public static EsBatchClient startClient(RestHighLevelClient client, BatchExecutorConfig batchConfig) {
+    public static EsBatchClient startClient(ElasticsearchAsyncClient client, BatchExecutorConfig batchConfig) {
         val batchClient = new EsBatchClient(client, batchConfig);
         batchClient.start();
         return batchClient;
@@ -44,32 +38,28 @@ public final class EsBatchClient extends BatchExecutor<DocWriteRequest<?>> {
 
     public static void closeClient(EsBatchClient batchClient) {
         if (isNull(batchClient)) return;
-        closeEsClient(batchClient.client);
+        closeElasticsearchApiClient(batchClient.client);
     }
 
-    public EsBatchClient(RestHighLevelClient client, BatchExecutorConfig batchConfig) {
+    public EsBatchClient(ElasticsearchAsyncClient client, BatchExecutorConfig batchConfig) {
         super(batchConfig);
         this.client = client;
     }
 
     public void addRequest(String index, String id, Map<String, ?> source) {
-        add(new IndexRequest(index).id(id).source(source, XContentType.JSON));
+        add(BulkOperation.of(bulkBuilder ->
+                bulkBuilder.index(indexBuilder ->
+                        indexBuilder.index(index).id(id).document(source)
+                )));
     }
 
     @Override
-    public void batchExecute(List<DocWriteRequest<?>> requests) {
+    public void batchExecute(List<BulkOperation> requests) {
         if (isNull(client)) return;
-        client.bulkAsync(new BulkRequest().add(requests), DEFAULT,
-                new ActionListener<BulkResponse>() {
-                    @Override
-                    public void onResponse(BulkResponse indexResponse) {
-                        // empty method
-                    }
-
-                    @Override
-                    public void onFailure(Exception e) {
-                        Util.report("ElasticSearch async failed", e);
-                    }
-                });
+        client.bulk(BulkRequest.of(builder -> builder.operations(requests)))
+                .whenComplete(((bulkResponse, exception) -> {
+                    if (isNull(exception)) return;
+                    Util.report("ElasticSearch async failed", exception);
+                }));
     }
 }

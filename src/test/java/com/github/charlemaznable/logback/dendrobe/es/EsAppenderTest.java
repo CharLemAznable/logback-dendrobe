@@ -1,5 +1,9 @@
 package com.github.charlemaznable.logback.dendrobe.es;
 
+import co.elastic.clients.elasticsearch.ElasticsearchClient;
+import co.elastic.clients.elasticsearch.core.SearchRequest;
+import co.elastic.clients.elasticsearch.indices.CreateIndexRequest;
+import co.elastic.clients.elasticsearch.indices.OpenRequest;
 import com.github.charlemaznable.core.es.EsConfig;
 import com.github.charlemaznable.logback.dendrobe.EsLogBean;
 import com.github.charlemaznable.logback.dendrobe.EsLogIndex;
@@ -8,12 +12,6 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.elasticsearch.action.admin.indices.open.OpenIndexRequest;
-import org.elasticsearch.action.search.SearchRequest;
-import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.client.indices.CreateIndexRequest;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -25,8 +23,9 @@ import org.testcontainers.utility.DockerImageName;
 import java.time.Duration;
 import java.util.Map;
 
-import static com.github.charlemaznable.core.es.EsClientElf.buildEsClient;
-import static com.github.charlemaznable.core.es.EsClientElf.closeEsClient;
+import static com.github.charlemaznable.core.es.EsClientElf.buildElasticsearchAsyncClient;
+import static com.github.charlemaznable.core.es.EsClientElf.buildElasticsearchClient;
+import static com.github.charlemaznable.core.es.EsClientElf.closeElasticsearchApiClient;
 import static com.github.charlemaznable.core.lang.Propertiess.parseStringToProperties;
 import static com.github.charlemaznable.logback.dendrobe.TestHotUpdater.listener;
 import static com.github.charlemaznable.logback.dendrobe.es.TestEsConfigService.removeConfig;
@@ -35,14 +34,12 @@ import static com.google.common.collect.Lists.newArrayList;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.awaitility.Awaitility.await;
-import static org.elasticsearch.client.RequestOptions.DEFAULT;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SuppressWarnings("deprecation")
 @Slf4j
 public class EsAppenderTest implements EsClientManagerListener {
 
@@ -60,7 +57,7 @@ public class EsAppenderTest implements EsClientManagerListener {
             = new ElasticsearchContainer(ELASTICSEARCH_IMAGE)
             .withPassword(ELASTICSEARCH_PASSWORD);
 
-    private static RestHighLevelClient esClient;
+    private static ElasticsearchClient esClient;
 
     private static Logger root;
     private static Logger self;
@@ -76,13 +73,12 @@ public class EsAppenderTest implements EsClientManagerListener {
         esConfig.setUris(newArrayList(elasticsearch.getHttpHostAddress()));
         esConfig.setUsername(ELASTICSEARCH_USERNAME);
         esConfig.setPassword(ELASTICSEARCH_PASSWORD);
-        esClient = buildEsClient(esConfig);
+        esClient = buildElasticsearchClient(esConfig);
 
-        val createIndexRequest = new CreateIndexRequest("logback.dendrobe");
-        val createIndexResponse = esClient.indices()
-                .create(createIndexRequest, DEFAULT);
-        val openIndexRequest = new OpenIndexRequest("logback.dendrobe");
-        val openIndexResponse = esClient.indices().open(openIndexRequest, DEFAULT);
+        val createIndexRequest = CreateIndexRequest.of(builder -> builder.index("logback.dendrobe"));
+        val createIndexResponse = esClient.indices().create(createIndexRequest);
+        val openIndexRequest = OpenRequest.of(builder -> builder.index("logback.dendrobe"));
+        val openIndexResponse = esClient.indices().open(openIndexRequest);
 
         root = LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
         self = LoggerFactory.getLogger(EsAppenderTest.class);
@@ -90,7 +86,7 @@ public class EsAppenderTest implements EsClientManagerListener {
 
     @AfterAll
     public static void afterAll() {
-        closeEsClient(esClient);
+        closeElasticsearchApiClient(esClient);
         elasticsearch.stop();
     }
 
@@ -171,7 +167,7 @@ public class EsAppenderTest implements EsClientManagerListener {
         customConfig.setUris(newArrayList(elasticsearch.getHttpHostAddress()));
         customConfig.setUsername(ELASTICSEARCH_USERNAME);
         customConfig.setPassword(ELASTICSEARCH_PASSWORD);
-        val customClient = buildEsClient(customConfig);
+        val customClient = buildElasticsearchAsyncClient(customConfig);
         EsClientManager.putExternalEsClient("CUSTOM", customClient);
         await().forever().until(() -> configured);
 
@@ -196,7 +192,7 @@ public class EsAppenderTest implements EsClientManagerListener {
         EsClientManager.putExternalEsClient("CUSTOM", null);
         await().until(() -> isNull(EsClientManager.getEsClient("CUSTOM")));
 
-        closeEsClient(customClient);
+        closeElasticsearchApiClient(customClient);
 
         EsClientManager.removeListener(this);
     }
@@ -227,7 +223,7 @@ public class EsAppenderTest implements EsClientManagerListener {
         crossConfig.setUris(newArrayList(elasticsearch.getHttpHostAddress()));
         crossConfig.setUsername(ELASTICSEARCH_USERNAME);
         crossConfig.setPassword(ELASTICSEARCH_PASSWORD);
-        val crossClient = buildEsClient(crossConfig);
+        val crossClient = buildElasticsearchAsyncClient(crossConfig);
         EsClientManager.putExternalEsClient("CROSS", crossClient);
         await().forever().until(() -> configured);
 
@@ -262,13 +258,18 @@ public class EsAppenderTest implements EsClientManagerListener {
     @SuppressWarnings("unchecked")
     @SneakyThrows
     private void assertSearchContent(String content, String info) {
-        val searchRequest = new SearchRequest();
-        searchRequest.source(SearchSourceBuilder.searchSource()
-                .query(QueryBuilders.matchPhraseQuery("event.message", content)));
-        val searchResponse = esClient.search(searchRequest, DEFAULT);
-        val searchResponseHits = searchResponse.getHits();
-        assertTrue(searchResponseHits.getHits().length > 0);
-        val responseMap = searchResponseHits.getAt(0).getSourceAsMap();
+        val searchRequest = SearchRequest.of(builder ->
+                builder.query(queryBuilder ->
+                        queryBuilder.matchPhrase(phrase ->
+                                phrase.field("event.message").query(content)
+                        )
+                )
+        );
+        val searchResponse = esClient.search(searchRequest, Map.class);
+        val searchResponseHits = searchResponse.hits().hits();
+        assertTrue(searchResponseHits.size() > 0);
+        val responseMap = searchResponseHits.get(0).source();
+        assertNotNull(responseMap);
         assertEquals(content, ((Map<String, String>) responseMap.get("event")).get("message"));
         if (nonNull(info)) assertEquals(info, ((Map<String, String>) responseMap.get("arg")).get("info"));
     }

@@ -1,5 +1,6 @@
 package com.github.charlemaznable.logback.dendrobe.es;
 
+import co.elastic.clients.elasticsearch.ElasticsearchAsyncClient;
 import com.github.charlemaznable.core.lang.concurrent.BatchExecutorConfig;
 import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.Subscribe;
@@ -7,7 +8,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.val;
-import org.elasticsearch.client.RestHighLevelClient;
 import org.slf4j.helpers.Util;
 
 import javax.annotation.Nullable;
@@ -21,13 +21,11 @@ import static com.github.charlemaznable.core.lang.Condition.nullThen;
 import static com.github.charlemaznable.logback.dendrobe.es.EsBatchClient.closeClient;
 import static com.github.charlemaznable.logback.dendrobe.es.EsBatchClient.startClient;
 import static com.github.charlemaznable.logback.dendrobe.es.EsBatchClient.stopClient;
-import static com.github.charlemaznable.logback.dendrobe.es.EsConfigServiceElf.configService;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static java.util.concurrent.Executors.newFixedThreadPool;
 import static lombok.AccessLevel.PRIVATE;
 
-@SuppressWarnings("deprecation")
 @NoArgsConstructor(access = PRIVATE)
 public final class EsClientManager {
 
@@ -43,7 +41,8 @@ public final class EsClientManager {
             @Subscribe
             public void configEsClient(String esName) {
                 // 内部配置的EsClient
-                val configValue = configService().getEsConfigValue(esName);
+                val configValue = EsConfigServiceElf
+                        .configService().getEsConfigValue(esName);
                 if (isNull(configValue)) {
                     // 不存在对应的配置
                     // 移除配置缓存
@@ -60,8 +59,10 @@ public final class EsClientManager {
                 // 配置未更改 -> 直接返回
                 if (configValue.equals(esConfigs.get(esName))) return;
                 // 校验配置
-                val esConfig = configService().parseEsConfig(esName, configValue);
-                val batchConfig = configService().parseBatchExecutorConfig(esName, configValue);
+                val esConfig = EsConfigServiceElf.configService()
+                        .parseEsConfig(esName, configValue);
+                val batchConfig = EsConfigServiceElf.configService()
+                        .parseBatchExecutorConfig(esName, configValue);
                 // 不论之前的EsClient是内部配置的还是外部导入的
                 // 此处都需要以当前的内部配置EsClient覆盖之
                 // 保存配置缓存
@@ -117,11 +118,11 @@ public final class EsClientManager {
         return notNullThen(esName, esClients::get);
     }
 
-    public static void putExternalEsClient(String esName, @Nullable RestHighLevelClient esClient) {
+    public static void putExternalEsClient(String esName, @Nullable ElasticsearchAsyncClient esClient) {
         putExternalEsClient(esName, esClient, null);
     }
 
-    public static void putExternalEsClient(String esName, @Nullable RestHighLevelClient esClient,
+    public static void putExternalEsClient(String esName, @Nullable ElasticsearchAsyncClient esClient,
                                            @Nullable BatchExecutorConfig batchConfig) {
         notNullThenRun(esName, name -> eventBus.post(
                 new ExternalEsClient(name, esClient, nullThen(batchConfig, BatchExecutorConfig::new))));
@@ -144,7 +145,7 @@ public final class EsClientManager {
     private static class ExternalEsClient {
 
         private String esName;
-        private RestHighLevelClient esClient;
+        private ElasticsearchAsyncClient esClient;
         private BatchExecutorConfig batchConfig;
     }
 }
