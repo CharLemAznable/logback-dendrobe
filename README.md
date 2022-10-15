@@ -29,7 +29,7 @@
 <dependency>
   <groupId>com.github.charlemaznable</groupId>
   <artifactId>logback-dendrobe</artifactId>
-  <version>0.2.2</version>
+  <version>2022.0.0</version>
 </dependency>
 ```
 
@@ -39,7 +39,7 @@
 <dependency>
   <groupId>com.github.charlemaznable</groupId>
   <artifactId>logback-dendrobe</artifactId>
-  <version>0.2.3-SNAPSHOT</version>
+  <version>2022.0.1-SNAPSHOT</version>
 </dependency>
 ```
 
