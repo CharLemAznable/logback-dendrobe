@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
-import java.util.stream.Collectors;
 
 import static com.github.charlemaznable.core.lang.Await.awaitForMillis;
 import static com.github.charlemaznable.core.lang.Await.awaitForSeconds;
@@ -80,15 +79,17 @@ public class RollingFileAppenderTest {
             log.info("info logging");
             log.warn("warn logging");
             log.error("error logging");
-            expectBuilder.append(" INFO info logging\n" +
-                    " WARN warn logging\n" +
-                    "ERROR error logging\n");
+            expectBuilder.append("""
+                     INFO info logging
+                     WARN warn logging
+                    ERROR error logging
+                    """);
         }
         awaitForSeconds(3);
 
         FileUtils.waitFor(new File("rolling"), 5);
         val ilogs = FileUtils.listFiles(new File("rolling"), new String[]{"ilog"}, false)
-                .stream().sorted().collect(Collectors.toList());
+                .stream().sorted().toList();
         assertTrue(ilogs.size() > 1);
         val ilogBuilder = new StringBuilder();
         for (val logFile : ilogs) {
@@ -120,15 +121,17 @@ public class RollingFileAppenderTest {
             log.info("info logging");
             log.warn("warn logging");
             log.error("error logging");
-            expectBuilder.append(" INFO info logging\n" +
-                    " WARN warn logging\n" +
-                    "ERROR error logging\n");
+            expectBuilder.append("""
+                     INFO info logging
+                     WARN warn logging
+                    ERROR error logging
+                    """);
             awaitForSeconds(1);
         }
 
         FileUtils.waitFor(new File("rolling"), 5);
         val dlogs = FileUtils.listFiles(new File("rolling"), new String[]{"dlog"}, false)
-                .stream().sorted().collect(Collectors.toList());
+                .stream().sorted().toList();
         assertTrue(dlogs.size() > 1);
         val dlogBuilder = new StringBuilder();
         for (val logFile : dlogs) {
@@ -160,15 +163,17 @@ public class RollingFileAppenderTest {
             log.info("info logging");
             log.warn("warn logging");
             log.error("error logging");
-            expectBuilder.append(" INFO info logging\n" +
-                    " WARN warn logging\n" +
-                    "ERROR error logging\n");
+            expectBuilder.append("""
+                     INFO info logging
+                     WARN warn logging
+                    ERROR error logging
+                    """);
             awaitForMillis(50);
         }
 
         FileUtils.waitFor(new File("rolling"), 5);
         val clogs = FileUtils.listFiles(new File("rolling"), new String[]{"clog"}, false)
-                .stream().sorted().collect(Collectors.toList());
+                .stream().sorted().toList();
         assertTrue(clogs.size() > 1);
         val clogBuilder = new StringBuilder();
         for (val logFile : clogs) {

@@ -11,18 +11,14 @@ import static lombok.AccessLevel.PRIVATE;
 @NoArgsConstructor(access = PRIVATE)
 final class VertxOptionsServiceElf {
 
-    private static VertxOptionsService optionsService;
+    private static final VertxOptionsService optionsService;
 
     static {
-        loadVertxOptionsService();
+        optionsService = findVertxOptionsService();
     }
 
     public static VertxOptionsService optionsService() {
         return optionsService;
-    }
-
-    static void loadVertxOptionsService() {
-        optionsService = findVertxOptionsService();
     }
 
     private static VertxOptionsService findVertxOptionsService() {

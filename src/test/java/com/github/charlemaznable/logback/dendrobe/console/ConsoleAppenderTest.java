@@ -52,9 +52,11 @@ public class ConsoleAppenderTest {
 
         val outputBuffer = ConsoleTarget.mockBufferByName("dendrobe-config");
         assertNotNull(outputBuffer);
-        assertEquals("test  INFO info logging\n" +
-                        "test  WARN warn logging\n" +
-                        "test ERROR error logging\n",
+        assertEquals("""
+                        test  INFO info logging
+                        test  WARN warn logging
+                        test ERROR error logging
+                        """,
                 outputBuffer.output());
     }
 

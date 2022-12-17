@@ -18,7 +18,7 @@ import static java.util.Objects.isNull;
 
 public final class EsBatchClient extends BatchExecutor<BulkOperation> {
 
-    private ElasticsearchAsyncClient client;
+    private final ElasticsearchAsyncClient client;
 
     public static EsBatchClient startClient(EsConfig esConfig, BatchExecutorConfig batchConfig) {
         return startClient(buildElasticsearchAsyncClient(esConfig), batchConfig);

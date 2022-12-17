@@ -61,10 +61,12 @@ public class FileAppenderTest {
 
         val output = FileUtils.readFileToString(
                 new File("FileAppenderTest.log"), StandardCharsets.UTF_8);
-        assertEquals("test  INFO info logging\n" +
-                "test  WARN warn logging\n" +
-                "test ERROR error logging\n" +
-                "test  WARN warn logging append\n" +
-                "test ERROR error logging append\n", output);
+        assertEquals("""
+                test  INFO info logging
+                test  WARN warn logging
+                test ERROR error logging
+                test  WARN warn logging append
+                test ERROR error logging append
+                """, output);
     }
 }

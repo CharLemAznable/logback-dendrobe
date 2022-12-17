@@ -34,10 +34,11 @@ public class LogbackDendrobeListenerTest {
         val rootLogger = (Logger) LoggerFactory.getLogger("root");
         val thisLogger = (Logger) log;
 
-        listener().reset(parseStringToProperties("" +
-                "ROOT[LEVEL]=INFO\n" +
-                "ROOT[ADDITIVITY]=true\n" +
-                "ROOT[CONSOLE.LEVEL]=DEBUG\n"));
+        listener().reset(parseStringToProperties("""
+                ROOT[LEVEL]=INFO
+                ROOT[ADDITIVITY]=true
+                ROOT[CONSOLE.LEVEL]=DEBUG
+                """));
         assertEquals(Level.INFO, rootLogger.getLevel());
         assertTrue(rootLogger.isAdditive());
         assertTrue(rootLogger.isDebugEnabled()); // decide by turbo filter
@@ -46,10 +47,11 @@ public class LogbackDendrobeListenerTest {
         assertTrue(thisLogger.isAdditive());
         assertTrue(thisLogger.isDebugEnabled()); // decide by turbo filter
 
-        listener().reset(parseStringToProperties("" +
-                "ROOT[LEVEL]=warn\n" +
-                "ROOT[ADDITIVITY]=false\n" +
-                "ROOT[CONSOLE.LEVEL]=info\n"));
+        listener().reset(parseStringToProperties("""
+                ROOT[LEVEL]=warn
+                ROOT[ADDITIVITY]=false
+                ROOT[CONSOLE.LEVEL]=info
+                """));
         assertEquals(Level.WARN, rootLogger.getLevel());
         assertFalse(rootLogger.isAdditive());
         assertFalse(rootLogger.isDebugEnabled()); // decide by turbo filter
@@ -81,13 +83,13 @@ public class LogbackDendrobeListenerTest {
     public void testLogbackDendrobeListenerLoggerContext() {
         val loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
 
-        listener().reset(parseStringToProperties("" +
-                "context.packagingDataEnabled=Y\n" +
-                "context.maxCallerDataDepth=4\n" +
-                "context.frameworkPackages=com.github.charlemaznable.logback.dendrobe\n" +
-                "context.property[dendrobe]=test\n" +
-                "context.property[dendrobe2=test\n" +
-                "root[console.target]=System.warn"));
+        listener().reset(parseStringToProperties("""
+                context.packagingDataEnabled=Y
+                context.maxCallerDataDepth=4
+                context.frameworkPackages=com.github.charlemaznable.logback.dendrobe
+                context.property[dendrobe]=test
+                context.property[dendrobe2=test
+                root[console.target]=System.warn"""));
         assertTrue(loggerContext.isPackagingDataEnabled());
         assertEquals(4, loggerContext.getMaxCallerDataDepth());
         assertEquals("com.github.charlemaznable.logback.dendrobe", loggerContext.getFrameworkPackages().get(0));

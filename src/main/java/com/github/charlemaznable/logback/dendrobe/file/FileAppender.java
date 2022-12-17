@@ -14,7 +14,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 
 public final class FileAppender extends AsyncOutputStreamAppender {
 
-    private ch.qos.logback.core.FileAppender<ILoggingEvent> appender;
+    private final ch.qos.logback.core.FileAppender<ILoggingEvent> appender;
 
     public FileAppender() {
         this.appender = new ch.qos.logback.core.FileAppender<>();

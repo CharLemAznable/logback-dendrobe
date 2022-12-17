@@ -17,7 +17,7 @@ import static com.github.charlemaznable.logback.dendrobe.console.ConsoleEffector
 
 public final class ConsoleAppender extends AsyncOutputStreamAppender {
 
-    private InternalAppender appender;
+    private final InternalAppender appender;
 
     public ConsoleAppender() {
         this.appender = new InternalAppender();

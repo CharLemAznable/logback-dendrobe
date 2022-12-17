@@ -12,7 +12,6 @@ import lombok.Setter;
 import lombok.val;
 
 import java.util.Arrays;
-import java.util.stream.Collectors;
 
 import static com.github.charlemaznable.logback.dendrobe.appender.LoggingEventElf.buildEventMap;
 import static com.github.charlemaznable.logback.dendrobe.eql.EqlCaches.EqlLogBeanEqlCache.getEqlLogBeanEql;
@@ -33,7 +32,7 @@ public final class EqlAppender extends AsyncAppender {
 
     public static final String DEFAULT_EQL_CONNECTION = "DEFAULT";
 
-    private InternalAppender appender;
+    private final InternalAppender appender;
 
     public EqlAppender() {
         this.appender = new InternalAppender();
@@ -103,8 +102,7 @@ public final class EqlAppender extends AsyncAppender {
 
                 val argumentArray = defaultIfNull(eventObject.getArgumentArray(), new Object[0]);
                 val arguments = Arrays.stream(argumentArray)
-                        .filter(arg -> nonNull(arg) && isEqlLogBeanPresent(arg.getClass()))
-                        .collect(Collectors.toList());
+                        .filter(arg -> nonNull(arg) && isEqlLogBeanPresent(arg.getClass())).toList();
                 // 日志不包含@EqlLogBean注解的参数, 执行默认连接的默认SQL
                 if (arguments.isEmpty()) {
                     val eql = EqlLogBeanEqlCache.getEqlLogBeanEql(eqlConnection);

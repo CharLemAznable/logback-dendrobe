@@ -15,6 +15,7 @@ import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.utility.DockerImageName;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Date;
 
 import static com.github.charlemaznable.core.lang.Await.awaitForMillis;
@@ -23,7 +24,6 @@ import static com.github.charlemaznable.logback.dendrobe.TestHotUpdater.listener
 import static com.github.charlemaznable.logback.dendrobe.eql.TestEqlConfigService.setConfig;
 import static java.lang.Runtime.getRuntime;
 import static java.lang.System.currentTimeMillis;
-import static java.math.BigDecimal.ROUND_HALF_UP;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 @Slf4j
@@ -40,7 +40,7 @@ public class EqlAppenderBatchTest {
             "  primary key (`log_id`)" +
             ");\n";
     private static final DockerImageName mysqlImageName = DockerImageName.parse("mysql:5.7.34");
-    private static MySQLContainer mysql = new MySQLContainer<>(mysqlImageName).withDatabaseName(DBBatch);
+    private static final MySQLContainer<?> mysql = new MySQLContainer<>(mysqlImageName).withDatabaseName(DBBatch);
 
     @BeforeAll
     public static void beforeAll() {
@@ -118,7 +118,7 @@ public class EqlAppenderBatchTest {
         Util.report("Original time: " + batchRunTime + "ms, " +
                 "logging time: " + batchRunLogTime + "ms, " +
                 "rating: " + new BigDecimal(batchRunLogTime).divide(
-                new BigDecimal(batchRunTime), 2, ROUND_HALF_UP).toString());
+                new BigDecimal(batchRunTime), 2, RoundingMode.HALF_UP));
     }
 
     @Getter

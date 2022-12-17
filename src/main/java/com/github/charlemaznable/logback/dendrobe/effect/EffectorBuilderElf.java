@@ -9,7 +9,7 @@ import static lombok.AccessLevel.PRIVATE;
 @NoArgsConstructor(access = PRIVATE)
 final class EffectorBuilderElf {
 
-    private static ServiceLoader<EffectorBuilder> builders;
+    private static final ServiceLoader<EffectorBuilder> builders;
 
     static {
         builders = ServiceLoader.load(EffectorBuilder.class);

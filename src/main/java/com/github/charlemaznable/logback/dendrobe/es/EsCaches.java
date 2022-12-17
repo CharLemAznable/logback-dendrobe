@@ -71,8 +71,9 @@ public final class EsCaches {
 
         static String getEsIndex(Class<?> clazz, String defaultEsIndex) {
             val esLogIndexOptional = getUnchecked(cache, clazz);
-            val esIndex = !esLogIndexOptional.isPresent() ? defaultEsIndex
-                    : defaultIfBlank(esLogIndexOptional.get().value(), defaultEsIndex);
+            val esIndex = esLogIndexOptional
+                    .map(index -> defaultIfBlank(index.value(), defaultEsIndex))
+                    .orElse(defaultEsIndex);
             return defaultIfBlank(esIndex, null);
         }
 

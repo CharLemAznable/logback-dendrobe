@@ -71,8 +71,9 @@ public final class VertxCaches {
 
         static String getVertxAddress(Class<?> clazz, String defaultAddress) {
             val vertxLogAddressOptional = getUnchecked(cache, clazz);
-            val vertxAddress = !vertxLogAddressOptional.isPresent() ? defaultAddress
-                    : defaultIfBlank(vertxLogAddressOptional.get().value(), defaultAddress);
+            val vertxAddress = vertxLogAddressOptional
+                    .map(address -> defaultIfBlank(address.value(), defaultAddress))
+                    .orElse(defaultAddress);
             return defaultIfBlank(vertxAddress, null);
         }
 

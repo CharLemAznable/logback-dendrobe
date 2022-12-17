@@ -58,8 +58,8 @@ public class EqlAppenderTest {
     private static final String SELECT_SIMPLE_LOG_BY_ID = "" +
             "select log_id, log_content, log_date, log_date_time from simple_log where log_id = ##";
     private static final DockerImageName mysqlImageName = DockerImageName.parse("mysql:5.7.34");
-    private static MySQLContainer mysql0 = new MySQLContainer<>(mysqlImageName).withDatabaseName(DB0);
-    private static MySQLContainer mysql1 = new MySQLContainer<>(mysqlImageName).withDatabaseName(DB1);
+    private static final MySQLContainer<?> mysql0 = new MySQLContainer<>(mysqlImageName).withDatabaseName(DB0);
+    private static final MySQLContainer<?> mysql1 = new MySQLContainer<>(mysqlImageName).withDatabaseName(DB1);
     private static Logger root;
     private static Logger self;
 
@@ -160,7 +160,7 @@ public class EqlAppenderTest {
         assertEquals("(test||)no db log null: null", queryNoDbLogNull.getLogContent());
 
         val queryNoDbLogNotLog = simpleLogs.get(3);
-        assertEquals("(test||)no db log not log: " + notLog.toString(), queryNoDbLogNotLog.getLogContent());
+        assertEquals("(test||)no db log not log: " + notLog, queryNoDbLogNotLog.getLogContent());
 
         val annotatedLog = new AnnotatedLog();
         annotatedLog.setALogId("1001");
@@ -265,9 +265,11 @@ public class EqlAppenderTest {
             self.info("info logging");
             self.warn("warn logging");
             self.error("error logging");
-            expectBuilder.append("info logging\n" +
-                    "warn logging\n" +
-                    "error logging\n");
+            expectBuilder.append("""
+                    info logging
+                    warn logging
+                    error logging
+                    """);
             awaitForSeconds(1);
         }
 
@@ -301,9 +303,11 @@ public class EqlAppenderTest {
             self.info("{}", new RollSqlLog("bean info logging"));
             self.warn("{}", new RollSqlLog("bean warn logging"));
             self.error("{}", new RollSqlLog("bean error logging"));
-            expectBuilder.append("bean info logging\n" +
-                    "bean warn logging\n" +
-                    "bean error logging\n");
+            expectBuilder.append("""
+                    bean info logging
+                    bean warn logging
+                    bean error logging
+                    """);
             awaitForSeconds(1);
         }
 

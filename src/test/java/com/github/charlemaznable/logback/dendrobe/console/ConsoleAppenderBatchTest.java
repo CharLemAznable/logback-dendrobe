@@ -7,13 +7,13 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.helpers.Util;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 import static com.github.charlemaznable.core.lang.Await.awaitForMillis;
 import static com.github.charlemaznable.core.lang.Propertiess.parseStringToProperties;
 import static com.github.charlemaznable.logback.dendrobe.TestHotUpdater.listener;
 import static java.lang.Runtime.getRuntime;
 import static java.lang.System.currentTimeMillis;
-import static java.math.BigDecimal.ROUND_HALF_UP;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 @Slf4j
@@ -76,7 +76,7 @@ public class ConsoleAppenderBatchTest {
         Util.report("Original time: " + batchRunTime + "ms, " +
                 "logging time: " + batchRunLogTime + "ms, " +
                 "rating: " + new BigDecimal(batchRunLogTime).divide(
-                new BigDecimal(batchRunTime), 2, ROUND_HALF_UP).toString());
+                new BigDecimal(batchRunTime), 2, RoundingMode.HALF_UP));
 
         ConsoleTarget.tearDownMockConsole();
     }

@@ -9,6 +9,7 @@ import org.n3r.eql.Eql;
 
 import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 import java.util.function.Consumer;
 
 import static com.github.charlemaznable.core.lang.Condition.checkNotNull;
@@ -25,7 +26,7 @@ public final class EqlTableNameRolling {
     private final Object rollingLock = new Object();
     private FileNamePattern tableNamePattern;
     private RollingCalendar rollingCalendar;
-    private Date dateInCurrentPeriod = new Date(0);
+    private final Date dateInCurrentPeriod = new Date(0);
     private long nextCheck = 0;
     private boolean enabled = false;
     @Getter
@@ -41,9 +42,9 @@ public final class EqlTableNameRolling {
         if (!hasDateToken || hasIntegerToken) return;
 
         RollingCalendar rc;
-        if (dateTokenConverter.getTimeZone() != null) {
+        if (dateTokenConverter.getZoneId() != null) {
             rc = new RollingCalendar(dateTokenConverter.getDatePattern(),
-                    dateTokenConverter.getTimeZone(), Locale.getDefault());
+                    TimeZone.getTimeZone(dateTokenConverter.getZoneId()), Locale.getDefault());
         } else {
             rc = new RollingCalendar(dateTokenConverter.getDatePattern());
         }

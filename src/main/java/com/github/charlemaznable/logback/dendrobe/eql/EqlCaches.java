@@ -115,7 +115,7 @@ final class EqlCaches {
 
         static boolean useEqlLogSql(Class<?> clazz, Eql eql) {
             val eqlLogSqlOptional = getUnchecked(cache, clazz);
-            if (!eqlLogSqlOptional.isPresent()) return false;
+            if (eqlLogSqlOptional.isEmpty()) return false;
 
             val eqlLogSql = eqlLogSqlOptional.get();
             useSqlFile(eql, eqlLogSql.sqlFile(),
@@ -223,7 +223,7 @@ final class EqlCaches {
 
         static String getTableNamePattern(Class<?> clazz) {
             val eqlLogRollingSqlOptional = getUnchecked(cache, clazz);
-            if (!eqlLogRollingSqlOptional.isPresent()) return null;
+            if (eqlLogRollingSqlOptional.isEmpty()) return null;
 
             val eqlLogRollingSql = eqlLogRollingSqlOptional.get();
             return eqlLogRollingSql.tableNamePattern();
@@ -231,7 +231,7 @@ final class EqlCaches {
 
         static boolean useEqlLogRollingSql(Class<?> clazz, Eql eql) {
             val eqlLogRollingSqlOptional = getUnchecked(cache, clazz);
-            if (!eqlLogRollingSqlOptional.isPresent()) return false;
+            if (eqlLogRollingSqlOptional.isEmpty()) return false;
 
             val eqlLogRollingSql = eqlLogRollingSqlOptional.get();
             useSqlFile(eql, eqlLogRollingSql.sqlFile(),

@@ -11,7 +11,6 @@ import lombok.Setter;
 import lombok.val;
 
 import java.util.Arrays;
-import java.util.stream.Collectors;
 
 import static com.github.bingoohuang.utils.lang.Mapp.desc;
 import static com.github.charlemaznable.logback.dendrobe.appender.LoggingEventElf.buildEventMap;
@@ -28,7 +27,7 @@ public final class EsAppender extends AsyncAppender {
 
     public static final String DEFAULT_ES_NAME = "DEFAULT";
 
-    private InternalAppender appender;
+    private final InternalAppender appender;
 
     public EsAppender() {
         this.appender = new InternalAppender();
@@ -83,8 +82,7 @@ public final class EsAppender extends AsyncAppender {
 
             val argumentArray = defaultIfNull(eventObject.getArgumentArray(), new Object[0]);
             val arguments = Arrays.stream(argumentArray)
-                    .filter(arg -> nonNull(arg) && isEsLogBeanPresent(arg.getClass()))
-                    .collect(Collectors.toList());
+                    .filter(arg -> nonNull(arg) && isEsLogBeanPresent(arg.getClass())).toList();
             // 日志不包含@EsLogBean注解的参数
             if (arguments.isEmpty()) {
                 val esClient = EsClientManager.getEsClient(esName);

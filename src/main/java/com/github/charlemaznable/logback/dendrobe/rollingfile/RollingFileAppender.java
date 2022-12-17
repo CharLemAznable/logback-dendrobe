@@ -17,7 +17,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.val;
 
-import static ch.qos.logback.core.CoreConstants.UNBOUND_HISTORY;
+import static ch.qos.logback.core.CoreConstants.UNBOUNDED_HISTORY;
 import static com.github.charlemaznable.logback.dendrobe.rollingfile.RollingFileEffectorBuilder.ROLLING_FILE_EFFECTOR;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -27,10 +27,10 @@ public final class RollingFileAppender extends AsyncOutputStreamAppender {
     public static final String DEFAULT_MAX_FILE_SIZE = "10MB";
     public static final int DEFAULT_MIN_INDEX = 1;
     public static final int DEFAULT_MAX_INDEX = 7;
-    public static final int DEFAULT_MAX_HISTORY = UNBOUND_HISTORY;
+    public static final int DEFAULT_MAX_HISTORY = UNBOUNDED_HISTORY;
     public static final boolean DEFAULT_CLEAN_HISTORY_ON_START = false;
 
-    private ch.qos.logback.core.rolling.RollingFileAppender<ILoggingEvent> appender;
+    private final ch.qos.logback.core.rolling.RollingFileAppender<ILoggingEvent> appender;
     @Setter
     @Accessors(chain = true)
     private String fileNamePattern;

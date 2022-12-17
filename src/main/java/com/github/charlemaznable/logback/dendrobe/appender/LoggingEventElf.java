@@ -6,6 +6,7 @@ import com.github.bingoohuang.westid.WestId;
 import lombok.NoArgsConstructor;
 import lombok.val;
 
+import java.io.Serial;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -23,11 +24,11 @@ import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 @NoArgsConstructor(access = PRIVATE)
 public final class LoggingEventElf {
 
-    private static Map<String, Function<ILoggingEvent, String>> eventConverterMap = newHashMap();
+    private static final Map<String, Function<ILoggingEvent, String>> eventConverterMap = newHashMap();
 
     static {
-        eventConverterMap.put("date", new Function<ILoggingEvent, String>() {
-            private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss,SSS");
+        eventConverterMap.put("date", new Function<>() {
+            private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss,SSS");
 
             @Override
             public String apply(ILoggingEvent event) {
@@ -43,7 +44,7 @@ public final class LoggingEventElf {
             if (cda != null && cda.length > 0) {
                 return cda[0].getClassName();
             } else {
-                return CallerData.NA;
+                return CallerData.CALLER_DATA_NA;
             }
         });
         eventConverterMap.put("method", event -> {
@@ -51,7 +52,7 @@ public final class LoggingEventElf {
             if (cda != null && cda.length > 0) {
                 return cda[0].getMethodName();
             } else {
-                return CallerData.NA;
+                return CallerData.CALLER_DATA_NA;
             }
         });
         eventConverterMap.put("line", event -> {
@@ -59,7 +60,7 @@ public final class LoggingEventElf {
             if (cda != null && cda.length > 0) {
                 return Integer.toString(cda[0].getLineNumber());
             } else {
-                return CallerData.NA;
+                return CallerData.CALLER_DATA_NA;
             }
         });
         eventConverterMap.put("file", event -> {
@@ -67,7 +68,7 @@ public final class LoggingEventElf {
             if (cda != null && cda.length > 0) {
                 return cda[0].getFileName();
             } else {
-                return CallerData.NA;
+                return CallerData.CALLER_DATA_NA;
             }
         });
         eventConverterMap.put("exception", event ->
@@ -88,6 +89,7 @@ public final class LoggingEventElf {
 
     public static class EventMap extends HashMap<String, Object> {
 
+        @Serial
         private static final long serialVersionUID = -2969581445867351849L;
 
         public EventMap(Map<String, Object> map) {

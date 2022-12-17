@@ -11,18 +11,14 @@ import static lombok.AccessLevel.PRIVATE;
 @NoArgsConstructor(access = PRIVATE)
 final class EsConfigServiceElf {
 
-    private static EsConfigService configService;
+    private static final EsConfigService configService;
 
     static {
-        loadEsConfigService();
+        configService = findEsConfigService();
     }
 
     public static EsConfigService configService() {
         return configService;
-    }
-
-    static void loadEsConfigService() {
-        configService = findEsConfigService();
     }
 
     private static EsConfigService findEsConfigService() {
