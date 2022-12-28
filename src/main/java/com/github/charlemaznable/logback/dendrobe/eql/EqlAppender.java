@@ -33,7 +33,7 @@ public final class EqlAppender extends AsyncAppender {
 
     public static final String DEFAULT_EQL_CONNECTION = "DEFAULT";
 
-    private InternalAppender appender;
+    private final InternalAppender appender;
 
     public EqlAppender() {
         this.appender = new InternalAppender();

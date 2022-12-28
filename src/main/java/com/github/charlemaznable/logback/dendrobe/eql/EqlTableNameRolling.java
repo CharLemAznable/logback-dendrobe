@@ -25,7 +25,7 @@ public final class EqlTableNameRolling {
     private final Object rollingLock = new Object();
     private FileNamePattern tableNamePattern;
     private RollingCalendar rollingCalendar;
-    private Date dateInCurrentPeriod = new Date(0);
+    private final Date dateInCurrentPeriod = new Date(0);
     private long nextCheck = 0;
     private boolean enabled = false;
     @Getter

@@ -71,7 +71,7 @@ final class ConsoleTarget {
     static class MockBuffer extends OutputStream {
 
         private String output;
-        private StringBuilder stringBuilder = new StringBuilder();
+        private final StringBuilder stringBuilder = new StringBuilder();
 
         @Override
         public void write(int b) {

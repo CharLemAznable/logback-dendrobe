@@ -30,7 +30,7 @@ public final class RollingFileAppender extends AsyncOutputStreamAppender {
     public static final int DEFAULT_MAX_HISTORY = UNBOUND_HISTORY;
     public static final boolean DEFAULT_CLEAN_HISTORY_ON_START = false;
 
-    private ch.qos.logback.core.rolling.RollingFileAppender<ILoggingEvent> appender;
+    private final ch.qos.logback.core.rolling.RollingFileAppender<ILoggingEvent> appender;
     @Setter
     @Accessors(chain = true)
     private String fileNamePattern;

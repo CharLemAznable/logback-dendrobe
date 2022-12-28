@@ -23,11 +23,11 @@ import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 @NoArgsConstructor(access = PRIVATE)
 public final class LoggingEventElf {
 
-    private static Map<String, Function<ILoggingEvent, String>> eventConverterMap = newHashMap();
+    private static final Map<String, Function<ILoggingEvent, String>> eventConverterMap = newHashMap();
 
     static {
         eventConverterMap.put("date", new Function<ILoggingEvent, String>() {
-            private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss,SSS");
+            private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss,SSS");
 
             @Override
             public String apply(ILoggingEvent event) {

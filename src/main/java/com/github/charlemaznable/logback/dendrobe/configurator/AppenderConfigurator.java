@@ -11,8 +11,9 @@ public abstract class AppenderConfigurator implements Configurator {
 
     protected static final String APPENDERS_SUFFIX = "[appenders]";
 
+    @SuppressWarnings("rawtypes")
     @Getter
-    private COWArrayList<Appender> appenderList = new COWArrayList<>(new Appender[0]);
+    private final COWArrayList<Appender> appenderList = new COWArrayList<>(new Appender[0]);
 
     public void clearAppenderList() {
         appenderList.clear();

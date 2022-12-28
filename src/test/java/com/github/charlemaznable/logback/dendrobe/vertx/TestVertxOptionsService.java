@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 @AutoService(VertxOptionsService.class)
 public class TestVertxOptionsService extends DefaultVertxOptionsService {
 
-    private static Map<String, String> configMap = newHashMap();
+    private static final Map<String, String> configMap = newHashMap();
 
     public static void setConfig(String configKey, String configValue) {
         configMap.put(configKey, configValue);

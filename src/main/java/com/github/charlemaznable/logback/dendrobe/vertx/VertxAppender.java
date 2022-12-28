@@ -27,7 +27,7 @@ public final class VertxAppender extends AsyncAppender {
 
     public static final String DEFAULT_VERTX_NAME = "DEFAULT";
 
-    private InternalAppender appender;
+    private final InternalAppender appender;
 
     public VertxAppender() {
         this.appender = new InternalAppender();

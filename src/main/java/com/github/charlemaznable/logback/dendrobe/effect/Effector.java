@@ -21,7 +21,7 @@ public final class Effector {
     private final Effector parent;
     private final LoggerContext loggerContext;
     private List<Effector> childrenList;
-    private Map<String, EffectiveLevel> effectiveLevelMap = newHashMap();
+    private final Map<String, EffectiveLevel> effectiveLevelMap = newHashMap();
 
     public Effector(Logger logger, Effector parent, LoggerContext loggerContext) {
         this.logger = logger;

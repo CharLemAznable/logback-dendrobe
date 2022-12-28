@@ -28,7 +28,7 @@ public final class EsAppender extends AsyncAppender {
 
     public static final String DEFAULT_ES_NAME = "DEFAULT";
 
-    private InternalAppender appender;
+    private final InternalAppender appender;
 
     public EsAppender() {
         this.appender = new InternalAppender();

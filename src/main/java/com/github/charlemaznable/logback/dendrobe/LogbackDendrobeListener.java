@@ -41,15 +41,15 @@ public final class LogbackDendrobeListener implements LoggerContextListener {
 
     private static final String SPRING_BOOT_LOGGING_SYSTEM = "org.springframework.boot.logging.LoggingSystem";
 
-    private static ServiceLoader<Configurator> configurators;
-    private static HotUpdater hotUpdater;
+    private static final ServiceLoader<Configurator> configurators;
+    private static final HotUpdater hotUpdater;
 
     static {
         configurators = ServiceLoader.load(Configurator.class);
         hotUpdater = findHotUpdater();
     }
 
-    private Properties defaults;
+    private final Properties defaults;
     private Properties config;
     private LoggerContext loggerContext;
     private EffectorContext effectorContext;
@@ -173,7 +173,7 @@ public final class LogbackDendrobeListener implements LoggerContextListener {
                                     key, config.getProperty(key, "")))
             );
 
-            val appenders = new COWArrayList<Appender>(new Appender[0]);
+            val appenders = new COWArrayList<>(new Appender[0]);
             configurators.forEach(configurator -> {
                 configurator.postConfigurate(loggerContext);
 

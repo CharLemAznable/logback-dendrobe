@@ -11,7 +11,7 @@ import static lombok.AccessLevel.PRIVATE;
 @NoArgsConstructor(access = PRIVATE)
 final class EqlExecuteWrapper {
 
-    private static ServiceLoader<EqlExecuteExtender> extenders;
+    private static final ServiceLoader<EqlExecuteExtender> extenders;
 
     static {
         extenders = ServiceLoader.load(EqlExecuteExtender.class);

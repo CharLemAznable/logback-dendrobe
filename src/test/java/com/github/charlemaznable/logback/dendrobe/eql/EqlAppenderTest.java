@@ -58,8 +58,8 @@ public class EqlAppenderTest {
     private static final String SELECT_SIMPLE_LOG_BY_ID = "" +
             "select log_id, log_content, log_date, log_date_time from simple_log where log_id = ##";
     private static final DockerImageName mysqlImageName = DockerImageName.parse("mysql:5.7.34");
-    private static MySQLContainer mysql0 = new MySQLContainer<>(mysqlImageName).withDatabaseName(DB0);
-    private static MySQLContainer mysql1 = new MySQLContainer<>(mysqlImageName).withDatabaseName(DB1);
+    private static final MySQLContainer<?> mysql0 = new MySQLContainer<>(mysqlImageName).withDatabaseName(DB0);
+    private static final MySQLContainer<?> mysql1 = new MySQLContainer<>(mysqlImageName).withDatabaseName(DB1);
     private static Logger root;
     private static Logger self;
 
@@ -160,7 +160,7 @@ public class EqlAppenderTest {
         assertEquals("(test||)no db log null: null", queryNoDbLogNull.getLogContent());
 
         val queryNoDbLogNotLog = simpleLogs.get(3);
-        assertEquals("(test||)no db log not log: " + notLog.toString(), queryNoDbLogNotLog.getLogContent());
+        assertEquals("(test||)no db log not log: " + notLog, queryNoDbLogNotLog.getLogContent());
 
         val annotatedLog = new AnnotatedLog();
         annotatedLog.setALogId("1001");

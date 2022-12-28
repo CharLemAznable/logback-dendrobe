@@ -11,8 +11,8 @@ import static org.slf4j.Logger.ROOT_LOGGER_NAME;
 
 public final class EffectorContext {
 
-    private Effector root;
-    private Map<String, Effector> effectorCache = new ConcurrentHashMap<>();
+    private final Effector root;
+    private final Map<String, Effector> effectorCache = new ConcurrentHashMap<>();
 
     public EffectorContext(LoggerContext loggerContext) {
         this.root = new Effector(loggerContext

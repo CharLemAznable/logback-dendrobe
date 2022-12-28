@@ -15,7 +15,7 @@ public abstract class AsyncOutputStreamAppender extends AsyncAppender {
             = "%date [%20.20thread] %5level %50.50logger{50}\\(%4.4line\\): %message%n";
 
     @Getter
-    private PatternLayoutEncoder encoder;
+    private final PatternLayoutEncoder encoder;
 
     public AsyncOutputStreamAppender() {
         this.encoder = new PatternLayoutEncoder();
