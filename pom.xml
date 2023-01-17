@@ -47,11 +47,13 @@
     <properties>
         <sonar.projectKey>CharLemAznable_logback-dendrobe</sonar.projectKey>
         <sonar.exclusions>
+            src/main/java/com/github/charlemaznable/logback/dendrobe/cloud/LogbackDendrobeReinitialListener.java,
             src/main/java/com/github/charlemaznable/logback/dendrobe/console/ConsoleTarget.java,
             src/main/java/com/github/charlemaznable/logback/dendrobe/impl/DefaultHotUpdater.java
         </sonar.exclusions>
 
         <char-elves.version>2023.0.0-SNAPSHOT</char-elves.version>
+        <gentle-factory.version>2023.0.0-SNAPSHOT</gentle-factory.version>
         <logback-dendrobe-annotations.version>2023.0.0-SNAPSHOT</logback-dendrobe-annotations.version>
     </properties>
 
@@ -83,8 +85,23 @@
         </dependency>
         <dependency>
             <groupId>com.github.charlemaznable</groupId>
+            <artifactId>gentle-factory</artifactId>
+            <version>${gentle-factory.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.charlemaznable</groupId>
             <artifactId>logback-dendrobe-annotations</artifactId>
             <version>${logback-dendrobe-annotations.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-context</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
