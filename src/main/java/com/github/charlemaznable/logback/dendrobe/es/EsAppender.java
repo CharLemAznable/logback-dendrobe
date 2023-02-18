@@ -76,10 +76,6 @@ public final class EsAppender extends AsyncAppender {
         protected void append(ILoggingEvent eventObject) {
             if (!isStarted()) return;
 
-            // 公共参数, 包含event/mdc/ctx-property
-            val paramMap = buildEventMap(eventObject);
-            val westId = paramMap.westId();
-
             val argumentArray = defaultIfNull(eventObject.getArgumentArray(), new Object[0]);
             val arguments = Arrays.stream(argumentArray)
                     .filter(arg -> nonNull(arg) && isEsLogBeanPresent(arg.getClass())).toList();
@@ -87,7 +83,9 @@ public final class EsAppender extends AsyncAppender {
             if (arguments.isEmpty()) {
                 val esClient = EsClientManager.getEsClient(esName);
                 if (isNull(esClient) || isNull(esIndex)) return;
-                esClient.addRequest(esIndex, westId, paramMap);
+                // 公共参数, 包含event/mdc/ctx-property
+                val paramMap = buildEventMap(eventObject);
+                esClient.addRequest(esIndex, paramMap.westId(), paramMap);
                 return;
             }
 
@@ -98,9 +96,11 @@ public final class EsAppender extends AsyncAppender {
                 val index = getEsIndex(clazz, esIndex);
                 if (isNull(esClient) || isNull(index)) continue;
 
+                // 公共参数, 包含event/mdc/ctx-property
+                val paramMap = buildEventMap(eventObject);
                 val currentMap = newHashMap(paramMap);
                 currentMap.put("arg", desc(argument)); // trans to map
-                esClient.addRequest(index, westId, currentMap);
+                esClient.addRequest(index, paramMap.westId(), currentMap);
             }
         }
     }
