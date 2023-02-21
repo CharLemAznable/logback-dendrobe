@@ -231,10 +231,30 @@ context.property[property-name]=property-value  # 配置上下文属性参数, �
 
 配置以上任一项, 即启动对应级别logger ElasticSearch日志
 
-10. 使用默认配置启动日志输出
+10. 配置Kafka输出
 
 ```
-{logger-name}[appenders]=[console][eql][vertx][file][rollingfile][es]
+{logger-name}[kafka.level]=debug
+{logger-name}[kafka.name]=DEFAULT
+{logger-name}[kafka.topic]={logger-name缩减字符串, 最长128个字符, 并将'.'替换为'_'}
+```
+
+以上配置中:
+
+* "kafka.XXX"关键字不区分大小写
+* 日志级别不区分大小写, 覆盖当前级别日志的```[level]```
+* Kafka日志级别未设置时, 优先使用当前级别日志的```[level]```, 若未设置```[level]```, 则使用父级日志的Kafka日志级别
+* kafka.name配置KafkaProducer客户端标识, 如果存在```kafka-${kafka.name}.properties```配置文件, 则自动加载并初始化KafkaProducer客户端用于发送日志事件消息
+* 可使用```KafkaClientManager#putExternalKafkaClient```方法配置自定义的KafkaProducer客户端, 需自行控制自定义KafkaProducer客户端的生命周期, 使用自定义的名称作为kafka.name配置
+* kafka.topic配置日志事件消息发送的Kafka消息主题, 默认为: logger-name的缩减字符串, 最长128个字符, 并将'.'替换为'_'
+* 日志事件存储的Kafka消息结构参见```com.github.charlemaznable.logback.dendrobe.appender.LoggingEventElf```
+
+配置以上任一项, 即启动对应级别logger Kafka日志
+
+11. 使用默认配置启动日志输出
+
+```
+{logger-name}[appenders]=[console][eql][vertx][file][rollingfile][es][kafka]
 ```
 
 当仅需启动日志的某些输出端时, 可使用此配置:
@@ -245,4 +265,5 @@ context.property[property-name]=property-value  # 配置上下文属性参数, �
   * 配置值中包含```[file]```字符串时, 启动默认文件输出, 但需另外配置```{logger-name}[file]```指定日志文件名
   * 配置值中包含```[rollingfile]```字符串时, 启动默认滚动文件输出, 但需另外配置```{logger-name}[rollingfile.fileNamePattern]```指定文件名滚动规则
   * 配置值中包含```[es]```字符串时, 启动默认ElasticSearch输出
+  * 配置值中包含```[kafka]```字符串时, 启动默认Kafka输出
   * "appenders"关键字和配置值不区分大小写
