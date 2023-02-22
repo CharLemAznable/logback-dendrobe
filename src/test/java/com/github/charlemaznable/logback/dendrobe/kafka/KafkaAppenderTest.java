@@ -5,7 +5,6 @@ import com.github.charlemaznable.logback.dendrobe.KafkaLogBean;
 import com.github.charlemaznable.logback.dendrobe.KafkaLogTopic;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -60,7 +59,6 @@ public class KafkaAppenderTest implements KafkaClientManagerListener {
 
     private boolean configured;
 
-    @SneakyThrows
     @BeforeAll
     public static void beforeAll() {
         kafka.start();
