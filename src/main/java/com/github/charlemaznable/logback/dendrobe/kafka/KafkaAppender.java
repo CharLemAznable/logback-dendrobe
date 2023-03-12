@@ -1,4 +1,4 @@
-package com.github.charlemaznable.logback.dendrobe.es;
+package com.github.charlemaznable.logback.dendrobe.kafka;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.ILoggingEvent;
@@ -15,24 +15,24 @@ import java.util.stream.Collectors;
 
 import static com.github.bingoohuang.utils.lang.Mapp.desc;
 import static com.github.charlemaznable.logback.dendrobe.appender.LoggingEventElf.buildEventMap;
-import static com.github.charlemaznable.logback.dendrobe.es.EsCaches.EsLogBeanEsNameCache.getEsName;
-import static com.github.charlemaznable.logback.dendrobe.es.EsCaches.EsLogBeanPresentCache.isEsLogBeanPresent;
-import static com.github.charlemaznable.logback.dendrobe.es.EsCaches.EsLogIndexCache.getEsIndex;
-import static com.github.charlemaznable.logback.dendrobe.es.EsEffectorBuilder.ES_EFFECTOR;
+import static com.github.charlemaznable.logback.dendrobe.kafka.KafkaCaches.KafkaLogBeanKafkaNameCache.getKafkaName;
+import static com.github.charlemaznable.logback.dendrobe.kafka.KafkaCaches.KafkaLogBeanPresentCache.isKafkaLogBeanPresent;
+import static com.github.charlemaznable.logback.dendrobe.kafka.KafkaCaches.KafkaLogTopicCache.getKafkaTopic;
+import static com.github.charlemaznable.logback.dendrobe.kafka.KafkaEffectorBuilder.KAFKA_EFFECTOR;
 import static com.google.common.collect.Maps.newHashMap;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 
-public final class EsAppender extends AsyncAppender {
+public final class KafkaAppender extends AsyncAppender {
 
-    public static final String DEFAULT_ES_NAME = "DEFAULT";
+    public static final String DEFAULT_KAFKA_NAME = "DEFAULT";
 
     private final InternalAppender appender;
 
-    public EsAppender() {
+    public KafkaAppender() {
         this.appender = new InternalAppender();
-        this.appender.setEsName(DEFAULT_ES_NAME);
+        this.appender.setKafkaName(DEFAULT_KAFKA_NAME);
     }
 
     @Override
@@ -41,13 +41,13 @@ public final class EsAppender extends AsyncAppender {
         this.appender.setContext(context);
     }
 
-    public EsAppender setEsName(String esName) {
-        this.appender.setEsName(esName);
+    public KafkaAppender setKafkaName(String kafkaName) {
+        this.appender.setKafkaName(kafkaName);
         return this;
     }
 
-    public EsAppender setEsIndex(String esIndex) {
-        this.appender.setEsIndex(esIndex);
+    public KafkaAppender setKafkaTopic(String kafkaTopic) {
+        this.appender.setKafkaTopic(kafkaTopic);
         return this;
     }
 
@@ -58,9 +58,9 @@ public final class EsAppender extends AsyncAppender {
 
     @Override
     protected FilterReply decide(Effector effector, Level eventLevel) {
-        // configured EsAppender and event passed EffectorTurboFilter,
+        // configured KafkaAppender and event passed EffectorTurboFilter,
         // but appender level is greater then event level -> DENY
-        if (effector.getEffectorLevelInt(ES_EFFECTOR) > eventLevel.levelInt) {
+        if (effector.getEffectorLevelInt(KAFKA_EFFECTOR) > eventLevel.levelInt) {
             return FilterReply.DENY;
         }
         return FilterReply.ACCEPT;
@@ -69,9 +69,9 @@ public final class EsAppender extends AsyncAppender {
     static class InternalAppender extends UnsynchronizedAppenderBase<ILoggingEvent> {
 
         @Setter
-        private String esName;
+        private String kafkaName;
         @Setter
-        private String esIndex;
+        private String kafkaTopic;
 
         @Override
         protected void append(ILoggingEvent eventObject) {
@@ -79,30 +79,30 @@ public final class EsAppender extends AsyncAppender {
 
             val argumentArray = defaultIfNull(eventObject.getArgumentArray(), new Object[0]);
             val arguments = Arrays.stream(argumentArray)
-                    .filter(arg -> nonNull(arg) && isEsLogBeanPresent(arg.getClass()))
+                    .filter(arg -> nonNull(arg) && isKafkaLogBeanPresent(arg.getClass()))
                     .collect(Collectors.toList());
-            // 日志不包含@EsLogBean注解的参数
+            // 日志不包含@KafkaLogBean注解的参数
             if (arguments.isEmpty()) {
-                val esClient = EsClientManager.getEsClient(esName);
-                if (isNull(esClient) || isNull(esIndex)) return;
+                val kafkaClient = KafkaClientManager.getKafkaClient(kafkaName);
+                if (isNull(kafkaClient) || isNull(kafkaTopic)) return;
                 // 公共参数, 包含event/mdc/ctx-property
                 val paramMap = buildEventMap(eventObject);
-                esClient.addRequest(esIndex, paramMap.westId(), paramMap);
+                kafkaClient.addRecord(kafkaTopic, paramMap.westId(), paramMap);
                 return;
             }
 
-            // 遍历@EsLogBean注解的参数
+            // 遍历@KafkaLogBean注解的参数
             for (val argument : arguments) {
                 val clazz = argument.getClass();
-                val esClient = EsClientManager.getEsClient(getEsName(clazz, esName));
-                val index = getEsIndex(clazz, esIndex);
-                if (isNull(esClient) || isNull(index)) continue;
+                val kafkaClient = KafkaClientManager.getKafkaClient(getKafkaName(clazz, kafkaName));
+                val topic = getKafkaTopic(clazz, kafkaTopic);
+                if (isNull(kafkaClient) || isNull(topic)) continue;
 
                 // 公共参数, 包含event/mdc/ctx-property
                 val paramMap = buildEventMap(eventObject);
                 val currentMap = newHashMap(paramMap);
                 currentMap.put("arg", desc(argument)); // trans to map
-                esClient.addRequest(index, paramMap.westId(), currentMap);
+                kafkaClient.addRecord(topic, paramMap.westId(), currentMap);
             }
         }
     }
