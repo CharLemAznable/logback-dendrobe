@@ -18,7 +18,6 @@ import static com.github.charlemaznable.logback.dendrobe.es.EsCaches.EsLogBeanEs
 import static com.github.charlemaznable.logback.dendrobe.es.EsCaches.EsLogBeanPresentCache.isEsLogBeanPresent;
 import static com.github.charlemaznable.logback.dendrobe.es.EsCaches.EsLogIndexCache.getEsIndex;
 import static com.github.charlemaznable.logback.dendrobe.es.EsEffectorBuilder.ES_EFFECTOR;
-import static com.google.common.collect.Maps.newHashMap;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
@@ -98,9 +97,8 @@ public final class EsAppender extends AsyncAppender {
 
                 // 公共参数, 包含event/mdc/ctx-property
                 val paramMap = buildEventMap(eventObject);
-                val currentMap = newHashMap(paramMap);
-                currentMap.put("arg", desc(argument)); // trans to map
-                esClient.addRequest(index, paramMap.westId(), currentMap);
+                paramMap.put("arg", desc(argument)); // trans to map
+                esClient.addRequest(index, paramMap.westId(), paramMap);
             }
         }
     }
