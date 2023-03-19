@@ -18,7 +18,6 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 
 import static com.github.charlemaznable.logback.dendrobe.appender.LoggingEventElf.buildEventMap;
-import static com.google.common.collect.Maps.newHashMap;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
@@ -76,9 +75,6 @@ public final class VertxAppender extends AsyncAppender {
         protected void append(ILoggingEvent eventObject) {
             if (!isStarted()) return;
 
-            // 公共参数, 包含event/mdc/ctx-property
-            val paramMap = buildEventMap(eventObject);
-
             val argumentArray = defaultIfNull(eventObject.getArgumentArray(), new Object[0]);
             val arguments = Arrays.stream(argumentArray)
                     .filter(arg -> nonNull(arg) && VertxLogBeanPresentCache.isVertxLogBeanPresent(arg.getClass()))
@@ -87,6 +83,8 @@ public final class VertxAppender extends AsyncAppender {
             if (arguments.isEmpty()) {
                 val vertx = VertxManager.getVertx(vertxName);
                 if (isNull(vertx) || isNull(vertxAddress)) return;
+                // 公共参数, 包含event/mdc/ctx-property
+                val paramMap = buildEventMap(eventObject);
                 vertx.eventBus().publish(vertxAddress, new JsonObject(paramMap));
                 return;
             }
@@ -98,9 +96,10 @@ public final class VertxAppender extends AsyncAppender {
                 val address = VertxLogAddressCache.getVertxAddress(clazz, vertxAddress);
                 if (isNull(vertx) || isNull(address)) continue;
 
-                val currentMap = newHashMap(paramMap);
-                currentMap.put("arg", argument);
-                vertx.eventBus().publish(address, new JsonObject(currentMap));
+                // 公共参数, 包含event/mdc/ctx-property
+                val paramMap = buildEventMap(eventObject);
+                paramMap.put("arg", argument);
+                vertx.eventBus().publish(address, new JsonObject(paramMap));
             }
         }
     }

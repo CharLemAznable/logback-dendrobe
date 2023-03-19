@@ -23,7 +23,6 @@ import static com.github.charlemaznable.logback.dendrobe.eql.EqlCaches.EqlLogSql
 import static com.github.charlemaznable.logback.dendrobe.eql.EqlCaches.EqlLogTableNameRollingCache.getTableNameRolling;
 import static com.github.charlemaznable.logback.dendrobe.eql.EqlEffectorBuilder.EQL_EFFECTOR;
 import static com.github.charlemaznable.logback.dendrobe.eql.EqlTableNameRolling.ACTIVE_TABLE_NAME;
-import static com.google.common.collect.Maps.newHashMap;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
@@ -98,8 +97,6 @@ public final class EqlAppender extends AsyncAppender {
 
             try {
                 EqlExecuteWrapper.preExecute(eventObject);
-                // 公共参数, 包含event/mdc/ctx-property
-                val paramMap = buildEventMap(eventObject);
 
                 val argumentArray = defaultIfNull(eventObject.getArgumentArray(), new Object[0]);
                 val arguments = Arrays.stream(argumentArray)
@@ -115,9 +112,10 @@ public final class EqlAppender extends AsyncAppender {
                             tableNamePatternStr, context);
                     rolling.rolling(eql, eqlPrepareSql);
 
-                    val currentMap = newHashMap(paramMap);
-                    currentMap.put(ACTIVE_TABLE_NAME, rolling.getActiveTableName());
-                    eql.params(currentMap).dynamics(currentMap).execute(eqlSql);
+                    // 公共参数, 包含event/mdc/ctx-property
+                    val paramMap = buildEventMap(eventObject);
+                    paramMap.put(ACTIVE_TABLE_NAME, rolling.getActiveTableName());
+                    eql.params(paramMap).dynamics(paramMap).execute(eqlSql);
                     return;
                 }
 
@@ -132,12 +130,13 @@ public final class EqlAppender extends AsyncAppender {
                     val rolling = getTableNameRolling(tnps, context);
                     rolling.rolling(eql, clazz);
 
+                    // 公共参数, 包含event/mdc/ctx-property
+                    val paramMap = buildEventMap(eventObject);
                     // 设参数key为arg, 加入eql参数上下文
-                    val currentMap = newHashMap(paramMap);
-                    currentMap.put("arg", argument);
-                    currentMap.put(ACTIVE_TABLE_NAME, rolling.getActiveTableName());
+                    paramMap.put("arg", argument);
+                    paramMap.put(ACTIVE_TABLE_NAME, rolling.getActiveTableName());
                     // 同时设置一般参数与动态参数
-                    eql.params(currentMap).dynamics(currentMap);
+                    eql.params(paramMap).dynamics(paramMap);
 
                     // 指定sqlFile的情形
                     if (useEqlLogSql(clazz, eql)) eql.execute();

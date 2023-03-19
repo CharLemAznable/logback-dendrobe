@@ -19,7 +19,6 @@ import static com.github.charlemaznable.logback.dendrobe.kafka.KafkaCaches.Kafka
 import static com.github.charlemaznable.logback.dendrobe.kafka.KafkaCaches.KafkaLogBeanPresentCache.isKafkaLogBeanPresent;
 import static com.github.charlemaznable.logback.dendrobe.kafka.KafkaCaches.KafkaLogTopicCache.getKafkaTopic;
 import static com.github.charlemaznable.logback.dendrobe.kafka.KafkaEffectorBuilder.KAFKA_EFFECTOR;
-import static com.google.common.collect.Maps.newHashMap;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
@@ -100,9 +99,8 @@ public final class KafkaAppender extends AsyncAppender {
 
                 // 公共参数, 包含event/mdc/ctx-property
                 val paramMap = buildEventMap(eventObject);
-                val currentMap = newHashMap(paramMap);
-                currentMap.put("arg", desc(argument)); // trans to map
-                kafkaClient.addRecord(topic, paramMap.westId(), currentMap);
+                paramMap.put("arg", desc(argument)); // trans to map
+                kafkaClient.addRecord(topic, paramMap.westId(), paramMap);
             }
         }
     }
