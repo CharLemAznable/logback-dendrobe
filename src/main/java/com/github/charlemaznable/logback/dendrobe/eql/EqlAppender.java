@@ -7,7 +7,6 @@ import ch.qos.logback.core.UnsynchronizedAppenderBase;
 import ch.qos.logback.core.spi.FilterReply;
 import com.github.charlemaznable.logback.dendrobe.appender.AsyncAppender;
 import com.github.charlemaznable.logback.dendrobe.effect.Effector;
-import com.github.charlemaznable.logback.dendrobe.eql.EqlCaches.EqlLogBeanEqlCache;
 import lombok.Setter;
 import lombok.val;
 
@@ -102,7 +101,7 @@ public final class EqlAppender extends AsyncAppender {
                         .filter(arg -> nonNull(arg) && isEqlLogBeanPresent(arg.getClass())).toList();
                 // 日志不包含@EqlLogBean注解的参数, 执行默认连接的默认SQL
                 if (arguments.isEmpty()) {
-                    val eql = EqlLogBeanEqlCache.getEqlLogBeanEql(eqlConnection);
+                    val eql = getEqlLogBeanEql(eqlConnection);
                     // 未指定默认连接或默认SQL, 则跳过
                     if (isNull(eql) || isBlank(eqlSql)) return;
 
