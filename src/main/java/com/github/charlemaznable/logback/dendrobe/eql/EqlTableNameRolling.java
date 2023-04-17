@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.val;
 import org.n3r.eql.Eql;
 
+import java.time.Instant;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -95,7 +96,7 @@ public final class EqlTableNameRolling {
     }
 
     private void computeNextCheck() {
-        nextCheck = rollingCalendar.getNextTriggeringDate(dateInCurrentPeriod).getTime();
+        nextCheck = rollingCalendar.getNextTriggeringDate(Instant.ofEpochMilli(dateInCurrentPeriod.getTime())).toEpochMilli();
     }
 
     private void computeActiveTableName() {
