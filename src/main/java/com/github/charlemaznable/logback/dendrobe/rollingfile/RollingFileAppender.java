@@ -161,6 +161,7 @@ public final class RollingFileAppender extends AsyncOutputStreamAppender {
             val triggeringPolicy = new SizeBasedTriggeringPolicy<ILoggingEvent>();
             triggeringPolicy.setContext(this.context);
             triggeringPolicy.setMaxFileSize(FileSize.valueOf(maxFileSize));
+            triggeringPolicy.setCheckIncrement(1_000);
             this.appender.setTriggeringPolicy(triggeringPolicy);
             return true;
 

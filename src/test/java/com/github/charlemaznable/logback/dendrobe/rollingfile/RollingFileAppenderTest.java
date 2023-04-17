@@ -84,6 +84,7 @@ public class RollingFileAppenderTest {
                      WARN warn logging
                     ERROR error logging
                     """);
+            awaitForMillis(100);
         }
         awaitForSeconds(3);
 
