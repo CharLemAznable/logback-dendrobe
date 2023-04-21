@@ -15,6 +15,7 @@ public final class LogbackDendrobeConfigurator extends ContextAwareBase implemen
         addInfo("Setting up logback dendrobe configuration.");
         dendrobeListener.initLoggerContext(loggerContext);
         dendrobeListener.configureLoggerContext(loggerContext);
-        return Configurator.ExecutionStatus.NEUTRAL;
+        return dendrobeListener.getBool("logback-invoke-next-configurator", false)
+                ? ExecutionStatus.NEUTRAL : ExecutionStatus.DO_NOT_INVOKE_NEXT_IF_ANY;
     }
 }

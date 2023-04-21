@@ -197,7 +197,7 @@ public final class LogbackDendrobeListener implements LoggerContextListener {
     }
 
     @SuppressWarnings("SameParameterValue")
-    private boolean getBool(String key, boolean defValue) {
+    boolean getBool(String key, boolean defValue) {
         return toBoolean(getRaw(key));
     }
 
