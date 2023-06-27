@@ -10,7 +10,6 @@ import com.github.charlemaznable.logback.dendrobe.EqlLogTable;
 import com.google.common.cache.Cache;
 import com.google.common.cache.LoadingCache;
 import lombok.NoArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.n3r.eql.Eql;
 
@@ -205,7 +204,6 @@ final class EqlCaches {
 
         static Cache<String, EqlTableNameRolling> cache = manualCache();
 
-        @SneakyThrows
         static EqlTableNameRolling getTableNameRolling(String tableNamePatternStr, Context context) {
             return checkNull(tableNamePatternStr, () -> nullTableNameRolling, k ->
                     get(cache, k, () -> new EqlTableNameRolling(k, context)));
