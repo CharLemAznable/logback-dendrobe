@@ -97,7 +97,7 @@ public final class EqlAppender extends AsyncAppender {
                 EqlExecuteWrapper.preExecute(eventObject);
 
                 val argumentArray = defaultIfNull(eventObject.getArgumentArray(), new Object[0]);
-                val arguments = Arrays.stream(argumentArray)
+                val arguments = Arrays.stream(argumentArray).parallel()
                         .filter(arg -> nonNull(arg) && isEqlLogBeanPresent(arg.getClass())).toList();
                 // 日志不包含@EqlLogBean注解的参数, 执行默认连接的默认SQL
                 if (arguments.isEmpty()) {

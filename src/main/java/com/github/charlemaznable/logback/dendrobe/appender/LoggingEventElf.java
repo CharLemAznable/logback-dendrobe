@@ -78,11 +78,11 @@ public final class LoggingEventElf {
     }
 
     public static EventMap buildEventMap(ILoggingEvent eventObject) {
-        val eventMap = eventConverterMap.entrySet().stream()
+        val eventMap = eventConverterMap.entrySet().stream().parallel()
                 .collect(toMap(Entry::getKey, e -> e.getValue().apply(eventObject)));
-        val mdcMap = eventObject.getMDCPropertyMap().entrySet().stream()
+        val mdcMap = eventObject.getMDCPropertyMap().entrySet().stream().parallel()
                 .collect(toMap(Entry::getKey, Entry::getValue));
-        val propMap = eventObject.getLoggerContextVO().getPropertyMap().entrySet().stream()
+        val propMap = eventObject.getLoggerContextVO().getPropertyMap().entrySet().stream().parallel()
                 .collect(toMap(Entry::getKey, e -> defaultIfNull(e.getValue(), System.getProperty(e.getKey()))));
         return new EventMap(of("event", eventMap, "mdc", mdcMap, "property", propMap));
     }
