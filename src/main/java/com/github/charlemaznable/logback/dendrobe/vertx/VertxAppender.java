@@ -75,7 +75,7 @@ public final class VertxAppender extends AsyncAppender {
             if (!isStarted()) return;
 
             val argumentArray = defaultIfNull(eventObject.getArgumentArray(), new Object[0]);
-            val arguments = Arrays.stream(argumentArray).parallel()
+            val arguments = Arrays.stream(argumentArray)
                     .filter(arg -> nonNull(arg) &&
                             VertxLogBeanPresentCache.isVertxLogBeanPresent(arg.getClass())).toList();
             // 日志不包含@VertxLogBean注解的参数
