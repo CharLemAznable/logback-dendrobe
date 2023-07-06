@@ -7,11 +7,11 @@ import lombok.val;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import static com.github.charlemaznable.core.lang.Condition.checkNotNull;
 import static com.github.charlemaznable.logback.dendrobe.effect.EffectorBuilderElf.builders;
-import static com.google.common.collect.Maps.newHashMap;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
@@ -21,7 +21,7 @@ public final class Effector {
     private final Effector parent;
     private final LoggerContext loggerContext;
     private List<Effector> childrenList;
-    private final Map<String, EffectiveLevel> effectiveLevelMap = newHashMap();
+    private final Map<String, EffectiveLevel> effectiveLevelMap = new ConcurrentSkipListMap<>();
 
     public Effector(Logger logger, Effector parent, LoggerContext loggerContext) {
         this.logger = logger;
