@@ -5,16 +5,21 @@ import lombok.NoArgsConstructor;
 import lombok.val;
 
 import java.util.ServiceLoader;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import static lombok.AccessLevel.PRIVATE;
 
 @NoArgsConstructor(access = PRIVATE)
 final class EqlExecuteWrapper {
 
-    private static final ServiceLoader<EqlExecuteExtender> extenders;
+    private static final CopyOnWriteArrayList<EqlExecuteExtender> extenders;
 
     static {
-        extenders = ServiceLoader.load(EqlExecuteExtender.class);
+        extenders = StreamSupport
+                .stream(ServiceLoader.load(EqlExecuteExtender.class).spliterator(), false)
+                .collect(Collectors.toCollection(CopyOnWriteArrayList::new));
     }
 
     public static void preExecute(ILoggingEvent eventObject) {
