@@ -39,7 +39,7 @@
 <dependency>
   <groupId>com.github.charlemaznable</groupId>
   <artifactId>logback-dendrobe</artifactId>
-  <version>2023.2.3-SNAPSHOT</version>
+  <version>2024.0.0-SNAPSHOT</version>
 </dependency>
 ```
 
