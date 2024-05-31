@@ -10,6 +10,7 @@ import ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy;
 import ch.qos.logback.core.rolling.TimeBasedRollingPolicy;
 import ch.qos.logback.core.rolling.helper.FileNamePattern;
 import ch.qos.logback.core.spi.FilterReply;
+import ch.qos.logback.core.util.Duration;
 import ch.qos.logback.core.util.FileSize;
 import com.github.charlemaznable.logback.dendrobe.appender.AsyncOutputStreamAppender;
 import com.github.charlemaznable.logback.dendrobe.effect.Effector;
@@ -161,7 +162,7 @@ public final class RollingFileAppender extends AsyncOutputStreamAppender {
             val triggeringPolicy = new SizeBasedTriggeringPolicy<ILoggingEvent>();
             triggeringPolicy.setContext(this.context);
             triggeringPolicy.setMaxFileSize(FileSize.valueOf(maxFileSize));
-            triggeringPolicy.setCheckIncrement(1_000);
+            triggeringPolicy.setCheckIncrement(Duration.buildByMilliseconds(1_000));
             this.appender.setTriggeringPolicy(triggeringPolicy);
             return true;
 
