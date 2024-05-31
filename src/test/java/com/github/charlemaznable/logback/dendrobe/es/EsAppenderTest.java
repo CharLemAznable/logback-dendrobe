@@ -75,10 +75,8 @@ public class EsAppenderTest implements EsClientManagerListener {
         esConfig.setPassword(ELASTICSEARCH_PASSWORD);
         esClient = buildElasticsearchClient(esConfig);
 
-        val createIndexRequest = CreateIndexRequest.of(builder -> builder.index("logback.dendrobe"));
-        val createIndexResponse = esClient.indices().create(createIndexRequest);
-        val openIndexRequest = OpenRequest.of(builder -> builder.index("logback.dendrobe"));
-        val openIndexResponse = esClient.indices().open(openIndexRequest);
+        esClient.indices().create(CreateIndexRequest.of(builder -> builder.index("logback.dendrobe")));
+        esClient.indices().open(OpenRequest.of(builder -> builder.index("logback.dendrobe")));
 
         root = LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
         self = LoggerFactory.getLogger(EsAppenderTest.class);
