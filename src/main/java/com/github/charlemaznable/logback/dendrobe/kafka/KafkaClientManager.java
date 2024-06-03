@@ -8,7 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.val;
 import org.apache.kafka.clients.producer.KafkaProducer;
-import org.slf4j.helpers.Util;
+import org.slf4j.helpers.Reporter;
 
 import javax.annotation.Nullable;
 import java.util.Map;
@@ -107,7 +107,7 @@ public final class KafkaClientManager {
                     try {
                         listener.configuredKafkaClient(kafkaName);
                     } catch (Exception t) {
-                        Util.report("listener error:", t);
+                        Reporter.error("listener error:", t);
                     }
                 }
             }

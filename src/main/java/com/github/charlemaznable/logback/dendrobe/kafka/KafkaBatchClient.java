@@ -7,7 +7,7 @@ import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.StringSerializer;
-import org.slf4j.helpers.Util;
+import org.slf4j.helpers.Reporter;
 
 import java.util.List;
 import java.util.Map;
@@ -59,7 +59,7 @@ public final class KafkaBatchClient extends BatchExecutor<ProducerRecord<String,
         for (val item : items) {
             producer.send(item, (metadata, exception) -> {
                 if (isNull(exception)) return;
-                Util.report("Kafka send failed", exception);
+                Reporter.error("Kafka send failed", exception);
             });
         }
         producer.flush();

@@ -7,7 +7,7 @@ import com.github.charlemaznable.core.es.EsConfig;
 import com.github.charlemaznable.core.lang.concurrent.BatchExecutor;
 import com.github.charlemaznable.core.lang.concurrent.BatchExecutorConfig;
 import lombok.val;
-import org.slf4j.helpers.Util;
+import org.slf4j.helpers.Reporter;
 
 import java.util.List;
 import java.util.Map;
@@ -59,7 +59,7 @@ public final class EsBatchClient extends BatchExecutor<BulkOperation> {
         client.bulk(BulkRequest.of(builder -> builder.operations(requests)))
                 .whenComplete(((bulkResponse, exception) -> {
                     if (isNull(exception)) return;
-                    Util.report("ElasticSearch async failed", exception);
+                    Reporter.error("ElasticSearch async failed", exception);
                 }));
     }
 }

@@ -8,7 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.val;
-import org.slf4j.helpers.Util;
+import org.slf4j.helpers.Reporter;
 
 import javax.annotation.Nullable;
 import java.util.Map;
@@ -107,7 +107,7 @@ public final class EsClientManager {
                     try {
                         listener.configuredEsClient(esName);
                     } catch (Exception t) {
-                        Util.report("listener error:", t);
+                        Reporter.error("listener error:", t);
                     }
                 }
             }

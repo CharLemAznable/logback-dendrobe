@@ -4,7 +4,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.jupiter.api.Test;
-import org.slf4j.helpers.Util;
+import org.slf4j.helpers.Reporter;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -73,7 +73,7 @@ public class ConsoleAppenderBatchTest {
         assertDoesNotThrow(() -> routineRun(threadCount, () -> batchRunLog(TIMES)));
         val batchRunLogTime = currentTimeMillis() - startLogTime;
 
-        Util.report("Original time: " + batchRunTime + "ms, " +
+        Reporter.error("Original time: " + batchRunTime + "ms, " +
                 "logging time: " + batchRunLogTime + "ms, " +
                 "rating: " + new BigDecimal(batchRunLogTime).divide(
                 new BigDecimal(batchRunTime), 2, RoundingMode.HALF_UP));

@@ -8,7 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.val;
-import org.slf4j.helpers.Util;
+import org.slf4j.helpers.Reporter;
 
 import javax.annotation.Nullable;
 import java.util.Map;
@@ -103,7 +103,7 @@ public final class VertxManager {
                     try {
                         listener.configuredVertx(vertxName);
                     } catch (Exception t) {
-                        Util.report("listener error:", t);
+                        Reporter.error("listener error:", t);
                     }
                 }
             }
@@ -140,7 +140,7 @@ public final class VertxManager {
 
     private static <T> Function<Throwable, T> reportFn(String message) {
         return t -> {
-            Util.report(message, t);
+            Reporter.error(message, t);
             return null;
         };
     }

@@ -10,7 +10,7 @@ import lombok.val;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.slf4j.helpers.Util;
+import org.slf4j.helpers.Reporter;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.utility.DockerImageName;
 
@@ -115,7 +115,7 @@ public class EqlAppenderBatchTest {
         assertDoesNotThrow(() -> routineRun(threadCount, () -> batchRunLog(TIMES)));
         val batchRunLogTime = currentTimeMillis() - startLogTime;
 
-        Util.report("Original time: " + batchRunTime + "ms, " +
+        Reporter.error("Original time: " + batchRunTime + "ms, " +
                 "logging time: " + batchRunLogTime + "ms, " +
                 "rating: " + new BigDecimal(batchRunLogTime).divide(
                 new BigDecimal(batchRunTime), 2, RoundingMode.HALF_UP));
