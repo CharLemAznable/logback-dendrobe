@@ -55,8 +55,7 @@ public class VertxAppenderTest implements VertxManagerListener {
     public static void beforeAll() {
         val vertxOptions = new VertxOptions();
         vertxOptions.setWorkerPoolSize(10);
-        vertxOptions.setClusterManager(new TestHazelcastClusterManager());
-        vertx = VertxElf.buildVertx(vertxOptions);
+        vertx = VertxElf.buildVertx(vertxOptions, new TestHazelcastClusterManager());
         vertx.eventBus().consumer("logback.dendrobe",
                 (Handler<Message<JsonObject>>) event -> {
                     try {
@@ -168,8 +167,7 @@ public class VertxAppenderTest implements VertxManagerListener {
         // 1. 外部导入, 从无到有
         val vertxOptions = new VertxOptions();
         vertxOptions.setWorkerPoolSize(42);
-        vertxOptions.setClusterManager(new TestHazelcastClusterManager());
-        val vertx = VertxElf.buildVertx(vertxOptions);
+        val vertx = VertxElf.buildVertx(vertxOptions, new TestHazelcastClusterManager());
         VertxManager.putExternalVertx("CUSTOM", vertx);
         await().forever().until(() -> configured);
 
@@ -234,8 +232,7 @@ public class VertxAppenderTest implements VertxManagerListener {
         configured = false;
         val vertxOptions = new VertxOptions();
         vertxOptions.setWorkerPoolSize(24);
-        vertxOptions.setClusterManager(new TestHazelcastClusterManager());
-        val vertx = VertxElf.buildVertx(vertxOptions);
+        val vertx = VertxElf.buildVertx(vertxOptions, new TestHazelcastClusterManager());
         VertxManager.putExternalVertx("CROSS", vertx);
         await().forever().until(() -> configured);
 
